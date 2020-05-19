@@ -377,7 +377,7 @@ function removeMarkers(map) {
 function loadScript() {
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAI7rYqbkqVmU7hjoAvfRDSGh28biwzp00&zoom=8&size=500x600&callback=verMapa';
+     
     document.body.appendChild(script);
     console.log('loadScript');
     scriptLoaded = true;
