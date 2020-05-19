@@ -292,9 +292,7 @@ function verMapa(){
         var c = confirm("Para ver el Mapa debe navegar en modo Seguro, debera volver a ingreser su Usuario y contrase�a\nHaga clic en Avanzado confirmar Excepcion de Seguridad");
         if(c){
             console.log(ip);
-            if(ip == "190.128.150.70:2220"){
-                ip = "190.128.150.70:2443";     
-            }
+             
             window.location.href = "https://"+ip+"/marijoa_sap";
         }        
     }else{
@@ -377,7 +375,7 @@ function removeMarkers(map) {
 function loadScript() {
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAI7rYqbkqVmU7hjoAvfRDSGh28biwzp00&zoom=8&size=500x600&callback=verMapa';
+     
     document.body.appendChild(script);
     console.log('loadScript');
     scriptLoaded = true;
