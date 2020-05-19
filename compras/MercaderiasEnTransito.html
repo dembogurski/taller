@@ -1,0 +1,44 @@
+<!-- begin: headers -->
+<!DOCTYPE html>
+
+      <link rel="stylesheet" type="text/css" href="compras/compras.css" /> 
+      <link rel="stylesheet" type="text/css" href="css/datatables.css" />  
+      <script type="text/javascript" src="js/datatables.min.js" ></script> 
+      <script type="text/javascript" src="compras/compras.js?_=00000000000000000000000000000000000000000" ></script>      
+<!-- end:   headers -->
+
+
+<!-- begin: head -->
+
+<div  style="background-color: lightgray;text-align: center;margin:8px 0 ">Mercader&iacute;as en Transito   </div>
+
+<div style="margin: 0 10px">
+<table id="lista_invoices" border="1"  cellspacing="0" cellpadding="0"    style="margin: 0 auto;min-width: 90%"  >
+   <thead>
+      <tr class="titulo"><th>N&deg; Compra</th><th>Suc</th><th>Cod.Prov.</th><th>Incoice</th><th>PROVEEDOR</th><th >Fecha</th><th>Fecha Creacion</th><th>Total</th><th>Moneda</th><th>TotalME</th><th>Comentarios</th></tr>  
+   </thead>        
+   <tbody>
+<!-- end:   head -->
+
+<!-- begin: line -->
+<tr id="{DocEntry}" data-tipo="{tipo}" style="cursor: pointer;background-color: white" onclick="abrirInvoice({DocEntry})"> 
+    <td class="itemc clicable" >{DocEntry}</td> 
+    <td class="itemc clicable suc" >{Suc}</td>  
+    <td class="item clicable"  title="RUC/Federal Tax ID: {LicTradNum}">{CardCode}</td> 
+    <td class="item clicable" >{NumAdCard}</td> 
+    <td class="item clicable" >{CardName}</td> 
+    <td class="itemc clicable" >{DocDate}</td>
+    <td class="itemc clicable" >{DocDueDate}</td>
+    <td class="num clicable" >{DocTotal}</td>
+    <td class="itemc clicable" >{DocCur}</td>
+    <td class="num clicable" >{DocTotalFC}</td>
+    <td class="item" data-info="{Comments}" >{CommentsShort}</td>
+</tr>
+<!-- end:   line -->
+
+
+<!-- begin: foot -->
+</tbody>
+  </table>
+    </div>
+<!-- end:   foot -->

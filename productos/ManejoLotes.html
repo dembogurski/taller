@@ -1,0 +1,217 @@
+
+
+<!-- begin: headers -->
+      <link rel="stylesheet" type="text/css" href="productos/ManejoLotes.css?_=1530534774211" /> 
+      <script type="text/javascript" src="productos/ManejoLotes.js?_=00000000000000" ></script>       
+      <script type="text/javascript" src="proveedores/proveedores.js" ></script>
+<!-- end:   headers -->
+
+
+<!-- begin: err_msg -->
+<div class="bad_session">  {err_msg} <input type="button" value="Volver" onclick="showMenu()"> </div>
+<!-- end:   err_msg -->
+
+<!-- begin: filters -->
+<input type="hidden" id="porc_val_min" value="{porc_val_min}">
+
+ 
+    <div id="pizq" style="text-align: center; width: 40%;min-width: 830px;border: solid 1px;margin: 10 auto;">
+        <table id="filtros" border="0"  cellspacing="6" cellpadding="0"   >
+            <tr class="titulo" ><th colspan="4" style="text-align: center">Manejo de Lotes (Filtros)</th></tr>
+            
+            <tr>
+                <td colspan="2">Estandares Predefinidos:</td>
+                <td colspan="2">
+                    <select id="estandar" onchange="setEstandar()">
+                        <option value="" data-desc=""></option>
+                        <option value="5x4" data-desc="Baja todo al Precio Minimo">Compras que entraron entre 5 y 4 A&ntilde;os atras (Precio Venta Minimo)</option>
+                        <option value="5x4_crucero" data-desc="Linea Crucero baja al 30% del Precio de Costo">Compras que entraron entre 5 y 4 A&ntilde;os atras (Crucero 30% del Costo)</option>
+                        <option value="7x5" data-desc="Baja todo al Precio de Costo">Compras que entraron entre 7 y 5 A&ntilde;os atras</option>
+                        <option value="0x7" data-desc="Baja todo al 50% del Precio de Costo">Compras que entraron has mas de 7 A&ntilde;os atras</option>
+                    </select>
+                </td>
+            </tr>
+            <tr><td colspan="4" id="msg_info"></td></tr>
+            <tr>
+                <td style="width: 15%">Compras Desde:</td> 
+                <td style="width: 10%"><input id="desde" class="fecha" type="text" size="10" value="01-01-2010"></td>  
+                <td style="width: 3%">Hasta:</tD> 
+                <td style="width: 10%"><input id="hasta" class="fecha" type="text" size="10" value="{hoy}"> &nbsp;Sucursal: <select id="sucs"><option value="%">% - Cualquiera</option>{sucursales}</select></td>  
+            </tr>
+            
+            <tr>
+                <td><label >Codigo Art:&nbsp; &nbsp;</label></td>
+                <td><input type="text" id="codigo" tabindex="4" data-next="lote" class="editable" value="%" size="12" placeholder="Codigo Articulo"  readonly="readonly" >
+                <td><label>Descripci&oacute;n&nbsp;&nbsp;&nbsp;</label></td>
+                <td><input type="text" id="descrip" size="60"  placeholder="Buscar Articulo"  > </td>
+            </tr>
+            <tr>
+                <td><label >Colores</label></td>
+                <td colspan="2">
+                    <select id="filtroColores"></select>
+                </td>
+                <td><label >Fin de Pieza</label>
+                 
+                    <select id="fp">
+                        <option value="No">No</option>
+                        <option value="Si">Si</option>
+                        <option value="%" selected>%</option>
+                    </select>
+                </td> 
+            </tr>
+            <tr>
+                <td><label >Lotes Especificos</label></td>
+                <td colspan="3">
+                    <textarea rows="3" cols="30" id="lotes" style="width: 96%" placeholder="Ingrese aqui los lotes entre comas. Ej.:  13615,13715,12416"></textarea>
+                </td>
+            </tr>
+            
+            <tr>
+                <td colspan="4">
+                    <div id="ui_articulos" title="Lista de Articulos" style="display:none; cursor: pointer;position: absolute;width:40%;"  >
+                        <table id="lista_articulos" cellspacing="0" cellpadding ="0" border="1" style="border-collapse: collapse;margin:0;width: 100%;background: white" >
+                          <tr><th colspan="7" class="titulo">Articulos</th></tr>
+                          <tr style="background-color: lightgray;"> <th style="width: 15%">Codigo</th>   <th style="width: 10%">Sector</th> <th style="width: 50%">Nombre Comercial</th> <th style="width: 10%">Ancho</th><th style="width: 10%">Composicion</th> <th style="width: 10%">Precio</th> </tr>
+                        </table>       
+                    </div> 
+                </td>
+            </tr>
+            <tr>
+                <td><label >Cod. Proveedor</label></td>
+                <td><input id="codigo_proveedor" type="text" readonly="readonly" size="12" value="%" ></td>
+                <td><label>Proveedor:</label></td>
+                <td><input type="text" id="nombre_proveedor" class="check editable" size="46" onchange="buscarProveedor(this)" placeholder="Busque agu&iacute; por el Nombre" data-next="boton_generar" ></td>                                   
+            </tr>
+            <tr>
+                <td><label>Estado de Venta</label></td>
+                <td class="estado_ventas">
+                    <select id="estado_venta">
+                        <option value="%" class="Normal">%</option>
+                        <option value="Normal" class="Normal">Normal</option>
+                        <option value="Oferta" class="Oferta">Oferta</option>
+                        <option value="Arribos" class="Arribos">Arribos</option>
+                        <option value="Retazo" class="Retazo">Retazo</option>
+                        <option value="Promocion" class="Promocion">Promocion</option>
+                    </select>
+                </td>   
+                 <td ><label>Fallas</label></td>
+                 <td>
+                    <select id="fallas">
+                        <option value="Sin Falla">Sin Falla</option>
+                        <option value="Con Falla">Con Falla</option>
+                        <option value="Todas">Todas</option>                         
+                    </select>
+                    &nbsp;&nbsp; <label>Term de A&ntilde;o</label> <input type="text" value="%" id="term" size="3" style="text-align: right">  
+                    &nbsp;&nbsp; <label>Term de A&ntilde;o Padre</label> <input type="text" value="%" id="term_padre" size="3" style="text-align: right">  
+                </td>                
+            </tr>
+            <tr>
+                <td colspan="4"   style="text-align: center;color:red;font-size: 10">No se muestrar&aacute;n lotes con Stock 0</td>
+            </tr>
+            <tr>
+                <td colspan="4" id="msg" style="text-align: center"></td>
+            </tr>
+          
+            <tr>
+                <td colspan="4" >
+                <div id="ui_proveedores" title="Lista de Proveedores" style="display:none; cursor: pointer;position: absolute;width: 40%"  >
+                   <table id="lista_proveedores" cellspacing="0" cellpadding ="0" border="1" style="width: 100%" >
+                   <tr><th colspan="4" class="titulo">Proveedores</th></tr>
+                   <tr style="background-color: lightgray;"> <th style="width: 15%">Codigo</th>   <th style="width: 20%">C.I./R.U.C.</th> <th style="width: 55%">Proveedor</th>   </tr>
+                </table>       
+               </div> 
+            </td>
+            </tr>
+            
+            <tr style="text-align: center">
+                <td colspan="4">
+                    <div id="ml_tipoModGroup">
+                        <div class="ml_tipoMod">
+                            Modificar: <select id="ml_tipoMod" onchange="actualizarLista()"><option value="precios">Precios</option><option value="colores">Color</option><option value="factor_precio">Factor Precio</option></select>
+                        </div>
+                         <input type="button" value="Limpiar Campos" onclick="limpiarCampos()">
+                         <input type="button" id="btn_preview" value="Ver Lista de Lotes" onclick="verLotes()">
+                    </div>
+                </td>
+            </tr>
+        </table> 
+</div>
+    <div class="precios filtroLista" id="pder">
+        <table style="width: auto;margin:0 auto" border="0">
+            <tr>
+                <td colspan="14">                    
+                    <label>Modificar:</label> 
+                    <select id="modificar" onchange="setLabels()" onclick="setLabels()">                        
+                        <option value="precio_final_directo">Establecer Precios Finales directamente</option>
+                        <option value="descuento_directo">Establecer descuentos directamente</option>
+                        <option value="porc_resp_costo">Porcentaje % descuento respecto al Precio de Costo</option>
+                        <option value="porc_resp_valmin">Porcentaje % descuento respecto al Valor Minimo</option>
+                    </select>
+                </td>                                 
+            </tr>
+            <tr id="tr_mod"></tr>
+            <tr><td></td>
+                <td style="text-align: right" title="Igualar valores"><img src="img/r_arrow.png" onclick="igualarValores()" width="20" height="12"></td>
+            </tr>
+            
+        </table>
+    </div>
+    <div class="colores filtroLista" id="editarColor">
+        Color: <div id="ml_listaColoresContainer"><input onclick="ml_buscarToggle()" type="text" id="ml_cambioColor" ><ul id="ml_listaColores"></ul> <input type="checkbox" id="padreEHijos" checked><label for="padreEHijos"> Actualizar tambi&eacute;n Padres e Hijos</label><button onclick="ml_actualizarColor()">Aplicar <img src="img/save-mini.png"></button><div id="bc_loader" style="display:none"></div><span id="ml_actualizarColorMsj"></span></div>
+    </div>
+<div class="factor_precio filtroLista" id="editarFactorPrecio" style="display:none">
+        Factor Precio: <input type="text" size="6" id="factor_precio" class="num" > <button onclick="previewFactorPrecio()">Previsualizar Factor Precio</button>   <button onclick="previewPreciosXKg()">Previsualizar Precios en Kg</button>  <button onclick="actualizarFactorPrecio()">Aplicar Factor Precio <img src="img/save-mini.png"></button> <span id="ml_actualizarFactorMsj"></span> 
+    </div> 
+    
+<!-- end:   filters -->
+
+<!-- begin: filters_result -->
+<div class="ml_listHeader">
+    <h3>Optimizar espacios ocultando columnas</h3>
+    <label for="check_proveedor">Proveedor</label><input type="checkbox" id="check_proveedor" class="check_proveedor" onclick=ocultar("proveedor")>
+    <label for="check_fecha_compra">Fecha Compra</label><input type="checkbox" id="check_fecha_compra" class="check_fecha_compra" onclick=ocultar("fecha_compra")>
+    <label for="check_descrip">Descripcion</label><input type="checkbox" id="check_descrip" class="check_descrip" onclick=ocultar("descrip")>
+    <label for="check_descuentos">Descuentos</label><input type="checkbox" id="check_descuentos" class="check_descuentos" onclick=ocultar("descuentos")>
+    <span id="msg_lotes"></span>
+</div>
+<div style="text-align: center;margin-top: 10px;">
+    <table border="1" class="lotes" >
+        <th class="readonly">N&deg;</th>
+        <th class="readonly proveedor">Proveedor</th>
+        <th class="readonly fecha_compra">Fecha Compra</th>
+        <th class="readonly">Codigo</th>
+        <th class="readonly descrip">Descripcion</th>
+        <th class="readonly">Lote</th>
+        <th class="readonly">Suc</th>
+        <th class="readonly">Stock</th>
+        <th class="readonly verValMinPrecMinVent" {verValMinPrecMinVent}>Precio Costo</th>
+        <th class="readonly verValMinPrecMinVent" {verValMinPrecMinVent}>Valor Minimo</th>
+        <th class="readonly">Fac.Precio</th>
+        <th class="readonly">Precio 1</th>
+        <th class="readonly">Precio 2</th>
+        <th class="readonly">Precio 3</th>
+        <th class="readonly">Precio 4</th>
+        <th class="readonly">Precio 5</th>
+        <th class="readonly">Precio 6</th>
+        <th class="readonly">Precio 7</th>
+        <th class="descuentos">Desc1</th>
+        <th class="descuentos">Desc2</th>
+        <th class="descuentos">Desc3</th>
+        <th class="descuentos">Desc4</th>
+        <th class="descuentos">Desc5</th>
+        <th class="descuentos">Desc6</th>
+        <th class="descuentos">Desc7</th>        
+        <th class="precios factor_precio filtroLista">PrecioFinal1</th>
+        <th class="precios factor_precio filtroLista">PrecioFinal2</th>
+        <th class="precios factor_precio filtroLista">PrecioFinal3</th>
+        <th class="precios factor_precio filtroLista">PrecioFinal4</th>
+        <th class="precios factor_precio filtroLista">PrecioFinal5</th>
+        <th class="precios factor_precio filtroLista">PrecioFinal6</th>
+        <th class="precios factor_precio filtroLista">PrecioFinal7</th>
+        <th class="colores filtroLista">Color Cod</th>
+        <th class="colores filtroLista">Color</th>        
+        <th class="precios">Estado Venta</th>
+        <th><input type="checkbox" id="select_all" onclick="selecccionar()"></th>
+    </table>
+</div>
+<!-- end:   filters_result -->

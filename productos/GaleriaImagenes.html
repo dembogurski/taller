@@ -1,0 +1,57 @@
+<!-- begin: header -->
+<link rel="stylesheet" type="text/css" href="productos/GaleriaImagenes.css?_=000000000000" />
+<script type="text/javascript" src="productos/GaleriaImagenes.js?_=152183345178562" ></script> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+   var imgURI = "{images_url}";
+   var responceData="";
+   var filteredData="";
+</script>
+<!-- end:   header -->
+
+<!-- begin: body -->
+<div id="popUpImageFrame" style="display: none;">
+   <div id="popUpFrame">      
+      <div id="popUpImageBody">
+         <label id="closeFrame" onclick="closeImgPopUp()"><img src="img/close.png"/></label>         
+         <div id="popUpImage"></div>
+         <div id="popUpImageInfo"></div>
+         <div id="popUpImageExtraInfo">
+            <table>
+               <thead>
+                  <tr><th></th></tr>
+                  <tr><th>Lote</th><th>Padre</th><th>Cant</th><th>Suc</th><th>Ubic</th><th>Fab.Color.Cod</th><th>FDP</th><th>Reserva</th></tr>
+               </thead>
+               <tbody>
+                  
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <div id="popUpImageMenu"></div>
+   </div>
+</div>
+<div id="gal_header">
+   <label for="gal_seach_key">Buscar: </label>
+   <div id="searchBox">
+   <input type="text" id="gal_seach_key" size="30" onclick="Go($(this))" onkeyup="getHits()" name="gal_seach" placeholder="Grupo, Tipo"/>
+   <ul id="searchHits">
+      
+   </ul>
+   </div>   
+   <div id="filtros">
+      <div class="i_filter"><label for="f_suc">Suc: </label><select onchange="getColors()" id="f_suc">{f_sucs}</select></div>
+      <div class="i_filter"><label for="f_color">Color: </label><select onchange="getDisenos()" id="f_color">{f_sucs}</select></div>
+      <div class="i_filter"><label for="f_diseno">Dise&ntilde;o: </label><select onchange="updateFilters()"  id="f_diseno">{f_sucs}</select></div>
+      <div class="i_filter"><label for="f_stock">Stock: ></label><input onchange="updateFilters()" type="text" id="f_stock" value="0" size="3" maxlength="4" onchange="Go()" /></div>
+      <div class="i_filter"><label for="f_term">Term:</label><input onchange="updateFilters()" type="text" id="f_term" value="%" size="3" maxlength="4"  /></div>
+      <div class="i_filter"><input type="checkbox" id="f_dfp" onchange="getDisenos()" /><label for="f_dfp">FDP</label></div>
+      <div class="i_filter"><button id="genGaleria" onclick="getResult()" >Buscar</button></div>
+      <div class="loader"></div>
+      <div id="galeria_msj"></div>
+   </div>
+</div>
+<div id="gal_body">
+
+</div>
+<!-- end:   body -->

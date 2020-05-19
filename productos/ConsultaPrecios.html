@@ -1,0 +1,171 @@
+<!-- begin: headers -->
+      <link rel="stylesheet" type="text/css" href="productos/ConsultaPrecios.css?1495712131208" /> 
+      <script type="text/javascript" src="productos/ConsultaPrecios.js?1533150173374" ></script>    
+      <script type="text/javascript" src="proveedores/proveedores.js" ></script>
+<!-- end:   headers -->
+
+
+<!-- begin: err_msg -->
+<div class="bad_session">  {err_msg} <input type="button" value="Volver" onclick="showMenu()"> </div>
+<!-- end:   err_msg -->
+
+<!-- begin: filters -->
+<input type="hidden" id="porc_val_min" value="{porc_val_min}"> 
+ <input id="hasta" class="fecha" type="hidden"  value="{hoy}">
+ 
+    <div id="pizq" style="text-align: center; width: 70%;min-width: 730px;border: solid 1px;margin: 10 auto;">
+        <table id="filtros" border="0"  cellspacing="6" cellpadding="0" style="width: 100%"   >
+            <tr class="titulo" ><th colspan="4" style="text-align: center">Listas de Precios</th></tr>
+             
+            <tr><td colspan="4" id="msg_info"></td></tr>
+            
+            <tr>
+                <td><label >Codigo Art:&nbsp; &nbsp;</label></td>
+                <td><input type="text" id="codigo" tabindex="4" data-next="lote" class="editable" value="%" size="12" placeholder="Codigo Articulo"  readonly="readonly"/>
+                <td><label>Descripci&oacute;n&nbsp;&nbsp;&nbsp;</label></td>
+                <td><input type="text" id="descrip" size="50"  placeholder="Buscar Articulo"  > </td>
+            </tr>
+            <tr>
+                <td><label >Colores</label></td>
+                <td colspan="3">
+                    <select id="filtroColores"></select>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <label >Buscar seg&uacute;n: </label>
+                    <div class="serchParamSelect">
+                        <select id="serchParam">
+                            <option value="BatchNum">Lotes</option>
+                            <option value="U_padre">Padres</option>
+                        </select>
+                    </div>
+                </td>
+                <td colspan="3">
+                    <textarea rows="2" cols="30" id="lotes" style="width: 96%" placeholder="Ingrese aqui los lotes entre comas. Ej.:  13615,13715,12416"></textarea>
+                </td>
+            </tr>
+            
+            <tr>
+                <td colspan="4">
+                    <div id="ui_articulos" title="Lista de Articulos" style="display:none; cursor: pointer;position: absolute;width:70%;"  >
+                        <table id="lista_articulos" cellspacing="0" cellpadding ="0" border="1" style="border-collapse: collapse;margin:0;width: 100%;background: white" >
+                          <tr><th colspan="7" class="titulo">Articulos</th></tr>
+                          <tr style="background-color: lightgray;"> <th style="width: 15%">Codigo</th>   <th style="width: 10%">Sector</th> <th style="width: 50%">Nombre Comercial</th> <th style="width: 10%">Ancho</th><th style="width: 10%">Composicion</th> <th style="width: 10%">Precio</th> </tr>
+                        </table>       
+                    </div> 
+                </td>
+            </tr>
+             
+            <tr style="display:none">
+                <td><label >Cod. Proveedor</label></td>
+                <td><input id="codigo_proveedor" type="text" readonly="readonly" size="12" value="%" ></td>
+                <td><label>Proveedor:</label></td>
+                <td><input type="text" id="nombre_proveedor" class="check editable" size="46" onchange="buscarProveedor(this)" placeholder="Busque agu&iacute; por el Nombre" data-next="boton_generar" ></td>                                   
+            </tr>
+            <tr>
+                <td><label>Estado de Venta</label></td>
+                <td class="estado_ventas">
+                    <select id="estado_venta">
+                        <option value="%" class="Normal">Todos</option>
+                        <option value="Normal" class="x">Normal</option>
+                        <option value="Oferta" class="Oferta">Oferta</option>
+                        <option value="Arribos" class="Arribos">Arribos</option>
+                        <option value="Retazo" class="Retazo">Retazo</option>
+                        <option value="Promocion" class="Promocion">Promocion</option>
+                    </select>
+                </td>   
+                 <td ><label>Fallas</label></td>
+                 <td>
+                    <select id="fallas">
+                        <option value="Sin Falla">Sin Falla</option>
+                        <option value="Con Falla">Con Falla</option>
+                        <option value="Todas">Todas</option>                         
+                    </select>
+                     <label>Sucursal:</label>  <select id="sucs"><option value="%">% - Cualquiera</option>{sucursales}</select> 
+                     <label>Mostrar:</label>
+                     <select id="limite">
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>    
+                        <option value="1000">1000</option>  
+                        <option value="10000000">&infin;</option> 
+                    </select>
+                    <label>Filas</label>
+                     <span id="msg"></span>
+                </td>                
+            </tr>
+          
+            <tr>
+                <td colspan="4" >
+                <div id="ui_proveedores" title="Lista de Proveedores" style="display:none; cursor: pointer;position: absolute;width: 40%"  >
+                   <table id="lista_proveedores" cellspacing="0" cellpadding ="0" border="1" style="width: 100%" >
+                   <tr><th colspan="4" class="titulo">Proveedores</th></tr>
+                   <tr style="background-color: lightgray;"> <th style="width: 15%">Codigo</th>   <th style="width: 20%">C.I./R.U.C.</th> <th style="width: 55%">Proveedor</th>   </tr>
+                </table>       
+               </div> 
+            </td>
+            </tr>
+            
+            <tr style="text-align: center">
+                <td colspan="4">
+                     <input type="button" value="Limpiar Campos" onclick="limpiarCampos()">
+                     <input type="button" value="Ver Lista de Lotes" onclick="verLotes()">
+                </td>
+            </tr>
+        </table> 
+</div>
+     
+
+<!-- end:   filters -->
+
+<!-- begin: filters_result -->
+<div style="display:none" >
+    <label>Optimizar espacios ocultando columnas</label>
+    <label>Proveedor</label><input type="checkbox" class="check_proveedor" checked="checked" onclick=ocultar("proveedor")>
+    <label>Fecha Compra</label><input type="checkbox" checked="checked" class="check_fecha_compra" onclick=ocultar("fecha_compra")>
+    <label>Descripcion</label><input type="checkbox" class="check_descrip" onclick=ocultar("descrip")>
+    <span id="msg_lotes"></span>
+</div>
+<div style="text-align: center;margin-top: 10px;">
+    <table border="1" class="lotes" style="margin: 0 auto" >
+        <th class="readonly oculto">N&deg;</th>
+        <th class="readonly proveedor oculto">Proveedor</th>
+        <th class="readonly fecha_compra oculto">Fecha Compra</th>
+        <th class="readonly">Codigo</th>
+        <th class="readonly descrip">Descripcion</th>
+        <th class="readonly">Lote</th>
+        <th class="readonly">ColorCod</th>
+        <th class="readonly">Color</th>
+        <th class="readonly">Suc</th>
+        <th class="readonly">Stock</th>
+        <th class="readonly">Ancho</th>
+        <th class="readonly permisos_extras" {permisos_extras}>Precio Costo</th>
+        <th class="readonly permisos_extras" {permisos_extras}>Valor Minimo</th>
+        <th class="readonly oculto">Precio 1</th>
+        <th class="readonly oculto">Precio 2</th>
+        <th class="readonly oculto">Precio 3</th>
+        <th class="readonly oculto">Precio 4</th>
+        <th class="readonly oculto">Precio 5</th>
+        <th class="readonly oculto">Precio 6</th>
+        <th class="readonly oculto">Precio 7</th>
+        <th class="oculto">Desc1</th>
+        <th class="oculto">Desc2</th>
+        <th class="oculto">Desc3</th>
+        <th class="oculto">Desc4</th>
+        <th class="oculto">Desc5</th>
+        <th class="oculto">Desc6</th>
+        <th class="oculto">Desc7</th>        
+        <th>PrecioFinal1</th>
+        <th>PrecioFinal2</th>
+        <th>PrecioFinal3</th>
+        <th>PrecioFinal4</th>
+        <th>PrecioFinal5</th>
+        <th>PrecioFinal6</th>
+        <th>PrecioFinal7</th>
+        <th>Estado Venta</th> 
+        <th>Img</th>
+    </table>
+</div>
+<!-- end:   filters_result -->

@@ -1,0 +1,335 @@
+#gal_header label, #gal_header input{   
+   font-size: 16px;   
+}
+#gal_header *{
+   margin-right:  5px;
+}
+ 
+#searchHits li{   
+   margin: 1px;
+   font-family: "Tahoma", Georgia, Sans-serif;
+   font-size: 15px;
+}
+#searchBox{   
+   position: relative;
+   display: inline;
+}
+#searchHits{
+   position: absolute;
+   top:20px;
+   left: 200px;
+   width: 300px;
+   background-color: lightslategray;
+}
+#searchHits li{
+   list-style: none;
+   margin-left: 2px;   
+   padding: 1px 7px 0px 1px;
+   background-color: lightsteelblue;
+}
+#searchHits li:nth-child(odd) {
+   background-color: #ccc;
+}
+#searchHits li:hover{
+   background-color: lightblue;   
+   cursor: pointer;
+}
+#gal_body div{
+   display: inline-block;
+   margin: 2px;
+   border: 1px solid black;
+   padding: 3px;
+}
+[id^="cod_"] *{
+   display: block;   
+}
+[id^="cod_"]{
+   width: 240px;
+   vertical-align: top;
+}
+#popUpImageFrame{   
+   z-index: 1;
+   position: fixed;
+   height: 90%;
+   width: 100%;   
+   background-color: white;   
+   overflow-y: scroll;
+}
+
+#popUpImageBody{
+   position: relative;
+   
+}
+#popUpImageMenu{      
+   position: absolute;      
+   background-color: gray;
+}
+#popUpImageInfo{
+   position: absolute;
+   text-align: left;   
+}
+#popUpImageInfo div{
+   display: block;
+   background-color: white;   
+}
+#popUpImageInfo label{
+   font-weight: 600;
+}
+#popUpImageExtraInfo table td, #popUpImageExtraInfo table th{
+      border: 1px solid black;
+      padding: 2px 7px;
+      white-space: nowrap;
+}
+#popUpImageExtraInfo table{      
+   border-collapse:collapse;
+   empty-cells: show;   
+}
+[class^="i_"] *{
+   padding: 0;
+   vertical-align:middle;
+   font-size: 16px;
+}
+
+input#f_dfp{
+   visibility: hidden;
+   margin-left: -60px
+}
+input#f_dfp ~ label::before{   
+   border: solid 1px gray;
+   border-radius: 3px;
+   padding: 3px;
+   content: 'Excluir ';
+   color: red;
+}
+input#f_dfp:checked ~ label::before{
+   content: 'Incluir ';
+   color: green;
+}
+[class^="i_"] input,[class^="i_"] select{
+   height: 26px;
+   min-width: 55px;
+}
+[class^="i_"] select,[class^="i_"] option div,[class^="i_"] input,[class^="i_"] button{
+   font-size: 16px;
+}
+button#genGaleria{
+   font-size: 0;
+   vertical-align: bottom;
+   background: url('../img/find.png') no-repeat;
+   background-size: 25px;
+   height: 27px;
+   width: 27px;
+   border:none;
+   border-radius: 8px;
+   background-color: lightgrey;
+   cursor: pointer;
+}
+button#genGaleria:hover{
+   background-color: lightskyblue;
+   cursor: pointer;
+}
+@media only screen and (min-width: 720px) {
+   #filtros{
+      display: inline-flex;
+   }
+   #popUpFrame{
+      position: relative;
+      margin: 1px auto;
+      width: 720px;
+      height: 480px;
+      background-color: darkgrey; /* lightgray;*/
+      text-align: center;
+   }
+   #popUpImage{   
+      margin: 0px auto;   
+   }
+   #closeFrame{ 
+      margin: 0px;
+      position: absolute;
+      width: 70px;
+      height: 25px;
+      background-color: lightgray;      
+      top: 5px;
+      left: 0px;
+      -webkit-border-top-right-radius: 11px;
+      -webkit-border-bottom-right-radius: 11px;
+      -moz-border-radius-topright: 11px;
+      -moz-border-radius-bottomright: 11px;
+      border-top-right-radius: 11px;
+      border-bottom-right-radius: 11px;
+   }
+   #closeFrame img{
+      margin: 4px;
+   }
+   #closeFrame:hover{
+      margin: 0px;
+      background-color: lightblue;
+      border: 1px dotted white;
+      cursor: pointer;
+   }
+   #popUpImageInfo{     
+      top: 480px;
+      width: 50%;
+      padding-bottom:17px;
+   }
+   #popUpImageMenu{
+      top: 0px;
+      right: 0px;
+      width: 20px;
+      height: 480px;
+      overflow-y: scroll;
+      overflow-x:hidden;
+      -webkit-transition: width 1.5s; /* For Safari 3.1 to 6.0 */
+     transition: width 1.5s;
+   }
+   #popUpImageMenu:hover{   
+      width: 100px;   
+   }
+   #popUpImageMenu img{
+      margin: 1px 0px;;
+      padding: 0px;
+      border: 1px solid darkgrey;
+      display: block;
+   }
+   #popUpImageMenu img:hover{
+      cursor: pointer;
+      margin: 0px;
+      padding: 1px 0px;
+      border: 2px solid lightblue;
+   }  
+   #popUpImageExtraInfo table{
+      width: 100%;
+   }
+   #popUpImageExtraInfo{
+     /* width: 45%;*/
+      position: absolute;
+      top: 480px;
+      right: 0;
+      padding-bottom:17px;
+   }   
+}
+@media only screen and (max-width: 720px) {   
+   
+   
+   #popUpFrame{
+      background-color: darkgrey;
+      position: relative;
+      margin: 2px auto;
+      width: 320px; 
+      height: 200px;
+      text-align: center;
+   }
+   #popUpImageInfo{  
+      width: 100%;
+      top: 263px;
+      position: absolute;     
+   }
+   #popUpImageMenu{
+      top: 200px;
+      left: 0px;      
+      width: 320px;      
+      height: 63px;  
+      overflow-y: hidden;      
+      white-space: nowrap;       
+   }   
+   #popUpImageMenu div{
+      height: 200px;
+      margin: 1px 0px;      
+      border: 1px solid darkgrey;
+      display: inline-block;
+   }
+   #popUpImageMenu div:hover{
+      cursor: pointer;
+      margin: 0px;
+      padding: 1px 0px;
+      border: 2px solid lightblue;
+   }
+   #closeFrame img{
+      display: none;
+   }
+   #closeFrame::before{
+      content: "Cerrar";
+      font-weight: 400;
+      background-color: lightgray;
+      padding: 5px 11px 3px 2px;
+      -webkit-border-top-right-radius: 11px;
+      -webkit-border-bottom-right-radius: 11px;
+      -moz-border-radius-topright: 11px;
+      -moz-border-radius-bottomright: 11px;
+      border-top-right-radius: 11px;
+      border-bottom-right-radius: 11px;
+   }
+   #closeFrame:hover{
+      background-color: initial;
+      border: none;
+   }
+   #closeFrame:hover:before{
+      background-color: lightcoral;
+   }
+   #closeFrame{ 
+      margin: 0px;
+      position: absolute;
+      top: 6px;
+      left:0px;
+      
+   }
+   #popUpImageExtraInfo{
+      width: 100%;
+      top: 557px;
+      position: absolute;      
+   }
+   #popUpImageExtraInfo table{      
+      width: 100%;
+      top: 0px;
+      right: 0;
+   }
+}
+div.loader{
+   display: none;
+}
+div.loader {
+  margin: 7px 13px;
+  float: left;
+  border: 3px solid #f3f3f3;
+  border-radius: 100%;
+  border-top: 3px solid blue;
+  border-bottom: 3px solid blue;
+  width: 10px;
+  height: 10px;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+div.clistaReserva{
+   pointer-events: relative;
+   height: 100%;
+   width: 100%;
+   display: block;
+}
+td[onclick^=verReserva]{
+   color: blue;
+   cursor: pointer;
+}
+div.clistaReserva{
+   display: none;
+}
+div.clistaReserva ul{
+   position: absolute;
+   left: 100%;
+   background-color: wheat;
+   display: block;
+   list-style: none;
+}
+div.clistaReserva ul li{
+   white-space: nowrap;
+   padding: 1px 2px;
+}

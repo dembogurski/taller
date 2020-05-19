@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="../css/reporte_defaults.css" rel="stylesheet" type="text/css" />
+    <link href="extracto_res.css?_=1516126155500" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../js/functions.js"></script>
+    
+    <script>
+        $(function(){
+            $("div#extracto_res_popUp").draggable();
+        });
+        function mostrarDetalle(target){
+            //console.log(target.index());
+            $("div#extracto_res_popUp table tbody, div#extracto_res_popUp table tfoot").empty();
+            $("div#extracto_res_popUp").css("height","auto");
+            var datos = {};
+            $(target.find('td')).each(function(){
+                var dataOrg = $(this).text().replace(/\./g,'').replace(/,/,'.');
+                var dataCheck = !isNaN(dataOrg)?dataOrg:$(this).text();
+                datos[$(this).attr('class')]=dataCheck;
+            });
+            //console.log(datos);
+            $.post("ExtractosRes.php",{"ex_action":"detalleMovimientos","ticket":datos.ticket,"cuota":datos.cuota},function(data){
+                if(Object.keys(data).length > 0){
+                    var total = 0;
+                    $.each(data, function(i,currentData){
+                        switch(parseInt(currentData.SrcObjTyp)){
+                            case 13:
+                                if(Object.keys(currentData.det).length > 0){
+                                    var detalles = currentData.det;
+                                    $.each(detalles, function(i,det){
+                                        var tr = $("<tr/>",{"id":det.DocNum});
+                                        var trd = $("<tr/>",{"id":"det_"+det.DocNum});
+                                        $("<td/>",{"align":"left","text":"Pago"}).appendTo(tr);
+                                        $("<td/>",{"align":"right","html":'<span onclick="filtrat($(this).text())">'+det.DocNum+'</span>/'+det.id_pago+''}).appendTo(tr);
+                                        $("<td/>",{"align":"center","text":det.suc}).appendTo(tr);
+                                        $("<td/>",{"align":"right","text":det.DocDate}).appendTo(tr);
+                                        $("<td/>",{"align":"right","text":parseFloat(det.CashSum).format(2,3,'.',',')}).appendTo(tr);
+                                        $("<td/>",{"align":"right","onclick":"listarRegistros("+det.DocNum+",'Credit')","text":parseFloat(det.CreditSum).format(2,3,'.',',')}).appendTo(tr);
+                                        $("<td/>",{"align":"right","onclick":"listarRegistros("+det.DocNum+",'Check')","text":parseFloat(det.CheckSum).format(2,3,'.',',')}).appendTo(tr);
+                                        $("<td/>",{"align":"right","text":parseFloat(det.TrsfrSum).format(2,3,'.',',')}).appendTo(tr);
+                                        $("<td/>",{"align":"right","text":parseFloat(det.SumApplied).format(2,3,'.',',')}).appendTo(tr);
+                                        total += parseFloat(det.SumApplied);
+                                        tr.appendTo("div#extracto_res_popUp table tbody");
+                                        trd.appendTo("div#extracto_res_popUp table tbody");
+                                    });
+                                }
+                                break;
+                            case 14:
+                                if(Object.keys(currentData.det).length > 0){
+                                    var detalles = currentData.det;
+                                    $.each(detalles, function(i,det){
+                                        var tr = $("<tr/>",{"id":det.DocNum});
+                                        var trd = $("<tr/>",{"id":"det_"+det.DocNum});
+                                        $("<td/>",{"align":"left","text":"Nota Credito"}).appendTo(tr);
+                                        $("<td/>",{"align":"right","text":det.DocEntry+'/'+det.U_Nro_Interno}).appendTo(tr);
+                                        $("<td/>",{"align":"center","text":det.WhsCode}).appendTo(tr);
+                                        $("<td/>",{"align":"right","text":det.DocDate}).appendTo(tr);
+                                        $("<td/>",{"align":"left","colspan":4,"text":det.Comments}).appendTo(tr);
+                                        $("<td/>",{"align":"right","text":parseFloat(det.DocTotal).format(2,3,'.',',')}).appendTo(tr);
+                                        total += parseFloat(det.DocTotal);
+                                        tr.appendTo("div#extracto_res_popUp table tbody");
+                                        trd.appendTo("div#extracto_res_popUp table tbody");
+                                    });
+                                }
+                                break;
+                        }
+                    });
+                    var trf = $("<tr/>");
+                    trf.append($("<td/>",{"align":"right","text":"Total: ","colspan":$("div#extracto_res_popUp table thead th").length -1}));
+                    trf.append($("<td/>",{"align":"right","text":total.format(2,3,'.',',')}));
+                    trf.appendTo("div#extracto_res_popUp table tfoot");
+                    $("div#extracto_res_popUp").show(0);
+                }
+            },"json");
+        }
+
+        function listarRegistros(DocNum,tipo){
+            $("tr[id^='det_']").empty(function(){
+                $("div#extracto_res_popUp").css("height","auto");
+            });
+            $.post("ExtractosRes.php",{"ex_action":tipo,"DocNum":DocNum}, function(data){
+            if(Object.keys(data).length > 0){
+                $("tr[id^='det_']").append($("<td/>",{"colspan":$("tr#"+DocNum+" td").length}));
+                $("<table/>").appendTo("tr#det_"+DocNum+" td");
+                var pri = true;
+                $.each(data,function(i,det){
+                var trh = $("<tr/>");
+                var tr = $("<tr/>");
+                $.each(det, function(key,value){
+                    if(pri){
+                        $("<th/>",{"text":key}).appendTo(trh);
+                    }
+                    switch(key){
+                        case 'Monto':
+                            $("<td/>",{"text":parseFloat(value).format(2,3,'.',','),"align":"right"}).appendTo(tr);
+                            break;
+                        default:
+                            $("<td/>",{"text":value,"align":"right"}).appendTo(tr);
+                    }
+                });
+                if(pri){
+                    trh.appendTo("tr#det_"+DocNum+" table");
+                    pri=false;
+                }
+                tr.appendTo("tr#det_"+DocNum+" table");
+                });
+            }
+            },"json");
+        }
+
+        
+        function cerrarPoUp(){
+            $("div#extracto_res_popUp").hide(0);
+            $("tr.pagos").show(0)
+        }
+
+        function filtrat(pago){
+            $("tr.pagos").hide(0)
+            $("tr."+pago).show(0)
+        }
+    </script>
+</head>
+
+<body>
+    <div id="main-body">
+        <div id="example">
+            <table border="1" cellpadding="2" cellspacing="0" style="margin-left:auto; margin-right:auto;">
+                <tr>
+                    <td colspan="9">
+                        <table>
+                            <tr>
+                                <th style="width: 15%" rowspan="2"><img style="width: 115px" src="[onshow.logoURL]"></th>
+                                <th style="width: 70%;" colspan="3">Extracto de Cuenta de Cliente</th>
+                                <th style="width: 15%;" rowspan="2">
+                                    <p class="user">[onshow.usuario]</p>
+                                    <p class="date">[onshow..now;frm='dd-mm-yyyy hh:nn:ss'] </p>
+                                </th>
+                            </tr>
+                            <tr>
+                               <th colspan="3">
+                                  <p>Per&iacute;odo [onshow.desde;frm='dd-mm-yyyy'] a [onshow.hasta;frm='dd-mm-yyyy']</p>
+                                 </th>
+                                 
+                              </tr>
+                              <tr>
+                                 <th colspan="5">Cliente: [onshow.cliente], RUC: [onshow.ruc]</th>
+                              </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                   <td colspan="5">
+                      <table id="detalle">
+                         <tr>
+                            <th>Ticket</th><th class="DocNum">DocNum</th><th>Factura</th><th>Suc</th><th>Cuota</th><th>Fecha Fact.</th><th>Moneda</th><th>Total</th><th>Pagado</th><th class="DocEntry">DocEntry</th><th>Saldo</th>
+                         </tr>
+                         <tr class="pagos [data.pagos]">
+                            <td align="right" class="ticket">[data.U_Nro_Interno;block=tr]</td>
+                            <td align="right" class="DocNum">[data.DocNum]</td>
+                            <td align="right" class="factura">[data.FolioNum]</td>
+                            <td align="center" class="suc">[data.U_SUC]</td>
+                            <td align="center" class="cuota">[data.InstlmntID]</td>
+                            <td align="right" class="fecha [data.venc]">[data.DocDate;frm='dd-mm-yyyy']</td>
+                            <td align="center" class="moneda">[data.DocCur]</td>
+                            <td align="right" class="total">[data.InsTotal;frm='0.000,00']</td>
+                            <td align="right" class="pagado" onclick="mostrarDetalle($(this).closest('tr'))">[data.Paid;frm='0.000,00']</td>
+                            <td align="right" class="DocEntry">[data.DocEntry]</td>
+                            <td align="right" class="saldo">[data.diff;frm='0.000,00']</td>
+                         </tr>
+                         <tr>
+                            <td colspan="8" align="right"><b>Saldo Total:</b></td>
+                            <td align="right"><b>[onshow.sum_saldos;block=tr;frm='0.000,00']</b></td>
+                         </tr>
+                      </table>
+                   </td>
+                </tr>
+            </table>
+            <p style="text-align:center;">Se encontraron [data.#] registros en total.</p>
+        </div>
+        <div id="extracto_res_popUp">
+            <div id="res_popUp_h">Detalle<button onclick="cerrarPoUp()">X</button></div>
+            <table>
+                <thead>
+                    <tr><th>Tipo</th><th>SAP/REF</th><th>Suc</th><th>Fecha</th><th>Efectivo</th><th>Tarjeta</th><th>Cheque</th><th>Trans.Banc.</th><th>Total Aplicado</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <!-- [onshow.h_query] -->
+</body>
+
+</html>

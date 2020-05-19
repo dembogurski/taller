@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+       .ajustar{
+          background-color: lightslategrey;
+         }
+      </style>
+      <script src="../js/jquery-2.1.3.min.js"></script>
+      <script>
+         function ajustarLotes(f_nro){
+            var suc = $("td#"+f_nro).data("suc");
+            $("td#"+f_nro+" tr.ajustar").each(function(){
+               var lote = $($(this).find("td.lote")).text();
+               var cantidad = $($(this).find("td.cantidad")).text();
+               var stock = $($(this).find("td.stock")).text();
+               var codigo = $($(this).find("td.codigo")).text();
+               var um_prod = $($(this).find("td.um_prod")).text();
+               var ajuste = (parseFloat(cantidad)-parseFloat(stock)).toFixed(2);
+
+               $.post("../Ajax.class.php",{"action":"registarAjuste","suc":suc,"lote":lote,"codigo":codigo,"ajuste":ajuste,"final":cantidad,"stock":stock,"oper":"Aumento en Entrada","signo":"+","motivo":"Cantidad Insuficiente Fact: "+f_nro,"um":um_prod,"usuario":"Sistema"},function(){
+                  $("button#enviar_"+f_nro).removeAttr("disabled");
+               },"json");
+               
+            });
+         }
+
+         function enviarTicket(f_nro){
+            $.post("SyncErrorCheckNRepair.class.php",{"action":"enviarTicket","f_nro":f_nro},function(){
+                  
+            },"json");
+         }
+      </script>
+</head>
+
+<body>
+    <div id="main-body">
+        <div id="example">            
+            <table border="1" cellpadding="2" cellspacing="0" style="margin-left:auto; margin-right:auto;">
+                <tr align="center">
+                    <td class="border03" id="[ticket.f_nro]" data-suc="[ticket.suc]"><strong>Ticket:</strong> [ticket.f_nro;block=tr;sub1=det] <strong>Fecha:</strong>[ticket.fecha_cierre;frm='dd-mm-yyyy'] <br /> <strong>Suc:</strong> [ticket.suc]  
+                     <button onclick="ajustarLotes([ticket.f_nro])">Ajustar Lotes</button>
+                     <button id="enviar_[ticket.f_nro]" onclick="enviarTicket([ticket.f_nro])">Enviar Ticket</button>
+                        <table border="1" cellpadding="2" cellspacing="0" style="width:300px;">
+                            <tr align="center" class="row0">
+                               <th>n</th>
+                               <th>Lote</th>
+                               <th>Codigo</th>
+                               <th>UM</th>
+                               <th>Cantidad</th>
+                               <th>Stock</th>
+                            </tr>
+                            <tr class="row1 [ticket_sub1.update]">
+                                <td align="right">[ticket_sub1.#]</td>
+                                <td align="right" class="lote">[ticket_sub1.lote;block=tr]</td>
+                                <td align="center" class="codigo">[ticket_sub1.codigo]</td>
+                                <td align="center" class="um_prod">[ticket_sub1.um_prod]</td>
+                                <td align="right" class="cantidad">[ticket_sub1.cantidad;frm='0.00']</td>                                
+                                <td align="right" class="stock">[ticket_sub1.Stock;frm='0.00']</td>                                
+                            </tr>
+                            <tr class="row2 [ticket_sub1.update]">
+                                <td align="right">[ticket_sub1.#]</td>
+                                <td align="right" class="lote">[ticket_sub1.lote;block=tr]</td>
+                                <td align="center" class="codigo">[ticket_sub1.codigo]</td>
+                                <td align="center" class="um_prod">[ticket_sub1.um_prod]</td>
+                                <td align="right" class="cantidad">[ticket_sub1.cantidad;frm='0.00']</td>                                
+                                <td align="right" class="stock">[ticket_sub1.Stock;frm='0.00']</td>                                
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <p style="text-align:center;">Se encontraron [ticket.#] registros.</p>
+        </div>
+    </div>
+</body>
+
+</html>

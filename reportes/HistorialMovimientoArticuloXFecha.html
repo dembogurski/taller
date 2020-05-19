@@ -1,0 +1,84 @@
+<!-- begin: header -->
+    <link rel="stylesheet" type="text/css" href="../productos/HistorialLote.css?_=1503596562235" />
+    <link rel="stylesheet" type="text/css" href="../css/reportes.css" />
+    <script type="text/javascript" src="../js/jquery-2.1.3.min.js" ></script>  
+<!-- end:   header -->
+
+
+<!-- begin: head -->
+<table id="resumen_pedidos" border="1"  cellspacing="0" cellpadding="0"    style="margin: 10px auto;min-width: 99%;border-collapse: collapse"  >           
+    <tr><th colspan="11" style="background-color: lightgray">Historial de Movimiento por Articulo y Color</th></tr> 
+    <tr>
+        <th colspan="11" style="background-color: lightgray">
+           <span class="label">Articulo: </span>({ItemCode}) {ItemName}, 
+           <span class="label">Desde: </span>{desde} <span class="label">hasta</span> {hasta}
+        </th>
+    </tr> 
+    <tr><th>Lote</th><th>Suc</th><th>Tipo Doc</th><th>Info</th><th>N&deg; Doc</th><th>Usuario</th><th>Fecha</th><th>Cantidad</th> <th>Cod. Entidad</th><th>Nombre</th><th>Sentido</th> </tr>
+<!-- end:   head -->
+
+
+<!-- begin: data -->
+<tr style="background-color: white" class="linea {linea} {LocCode}">    
+    <td class="itemc">{DistNumber}</td>
+    <td class="itemc">{LocCode}</td>
+    <td class="item">{DocType}</td>  
+    <td class="item">{MovData}</td>
+    <td class="itemc">{ApplyEntry}</td>
+    <td class="itemc">{DocDate}</td> 
+    <td class="itemc">{Usuario}</td>
+    <td class="num Quantity">{Quantity}</td>
+    <td class="item">{CardCode}</td>
+    <td class="item">{CardName}</td>
+    <td class="itemc" style="background-color: {fondo}">{Direction}</td> 
+</tr>
+<!-- end:   data -->
+
+<!-- begin: total -->
+<tr> <td colspan="7">  </td>  <td class="num total" style="font-weight: bolder">{QuantityTotal}</td>  </tr>
+<!-- end:   total -->
+
+<!-- begin: footer -->
+</table>
+<script>
+    var sucs = {sucs};
+</script>
+<!-- end:   footer -->
+
+
+<!-- begin: script noeval -->
+<style>
+    span.Si{
+        color: red;
+    }
+    span.No{
+        color: green;
+    }
+</style>
+<script>
+    if(sucs.length>0){
+        sucs.forEach(function(value,key){
+            $("<option/>",{
+                "id":'suc_'+value,
+                "value":value,
+                "text":value                
+            }).appendTo("select#suc")
+        });
+    }
+    function updateList(){
+        $("tr.linea").hide();
+        var suc = $("select#suc option:selected").val();
+        var total = 0;
+        $("."+suc).each(function(){
+          $(this).show();  
+          var mts = ($(this).find("td.Quantity").text()).replace(/,/g, ".")
+          total += parseFloat(mts);
+          console.log(total);
+        });
+        $("td.total").text(total.toFixed(2));
+    }
+    $("option#suc_"+opener.getSuc()).prop("selected","selected");
+    updateList();
+</script>
+<!-- end: script -->
+ 

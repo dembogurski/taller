@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+Template de la clase NotasCredito.class.php
+-->
+
+<!-- begin: header -->
+    <link rel="stylesheet" type="text/css" href="notas_credito/notas_credito.css" />   
+    <script type="text/javascript" src="notas_credito/notas_credito.js?_=1503348442441" ></script> 
+    <script type="text/javascript" src="clientes/clientes.js" ></script>    
+    <script>
+        var facturaContable = {fact_cont};
+    </script>  
+<!-- end:   header -->
+
+
+
+<!-- begin: titulo_nota_credito -->
+<input type="hidden" id="limite_detalles" value="{limite_detalles}">
+<input type="hidden" id="fecha_hoy" value="{fecha_hoy}">
+<input type="hidden" id="fecha_factura" value="{fecha_factura}"> 
+<input type="hidden" id="fuera_rango" value="{fuera_rango}"> 
+  
+<div class="titulo_nota_credito">Nota de Credito</div>
+<!-- end:   titulo_nota_credito -->
+
+<!-- begin: cabecera_nota_credito -->
+<div id="cabecera"> 
+    <div id="cli_data"> 
+    <input type="hidden" id="codigo_cliente" value="">    
+    <label id="label_ruc">C.I./R.U.C.:</label> <input type="text" id="ruc_cliente" onchange="buscarCliente(this)" size="20" maxlength="34" placeholder="Buscar Cliente" data-next="nombre_cliente" size="12">
+    <label>Cliente:</label>   <input type="text" id="nombre_cliente" size="46" onchange="buscarCliente(this)" placeholder="Busque agu&iacute; por el Nombre" data-next="boton_generar" >
+    <label>Cat:</label>  <input type="text" id="categoria" size="3" readonly style="text-align: center" value="1"  >
+    <label class="factura">Factura N&deg;: </label> 
+    <select id="facturas"></select>  
+     
+    <input type="text" readonly="readonly" disabled="disabled" size="8" id="factura" style="display:none" value="">
+    <label class="nota" style="display: none">N&deg; Nota Credito: </label> 
+    <input class="nota" type="text" readonly="readonly" disabled="disabled" id="nro_nota_credito" size="8"   style="display:none" value="">
+    <input id="boton_generar" onclick="crearNotaCredito()" style="display:none" type="button" value="Generar Nota de Credito" >&nbsp;&nbsp;<span id="msg"></span>
+    </div>
+    
+    <div id="ui_clientes" title="Lista de Clientes" style="display:none; cursor: pointer"  >
+     <table id="lista_clientes" cellspacing="0" cellpadding ="0" border="1" >
+        <tr><th colspan="4" class="titulo">Clientes</th></tr>
+        <tr style="background-color: lightgray;"> <th style="width: 15%">Codigo</th>   <th style="width: 20%">C.I./R.U.C.</th> <th style="width: 55%">Cliente</th> <th style="width: 10%">Categoria</th> </tr>
+     </table>       
+    </div> 
+ </div>   
+<!-- end:   cabecera_nota_credito -->
+
+<!-- begin: area_carga_cab -->
+    <div id="area_carga" style="display:none" >
+        
+        <table id="detalle_factura" border="1"  cellspacing="0" cellpadding="0" width="99%"  >
+           
+            <tr><th colspan="10" style="background-color: lightgray">Detalle de Factura</th></tr>  
+            <tr class="titulo"><th class="codigo">Codigo</th><th class="descrip">Descripcion</th><th class="cant">Cantidad</th><th class="um">UM</th> <th class="precio">Precio</th><th class="subtotal">Subtotal</th><th class="max_dev">Cant.Max.Dev.</th><th class="cant_dev">Cant. Dev.</th><th class="subtotal">Subtotal Dev.</th><th class="delete">*</th></tr>  
+            
+<!-- end:   area_carga_cab -->            
+
+<!-- begin: area_carga_data -->
+         <tr id="tr_{lote}"><td class="item codigo_lote" >{lote}</td><td class="item">{descrip}</td><td class="num cantidad" id="cant_vend_{lote}">{cantidad}</td><td  class="itemc">{um_cod}</td> <td class="num" id="precio_venta_{lote}">{precio_neto}</td><td class="num">{subtotal}</td>
+                <td class="itemc" style="width:60px"><input type="text" id="dev_{lote}" data-codigo="{codigo}" data-lote="{lote}" data-precio="{pn}" data-um="{um_prod}" data-descrip="{descrip}" class="cant_dev num" size="8" maxlength="10" ></td><td style="width:120px" class="num subtotal_dev_" id="subtotal_dev_{lote}"></td><td class="itemc"></td></tr>
+<!-- end:   area_carga_data -->
+
+<!-- begin: area_carga_foot -->
+<tr class="tr_total_factura" style="font-weight: bolder"><td >&nbsp;Totales</td><td colspan="3" id="msg_det" style="text-align: center;font-size: 11" class="info"></td>  <td id="descuento_factura" style="text-align: right;" class="num">{TOTAL_DESC}</td><td style="text-align: right;" colspan="" id="total_factura" class="num">{TOTAL}&nbsp;Gs.</td><td></td><td></td><td style="text-align: right;" class="num" id="total_dev"></td> </tr>
+        </table>  
+    </div>   
+<div style="text-align: center;margin-top: 6px;display:none" id="div_guardar"  >
+    <input type="button" value="  Volver al Menu  " onclick="showMenu()" id="atras" style="display:none">
+    <input type="button" value="  Finalizar  " disabled="disabled" id="finalizar" onclick="finalizar()">
+    <span id="NCGenMov"><input id="generarMovimientoCaja" type="checkbox" checked="checked"/><label for="generarMovimientoCaja" >Gererar Movimiento de Caja (En Efectivo): </label></span>
+    <input type="button" value="  Imprimir Comprobante   " onclick="imprimirNotaCredito()" id="imprimir" class="print" style="display:none">
+    
+    <label style="display:none" class="print">Seleccione Nota de Credito:</label> 
+        <select class="print" id="tipo_fact" data-next="tipo_factura" onchange="getNotasCreditoContables()" style="height: 26px;display:none" >
+            <option>Pre-Impresa</option>
+            <option>Manual</option>            
+        </select>
+    <select class="print" id="nota_credito_contable" data-next="tipo_factura" style="font-weight: bold;height: 26px;display:none"> </select>  
+     <input type="button" value="  Imprimir Nota de Credito   " onclick="imprimirNotaCreditoLegal()" id="imprimir_nc_legal" class="print" style="display:none">
+</div>
+<script>preConfigurar();</script>
+<!-- end:   area_carga_foot -->   
+
+
+
+<div class="titulo_nota_credito">Nota de Credito</div>
+<!-- end:   titulo_nota_credito -->
+
+<!-- begin: cabecera_nota_credito_existente -->
+<div id="cabecera"> 
+    <div id="cli_data"> 
+    <input type="hidden" id="codigo_cliente" value="">    
+    <label id="label_ruc">C.I./R.U.C.:</label> <input type="text" id="ruc_cliente" value="{ruc}" readonly="readonly" size="20" maxlength="34"    size="12">
+    <label>Cliente:</label>   <input type="text" id="nombre_cliente" readonly="readonly" size="46" value="{cliente}"  > 
+    <label class="factura">Factura N&deg;: </label>  
+    <input type="text" readonly="readonly" disabled="disabled" size="8" id="factura"   value="{factura}">
+     <input class="moneda" type="text" id="moneda" size="3" readonly style="text-align: center;" value="{moneda}"   >
+    <label class="nota" >N&deg; Nota Credito: </label> 
+    <input class="nota" type="text" readonly="readonly" disabled="disabled" id="nro_nota_credito" size="8" id="nro_nota" value="{nro_nota}">
+     &nbsp;&nbsp;<span id="msg"></span>
+    </div>       
+</div>   
+<!-- end:   cabecera_nota_credito -->

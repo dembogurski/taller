@@ -1,0 +1,77 @@
+<!-- begin: header -->     
+      <link rel="stylesheet" type="text/css" href="../css/main.css" /> 
+      <link rel="stylesheet" type="text/css" href="../css/reportes.css" /> 
+      <link rel="stylesheet" type="text/css" href="ReporteSolicitudes.css?_=15012sss2897" /> 
+      <script type="text/javascript" src="../js/jquery-2.1.3.min.js" ></script>   
+      <script type="text/javascript" src="../js/jquery-ui/jquery-ui.min.js" ></script>   
+      <script type="text/javascript" src="ReporteSolicitudes.js?_=11112ss3123121" ></script>
+      <script type="text/javascript" src="../js/reportes.js" ></script> 
+<!-- end:   header -->
+
+  
+
+<!-- begin: head -->
+<input type="hidden" id="operario" value="{operario}">
+<input type="hidden" id="origen" value="{suc}">
+<input type="hidden" id="destino" value="{suc_d}">
+<input type="hidden" id="paper_size" value="{paper_size}">
+
+<div id="anchorTitle" class="anchorTitle"></div>
+
+
+<table id="solicitudes" border="1"  cellspacing="0" cellpadding="0"    style="margin: 10px auto;min-width: 99%;border-collapse: collapse"  >
+   <tr><th colspan="11" style="background-color: rgb(221, 218, 205);font-family:marijoa;height: 30px"  >MARIJOA</th></tr>        
+   <tr style="background-color: white;height: 30px">
+       <th colspan="3" ><small>{operario}</small><br> {suc}&rArr;{suc_d}  </th><th colspan="5" >Solicitudes de Traslado   <br><small> Periodo: {desde} &harr; {hasta} &nbsp;{tipo}</small></th>
+   <th colspan="3" ><small>{fecha_hora}</small></th></tr> 
+    
+   <tr class="titulo"><th>N&deg;<div class="filtro"><input type="button" value="F" data-target="nro_filtro" onclick="showOption($(this))"/><ul id="nro_filtro">{nros}</ul></div></th><th>Usuario</th><th>Cierre</th><th>Lote</th><th >Remp.</th><th>Descripci&oacute;n <span class="descripInfo">Seleccione &darr;</span></th><th>Cant.</th><th>Urge</th><th>Ubic<div class="filtro"><input type="button" value="F" data-target="ubic_filtro" onclick="showOption($(this))"/><ul id="ubic_filtro"><li onclick="fitrarUbic($(this))">Todos</li><li onclick="fitrarUbic($(this))">Hombre</li><li onclick="fitrarUbic($(this))">Maquina</li><li onclick="fitrarUbic($(this))">Vacios</li></ul></div></th><th>Estado</th><th>*</th></tr>  
+            
+<!-- end:   head -->
+
+<!-- begin: line -->
+<tr id="{lote}" data-lote="{lote}" data-codigo="{codigo}" class="fila {nro}" data-verificar="{verificar}" > 
+    <td class="itemc nro_pedido">{nro}</td>  
+     
+    <td class="item" >{usuario}</td>
+    <td class="item" >{cierre}</td>
+    <td class="item lote" data-nro="{nro}" >{lote}</td>
+    <td style="width:100px" class="td_remplazo" ><input type="text" class="lote_rem item" maxlength="12" value="{lote_rem}" style="border:solid white 0px;width: 100%;margin:0px;height:18px"></td>
+    <td class="item descrip" title="{obs}" >{descrip}</td> 
+    <td class="num cant" >{cantidad}</td> 
+    <td class="itemc {color_urge}" >{urge}</td>
+    <td class="item ubic_{lote}" ><img  src="../img/loading_fast.gif" width="16px" height="16px" ></td>
+    <td class="itemc msg_{lote}  msg_{lote_rem}" >{estado}</td>
+    <td class="itemc"><input type="checkbox" id="check_{lote}" class="check_{lote}"/><div class="chVerif"></div></td>
+</tr>
+<!-- end:   line -->
+
+
+<!-- begin: foot -->
+<tr> 
+    <td class="item" colspan="5" >Cant:<span id="cantidad"></td>      
+</tr>
+<tr><td colspan="100">
+    <table class="firma">
+        <tr><td></td><td class="line"></td><td></td><td class="line"></td><td></td></tr>
+        <tr><td></td><td>GESTOR DE PEDIDOS</td><td></td><td>PREPARADOR DEL PEDIDO</td><td></td></tr>
+    </table>
+</td></tr>
+</table>
+<!-- end:   foot -->
+
+<!-- begin: procesador_pedidos -->
+<div id="message_frame">
+    <div id="message_header">
+        <ul id="estados">
+            <li onclick="cambiarEstado($(this))">Despachado</li>
+            <li onclick="cambiarEstado($(this))">Pendiente</li>
+            <li onclick="cambiarEstado($(this))">Suspendido</li>
+        </ul>
+        <button onclick="mostrarOcultarEstados()">Cambiar de Estado</button>
+        <input type="button" value="Procesar" onclick="procesarLotes()" style="font-size:9px;height: 22px" >&nbsp;&nbsp;
+        <img src="../img/printer-01_32x32.png" height="26" width="26" style="cursor:pointer;margin-bottom:-6" onclick="imprimir()">&nbsp;&nbsp;
+    </div>
+    <div id="message"></div>
+</div>
+<!-- end: procesador_pedidos -->

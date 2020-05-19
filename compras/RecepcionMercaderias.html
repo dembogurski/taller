@@ -1,0 +1,162 @@
+<!-- begin: headers -->
+<!DOCTYPE html>
+
+      <link rel="stylesheet" type="text/css" href="compras/compras.css?_=1498743563948" /> 
+      <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js" ></script>
+      <script type="text/javascript" src="compras/compras.js?_=1498743563948" ></script>
+      <script language="javascript">
+           
+      </script>
+<!-- end:   headers -->
+
+
+<!-- begin: search_bar -->
+<input type="hidden" id="DocEntry" value="{DocEntry}">
+<input type="hidden" id="estado" value="{estado}">
+<input type="hidden" id="tipo_doc" value="{tipo_doc}">
+
+<div id="img_viewer" class="img_viewer"></div>
+
+<div id="obs" class="obs"  style="display:none;text-align: center">
+     <label style="font-weight:bolder">Agregar Observaci&oacute;n</label><br>
+     <textarea cols="70" rows="3" id="observ" maxlength="200" onkeyup="contarCaracteres()"></textarea><br>   
+     
+     <input type="button" id="cancel" onclick="closeObs()"  value="Cancelar" style="font-size:11px;font-weight: bolder">   
+     <input type="button" id="save_obs" value="Guardar" onclick="saveObs()" style="font-size:11px;font-weight: bolder">
+     <label style="font-size: 10px;color:red" id="rest"></label>
+</div>
+
+<div id="search_bar" style="width: 40%">  
+    <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;">          
+        <tr>
+            <td>
+                <label title="Presione F3 o Ctrl+F para Buscar">Buscar:</label>  <input title="Presione F3 o Ctrl+F para Buscar" class="filter" type="text" id="search_q" size="30" placeholder="Mar/Bulto o Color Desc. (F3)" > 
+                <input title="Presione F3 o Ctrl+F para Buscar" type="button" id="buscar" value="Buscar" onclick="buscar()" disabled="disabled" style="margin: 0;font-size: 10;font-family: arial;height:24px "  />            
+                <input type="button" value="<" onclick="resAnt()"/>  
+                <span id="index">0</span>   
+                <input type="button" value=">" onclick="resSig()"/>     
+                <span id="msg_filter" style="font-size: 12px;"></span>
+                <span id="msg" style="font-size: 12px;"></span>
+            </td>
+        </tr> 
+        <tr>
+            <td><input type="checkbox" id="porCompletar" checked/><label for="porCompletar">Filtrar s&oacute;lo por completar</label></td>
+        </tr>        
+    </table>       
+</div>
+<!-- end:   search_bar -->
+
+<!-- begin: rolls -->
+
+    
+<div id="tabs" style="height: 80px;display: none" >
+    <input type="hidden" id="DocEntry" value="{DocEntry}">
+    <ul>
+       <li><a href="#filtros">Filtros</a></li>
+       <li><a href="#compra">Datos de Compra</a></li>
+       <li><a href="#hardware" id="tab_tarjetas">Hardware</a></li>
+       <li><a href="#software">Configuraci&oacute;n</a></li>         
+    </ul>
+    <div id="filtros" >
+        <table border="0" id="filter_bar" >
+            <tr>
+                <td>
+                    <label>Art:</label><select   id="filtro_articulo" onchange="getDesigns()" ><option class="touch_filter" value="%">Todos</option>{option_articulos}</select>
+                    <label>Design:</label><input class="filter" type="text" id="filtro_desing" size="14" placeholder="Filtro Design">  
+                    <label>St:</label><input class="filter" type="text" id="filtro_mar" size="14" placeholder="Filtro Mar" >  
+                    <label>Color.Desc.</label><input  class="filter" type="text" id="q_color_desc" size="10" placeholder="Filtro Color Desc." >  
+                    <label>Color.Com.</label><select  id="q_color_com"  ><option class="touch_filter" value="%">Todos</option>{colores_comerciales}</select>  
+                    <label for="solo_faltantes">Sin proc:</label><input type="checkbox" id="solo_faltantes" >&nbsp;<label for="reply">Replicar:</label><input type="checkbox" id="reply" checked="checked">
+                    <input type="button" value="Filtrar" onclick="filtrar()"  style="margin: 0;font-size: 10;font-family: arial;height:24px "/>  
+                    <span id="filter_msg"></span>
+                </td> 
+            </tr>
+        </table>  
+    </div>
+    <div id="compra" style="text-align: left;margin:0">
+        <b>N&deg; </b> {DocEntry}<b>&nbsp;&nbsp;&nbsp;Proveedor:</b> {cardname}<b>&nbsp;&nbsp;&nbsp;Invoice:</b> {invoice}<b>&nbsp;&nbsp;&nbsp;Estado:</b> <a onmouseover="mostrarBotonFinalizar()" style="color:{color};text-decoration:none;cursor: pointer">{estado}</a>
+        <input type="button" id="cerrar" value="Finalizar Descarga" style="display:none" onclick="finalizar()" >
+        <span class="msg_info" id="msg_cab"></span>
+        <input type="button" id="cerrar_descarga" value="Confirme cerrar Descarga" style="display:none" onclick="cerrarDescarga()" >
+        <input type="button" id="set_no_recibido" value="Ajustar y Marcar como No Recibidas" style="display:none" onclick="noRecibida()" > 
+        <div style="text-align: center" id="info"></div>
+    </div>    
+    <div id="hardware" style="text-align: left;"> 
+         <b>IP Balanza</b><input type="text" size="15"  id="ip"  style="border:solid lightgray 1px;text-align: center;" onchange="setCoockie()" value="localhost">
+         <b>Impresoras</b><select id="printers"></select> <b>Impresi&oacute;n directa</b> <input type="checkbox" id="silent_print">
+    </div>  
+    <div id="software" style="text-align: left;"> 
+        <table border="0" style="font-size: 12px">
+            <tr>
+                <td>
+                    <b>Tama&ntilde;o letras</b></td><td> <div id="fuente" style="width:30mm"></div> </td><td>&nbsp;&nbsp;<label id="font">12</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <b>Tama&ntilde;o Imagenes&nbsp;&nbsp;</b></td><td> <div id="imagenes" style="width:30mm"></div> 
+                </td>
+            </tr>
+        </table> 
+    </div>         
+</div>
+    <div class="fixed-table-container">
+    <div class="header-background"> 
+          <table border="1"  cellspacing="0" cellpadding="0" style="border-collapse: collapse;width:99%" id="packing_head"  > 
+                <tr id="cabecera" style="font-size:12px;background-color: lightgray">
+                    <th class="design" style="width: 15%">Articulo</th>
+                    <th class="design" style="width: 10%">Design/Descrip</th>
+                    <th class="design" style="width: 5%">Store Number</th>
+                    <th class="design" style="width: 5%">Bag/Bulto</th> 
+                    <th class="design" style="width: 14%">Color Desc.</th>
+                    <th style="width: 14%">Color Comercial</th>    
+                    <th class="design" style="width: 3%">Precio</th>
+                    <th class="design" style="width: 2%;padding-left:2px;padding-right: 2px">UM</th>
+                    <th class="design" style="width: 5%">Lote</th>     
+                    <th class="design" style="width: 5%">E.Quty</th>
+                    <th style="width: 5%">Q.Ticket</th>
+                    <th style="width: 5%">Kg Real</th>                   
+                    <th style="width:3%"> <img src="img/printer_mini.png"></th>                    
+                    <th style="width: 2%">Obs</th>
+                    <th style="width: 2%">&nbsp;</th>
+                </tr>
+          </table>
+      </div> 
+         
+      <div class="fixed-table-container-inner">        
+        <table border="1"  cellspacing="0" cellpadding="0" class="tabla"  > 
+            <thead>
+                <tr id="cabecera" style="font-size:0px;height: 0px;">
+                    <th class="design" style="width: 15%"></th>
+                    <th class="design" style="width: 10%"></th>
+                    <th class="design" style="width: 5%"></th>
+                    <th class="design" style="width: 5%"></th> 
+                    <th class="design" style="width: 14%"></th>
+                    <th style="width: 14%"></th>    
+                    <th class="design" style="width: 3%"></th>
+                    <th class="design" style="width: 2%;padding-left:2px;padding-right: 2px"></th>
+                    <th class="design" style="width: 5%"></th>     
+                    <th class="design" style="width: 5%"></th>
+                    <th style="width: 5%"></th>
+                    <th style="width: 5%"></th>                     
+                    <th style="width:3%"></th>                     
+                    <th style="width: 2%"></th>
+                    <th style="width: 2%"></th>
+                </tr>
+            </thead>
+            <tbody id="productos" >
+
+            </tbody>
+        </table>
+      </div>
+        
+  </div>
+<div id="totales"  >
+            <table border="1" class="totales" cellspacing="0" cellpadding="0"   > 
+                <tr> 
+                    <td style="font-weight: bolder">Recibidos:</td>
+                    <td style="width: 15mm">Metros:</td> <td class="num"  id="tMts"></td>
+                    <td style="width: 15mm">Kilos:</td>  <td class="num"  id="tKgs"></td>
+                    <td style="width: 15mm">Yardas</td>  <td class="num"  id="tYds"></td>
+                    <td style="width: 15mm">Unid:</td>   <td class="num"  id="tUnid"></td>
+                </tr>
+            </table>
+        </div>
+<!-- end:   rolls -->
+

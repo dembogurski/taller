@@ -1,0 +1,94 @@
+ 
+/* 
+    Created on : 01/09/2016, 01:49:45 PM
+    Author     : Ing.Douglas
+*/
+
+ 
+
+[readonly]{
+    background-color: rgb(250, 250, 250);
+    font-size: 14px;
+    font-family: tahoma;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+.ajuste{
+    display: none;
+}
+.lotes{
+    font-size: 16px;
+    font-family: arial;
+    text-align: center;
+    height: 30px;    
+}
+table label{
+    font-size: 16px
+}
+#tabs .ui-tabs-nav{
+    margin: 0;
+    padding: 0;
+}
+div#panel_inferior{
+    position: relative;
+}
+#area_trab input[type=text]{
+    color:black;
+    font-family: tahoma;
+    font-size: 20px;
+    font-weight: bolder
+}
+#area_trab input[type=button]{
+    color:black;
+    font-family: tahoma;
+    font-size: 20px;
+    font-weight: bolder;
+    margin: 0 0 0 -4px;
+    padding: 0 4px 0 4px;
+}
+.selected{
+    background-color:  #FFA500;
+    color:black;
+    font-weight: bolder;
+}
+.selected .suc_span::after{
+    content: url("../img/l_arrow.png");
+    display: block;
+    margin: -20px -150% 0 0;
+    z-index: 100;
+}
+.passed .suc_span::after{
+    content: url("../img/l_arrow.png");
+    display: block;
+    margin: 20px -100% 20px 65px;
+    z-index: 100;
+    position: absolute;
+}
+.input_err{
+    border:solid red 1px;
+}
+#config input[type="checkbox"] {
+    transform: scale(1.5);
+}
+#config  select,#config option, #config label{
+    font-size: 20px;
+}
+div#metradorMsj{
+    display: inline;
+    padding: 1px 7px 0;
+}
+div#mf_stock_comprometido{
+    display: none;
+    position: absolute;
+    top: 20px;
+    left: 105px;
+    border: dotted 2px gray;
+    border-radius: 7px;
+    background-color: white;
+    padding: 10px;
+}
+div#mf_stock_comprometido table,div#mf_stock_comprometido table th,div#mf_stock_comprometido table td{
+    border-collapse: collapse;
+    border: solid 1px black;
+    padding: 1px 3px;
+}

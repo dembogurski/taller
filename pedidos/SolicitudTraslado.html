@@ -1,0 +1,123 @@
+
+<!-- begin: headers -->
+    <link rel="stylesheet" type="text/css" href="pedidos/solicitud_traslado.css?_=1499951684080" />   
+    <script type="text/javascript" src="pedidos/solicitud_traslado.js?_=1499951684080" ></script>
+    <script type="text/javascript" src="js/jquery.zoom.js" ></script>   
+<!-- end:   headers -->
+
+<!-- begin: area_carga_cab -->
+<input type="hidden" id="images_url" value="{images_url}">
+
+    <div id="area_carga" style="margin-left: 4px" >
+        <table border="0" style="border-collapse: collapse">           
+            <tr>
+                <td>
+                  <input type="hidden" id="codigo" value="">  
+                  <select id="tipo_busqueda">
+                      <option value="BatchNum">Lote:</option>
+                      <option value="U_padre">Padre:</option>
+                  </select>
+                </td>
+                <td> 
+                    <input type="text" onclick="mostrarResultados()" id="lote" value="" size="16" maxlength="30" class="buscador editable" tabindex="1"  style="font-weight: bolder;text-transform: uppercase;" data-next="color"  placeholder="Buscar" data-info="El codigo del lote es Obligatorio" >
+                    <img src="img/keypad32.png" border="0" onclick="showKeyPad()" style="margin:0 0 -8px -8px;width:28px;heigth:28px;cursor: pointer" title="Teclado Numerico" >
+                    <select id="sucObjetivo" onchange="buscarLote()"><option value="%" data-informacion="Todos" selected>*</option>{sucursales}</select>
+                    Stock > <input id="filtroStock" onchange="buscarLote()" size="4" tipe="text" value="10" maxlength="4"/>
+                    <img src="img/arrow-up.png" onclick="seleccionarArriba()" class="arrows" title="Seleccionar" >
+                    <img src="img/arrow-down.png" onclick="seleccionarAbajo()" class="arrows" title="Seleccionar" >
+                    <label>Color:  </label> <input type="text" id="color" class="item buscador editable"  tabindex="2" data-next="cantidad" size="20"  placeholder="Incluir color" style="text-transform: uppercase;" >
+                    <label>Stock:  </label> <input type="text" id="stock" class="num"   size="12" readonly="readonly" >
+                    <label>Suc:    </label> <input type="text" id="suc"   class="itemc" size="4" readonly="readonly" >
+                    &nbsp<span id="msg" ></span> 
+                </td>
+                <td rowspan="4" id="img_td" style="vertical-align: top;margin-left: 26px; " ></td>      
+            </tr>
+            <tr>
+                <td><label>Descripci&oacute;n:</label></td>
+                <td><input type="text" id="descrip" size="86" readonly > 
+                    <label for="mi_suc">Incluir tambien mi Suc:</label>
+                    <input type="checkbox" id="mi_suc" onchange="buscarLote()" checked="checked">
+                    <img src="img/info.png" width="26" height="26" onclick="historial()" >
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <label>Cantidad:  </label> 
+                </td>
+                <td>
+                    <input type="text" class="num numeros editable buscador" tabindex="3" id="cantidad"   data-next="obs" size="8"  >                         
+                    <div id="result" class="info" style="width:80%;float:right"></div>
+                </td> 
+                 
+            </tr>
+            <tr>
+                <td><label>Obs:  </label></td><td><input type="text" class="editable" tabindex="4" id="obs" data-next="mayorista" maxlength="80" size="56"  > 
+                <label><b>Tipo: </b> </label>
+                     <select id="mayorista" tabindex="5" data-next="urge" class="editable">
+                         <option value="No">Minorista</option>
+                         <option value="Si">Mayorista</option>
+                     </select>     
+                <label><b>Urgente: </b> </label>
+                <select id="urge" tabindex="6" data-next="add_code" class="editable">
+                     <option>No</option>
+                     <option>Si</option>
+                </select>  
+                
+                <input type="button" id="add_code" value="    Insertar    "  onclick="addCode()" tabindex="7" disabled style="height:22px;font-size:9;font-weight: bold" data-info="Agregar esta Pieza al Pedido" > </td>
+            </tr>
+        </table> 
+    </div> 
+    <div id="ui_articulos" title="Lista de Articulos" style="display:none; cursor: pointer;position: absolute;min-width:50%;max-width: 90%"  >
+        <table id="lista_articulos" cellspacing="0" cellpadding ="0" border="1" style="border-collapse: collapse;margin:0 78;width: 100%" >
+        <tr><th colspan="8" class="titulo">Articulos<input class="actionButton" type="button" value="Cerrar" onclick="ocultarResultados()"/></th></tr>
+        <tr style="background-color: lightgray;"> 
+            <th style="width: 7%">Lote</th> 
+            <th  style="width:8%">Sector</th> 
+            <th style="width: 40%">Nombre Comercial</th><th  style="width: 30%">Color</th><th  style="width: 5%;" >Stock</th><th style="width: 2%">Suc</th><th style="width: 3%">Precio1</th><th style="width: 5%">Estado</th></tr>
+     </table>       
+    </div> 
+
+<!-- end:   area_carga_cab -->   
+
+<!-- begin: mensaje -->
+<div style="text-align: center;font-weight: bolder;display:none;background: #ffffcc;" class="error generar" id="msg_alt">No hay Solicitudes Abiertas para esta Sucursal, Generar una?   <input type="button" id="generar_pedido" value="Generar Solicitud"  onclick="generarSolicitudTraslado()" tabindex="7" style="height:22px;font-size:9;font-weight: bold;" data-info="Genera una Solicitud de Traslado" ></div> 
+<div style="text-align: center;"><img src="img/refresh-32.png" title="Actualizar" data-info="Ver todas las Solicitudes Abiertas" class="rotate" style="height: 26px;width: 26px; margin-bottom: -8px;cursor: pointer" onclick="mostrarTodo()">    </div>
+<div class="titulo" style="width: 80%;margin: 10 auto;border: solid gray 1px;text-align: center;">Solicitudes de Traslado Abiertas</div>
+<!-- end:   mensaje -->
+
+<!-- begin: solicitudes_abiertas_cab -->
+<div id="solicitudes"> 
+<!-- end:   solicitudes_abiertas_cab -->
+
+<!-- begin: solicitudes_abiertas_data -->
+<table border="1" class="solicitud_abierta_cab solicitud_{nro}" data-destino="{destino}"  data-nro="{nro}" style="border:1px solid gray;border-collapse: collapse;min-width: 80%;margin:4 auto;"> 
+    <tr style="background-color: lightgray">
+        <th>Nro</th> <th>Usuario</th><th>Origen</th><th>Destino</th><th>Fecha</th><th>Estado</th> 
+    </tr>  
+    <tr style="background-color: white"> <th>{nro}</th> <th>{usuario}</th><th>{origen}</th><th>{destino}</th><th>{fecha}</th><th class="estado" style="background-color: #73AD21;color:white;width:170px;height:28px">Abierta&nbsp;<input type="button" value="Enviar Solicitud" style="display:none;height:22px;font-size: 9px;cursor:pointer" onclick="enviarSolicitud({nro})"></th> </tr>
+    <tr>
+        <td colspan="8">
+            <table border="1" id="sol_{nro}" class="solicitud_abierta" data-destino="{destino}" data-nro="{nro}" style="border:1px solid gray;border-collapse: collapse;min-width: 100%;">
+                <tr><th colspan="8" style="background-color: lightgray;font-size: 11px" >Detalle</th></tr>
+                <tr class="titulo"><th>Lote</th><th>Descrip</th><th>Color</th><th>Cantidad</th><th>Mayorista</th><th>Urgente</th><th>Obs</th><th></th></tr> 
+ <!-- end: solicitudes_abiertas_data -->                
+                
+<!-- begin: solicitudes_abiertas_detalle --> 
+<tr style="background-color: white"><td class="item  lote_{lote}" name="lote"  >{lote}</td><td class="item">{descrip}</td><td class="item">{color}</td><td class="num">{cantidad}</td><td class="itemc">{mayorista}</td><td class="itemc">{urge}</td><td class="item">{obs}</td><td  class="itemc"><img src="img/trash_mini.png" class="trash" id="trash_{lote}" style="cursor:pointer;" onclick=borrarLote("{lote}","{nro}")  /></td></tr> 
+<!-- end:   solicitudes_abiertas_detalle -->                
+  
+<!-- begin: solicitudes_abiertas_fin_data -->
+
+            </table>
+        </td>
+    </tr> 
+        
+</table>
+<br><br>
+<!-- end:  solicitudes_abiertas_fin_data --> 
+
+<!-- begin: solicitudes_abiertas_foot -->
+</div>
+<!-- end:   solicitudes_abiertas_foot -->
+
+

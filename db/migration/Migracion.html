@@ -1,0 +1,198 @@
+<!-- begin: header noeval -->
+     
+<script type="text/javascript" src="../../js/jquery-2.1.3.min.js" ></script>  
+
+<script>
+    
+    
+$(function(){
+ $(".checkbox").each(function(){
+     var tabla = $(this).attr("data-action");
+     if(tabla !== "createStoredProcedures"){
+        checkMigrated(tabla);
+     }
+ });   
+});    
+
+function checkMigrated(tabla){
+ $.ajax({
+        type: "POST",
+        url: "Migracion.php",
+        data: {"action": "checkMigratedTables","tabla":tabla},
+        async: true,
+        dataType: "html",
+        beforeSend: function () {
+           // $("."+action).html("Check "+tabla+"...<img src='../../img/loading_fast.gif' width='16px' height='16px' >"); 
+        },
+        complete: function (objeto, exito) {
+                                
+            var result = $.trim(objeto.responseText);
+            if(result != "0"){
+                result +="<img src='../../img/ok.png' width='16px' height='16px' >" 
+            }else{
+                result +="<img src='../../img/error.png' width='16px' height='16px' >" 
+            }
+            $("."+tabla).html(result);
+             
+        },
+        error: function () {
+            $("."+tabla).html("Ocurrio un error en la comunicacion con el Servidor...");
+        }
+    });    
+}
+  
+
+function migrate(){
+   $(".checkbox").each(function(){
+       var c = $(this).is(":checked");
+       if(c){
+           var action = $(this).attr("data-action");
+           proceedMigrate(action);
+       }
+   });
+}
+
+function proceedMigrate(action){
+    $.ajax({
+        type: "POST",
+        url: "Migracion.php",
+        data: {"action": action},
+        async: true,
+        dataType: "html",
+        beforeSend: function () {
+            $("."+action).html("Migrando "+action+"...<img src='../../img/loading_fast.gif' width='16px' height='16px' >"); 
+        },
+        complete: function (objeto, exito) {
+                                
+            var result = $.trim(objeto.responseText);
+            
+            if(parseInt(result) > 0){
+              result+="<img src='../../img/ok.png' width='16px' height='16px' >";   
+            }else{
+                result+="<img src='../../img/error.png' width='16px' height='16px' >";   
+            }
+            
+            $("."+action).html(result);
+             
+        },
+        error: function () {
+            $("."+action).html("Ocurrio un error en la comunicacion con el Servidor...");
+        }
+    });     
+}
+
+    
+</script>
+
+<!-- end:   header -->
+
+
+<!-- begin: body -->
+     
+<table border="1" style="border-collapse: collapse">
+    <tr>
+        <th colspan="3" style="text-align: center"  >Programa de Migracion de Datos</th>        
+    </tr>
+    <tr>
+        <th>Tabla</th><th colspan="2" ><input type="button" value="Migrar" onclick="migrate()"></th>
+    </tr>
+    <tr>
+        <td>Tablas Basicas MySQL</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="migrarTablasBasiscas" ></td><td colspan="2" class="migrarTablasBasiscas"></td>
+    </tr>
+     
+    
+    <tr>
+        <td>Plan de Cuentas</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="plan_cuentas" ></td><td colspan="2" class="plan_cuentas"></td>
+    </tr>
+    
+    
+    <tr>
+        <td>Paises</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="paises" ></td><td colspan="2" class="paises"></td>
+    </tr>
+    <tr>
+        <td>Clientes</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="clientes" ></td><td colspan="2" class="clientes"></td>
+    </tr>
+    
+    <tr>
+        <td>Contactos</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="contactos" ></td><td colspan="2" class="contactos"></td>
+    </tr>
+    
+    <tr>
+        <td>Proveedores</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="proveedores" ></td><td colspan="2" class="proveedores"></td>
+    </tr>
+    <tr>
+        <td>Puntos de Venta</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="pdvs" ></td><td colspan="2" class="pdvs"></td>
+    </tr>
+    <tr>
+        <td>Colores Pantone</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="pantone" ></td><td colspan="2" class="pantone"></td>
+    </tr>
+    <tr>
+        <td>Sectores</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="sectores" ></td><td colspan="2" class="sectores"></td>
+    </tr>
+    <tr>
+        <td>Usos</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="usos" ></td><td colspan="2" class="usos"></td>
+    </tr>
+    <tr>
+        <td>Propiedades</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="art_propiedades" ></td><td colspan="2" class="art_propiedades"></td>
+    </tr>
+    <tr>
+        <td>Articulos</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="articulos" ></td><td colspan="2" class="articulos"></td>
+    </tr>
+    
+    <tr>
+        <td>Parametros Globales</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="parametros" ></td><td colspan="2" class="parametros"></td>
+    </tr>
+    <tr>
+        <td>Generar Lista de Precios</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="lista_precios" ></td><td colspan="2" class="lista_precios"></td>
+    </tr>
+    <tr>
+        <td>Migrar Precios x Articulo</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="lista_prec_x_art" ></td><td colspan="2" class="lista_prec_x_art"></td>
+    </tr>
+    <tr>
+        <td>Actualizar Series de Lotes</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="series_lotes" ></td><td colspan="2" class="series_lotes"></td>
+    </tr>
+    <tr>
+        <td>Ubicaciones</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="ubicaciones" ></td><td colspan="2" class="ubicaciones"></td>
+    </tr>
+    <tr>
+        <td>Temporadas</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="temporadas" ></td><td colspan="2" class="temporadas"></td>
+    </tr>
+    <tr>
+        <td>Articulos x Temporadas</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="articulos_x_temp" ></td><td colspan="2" class="articulos_x_temp"></td>
+    </tr>
+    
+    <tr>
+        <td>Registro de Ubicaciones</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="reg_ubic" ></td><td colspan="2" class="reg_ubic"></td>
+    </tr>
+    
+    <tr>
+        <td>Dise&ntilde;os</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="designs" ></td><td colspan="2" class="designs"></td>
+    </tr>
+    
+    <tr>
+        <td>Politica Cortes</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="politica_cortes" ></td><td colspan="2" class="politica_cortes"></td>
+    </tr>
+    <tr>
+        <td>Lotes</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="lotes" ></td><td colspan="2" class="lotes"></td>
+    </tr> 
+    <tr>
+        <td>Turnos</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="turnos" ></td><td colspan="2" class="turnos"></td>
+    </tr> 
+    <tr>
+        <td>Tarjetas</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="tarjetas" ></td><td colspan="2" class="tarjetas"></td>
+    </tr> 
+    <tr>
+        <td>Tipos de Gastos</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="tipos_gastos" ></td><td colspan="2" class="tipos_gastos"></td>
+    </tr>
+    
+    <tr>
+        <td>Conceptos</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="conceptos" ></td><td colspan="2" class="conceptos"></td>
+    </tr>
+    
+    <tr>
+        <td>Crear Funciones</td><td style="text-align: center"><input class="checkbox" type="checkbox" data-action="createStoredProcedures" ></td><td colspan="2" class="createStoredProcedures"></td>
+    </tr>
+    
+</table>
+ 
+<!-- end:   body -->
