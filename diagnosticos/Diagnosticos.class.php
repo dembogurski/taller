@@ -11,7 +11,7 @@ require_once("../Y_DB_MySQL.class.php");
 class Diagnosticos {
 
     private $table = 'diagnosticos';
-    private  $items = [array("column_name"=>"id_diag","nullable"=>"NO","data_type"=>"int","max_length"=>"","numeric_pres"=>"10","dec"=>"0","titulo_campo"=>"Id Diag=>","titulo_listado"=>"yes","type"=>"number","required"=>"required","inline"=>"false","editable"=>"readonly","insert"=>"Yes","default"=>"","pk"=>"PRI","extra"=>"auto_increment"),array("column_name"=>"usuario","nullable"=>"NO","data_type"=>"varchar","max_length"=>"30","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Usuario=>","titulo_listado"=>"Usuario","type"=>"text","required"=>"required","inline"=>"false","editable"=>"readonly","insert"=>"Auto","default"=>"","pk"=>"MUL","extra"=>""),array("column_name"=>"chapa","nullable"=>"NO","data_type"=>"varchar","max_length"=>"30","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Chapa=>","titulo_listado"=>"Chapa","type"=>"text","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"","pk"=>"MUL","extra"=>""),array("column_name"=>"fecha","nullable"=>"YES","data_type"=>"datetime","max_length"=>"","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Fecha=>","titulo_listado"=>"Fecha","type"=>"datetime-local","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"","pk"=>"","extra"=>""),array("column_name"=>"descrip","nullable"=>"YES","data_type"=>"varchar","max_length"=>"10000","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Descrip=>","titulo_listado"=>"Descrip","type"=>"textarea","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"","pk"=>"","extra"=>"")];    
+    private  $items = [array("column_name"=>"id_diag","nullable"=>"NO","data_type"=>"int","max_length"=>"","numeric_pres"=>"10","dec"=>"0","titulo_campo"=>"Id Diag=>","titulo_listado"=>"Id Diag","type"=>"number","required"=>"required","inline"=>"false","editable"=>"readonly","insert"=>"Auto","default"=>"","pk"=>"PRI","extra"=>"auto_increment"),array("column_name"=>"cod_cli","nullable"=>"YES","data_type"=>"varchar","max_length"=>"30","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Cod Cli=>","titulo_listado"=>"Cliente","type"=>"db_select","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"clientes=>cod_cli,nombre","pk"=>"MUL","extra"=>""),array("column_name"=>"usuario","nullable"=>"NO","data_type"=>"varchar","max_length"=>"30","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Usuario=>","titulo_listado"=>"","type"=>"text","required"=>"","inline"=>"false","editable"=>"No","insert"=>"Auto","default"=>"","pk"=>"MUL","extra"=>""),array("column_name"=>"chapa","nullable"=>"YES","data_type"=>"varchar","max_length"=>"30","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Chapa=>","titulo_listado"=>"Chapa","type"=>"text","required"=>"required","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"","pk"=>"MUL","extra"=>""),array("column_name"=>"marca","nullable"=>"YES","data_type"=>"varchar","max_length"=>"100","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Marca=>","titulo_listado"=>"Marca","type"=>"db_select","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"marcas=>marca,marca","pk"=>"MUL","extra"=>""),array("column_name"=>"fecha","nullable"=>"YES","data_type"=>"datetime","max_length"=>"","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Fecha","titulo_listado"=>"","type"=>"date","required"=>"","inline"=>"false","editable"=>"No","insert"=>"Auto","default"=>"","pk"=>"","extra"=>""),array("column_name"=>"descrip","nullable"=>"YES","data_type"=>"varchar","max_length"=>"10000","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Descrip=>","titulo_listado"=>"","type"=>"textarea","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"","pk"=>"","extra"=>""),array("column_name"=>"url_img0","nullable"=>"YES","data_type"=>"varchar","max_length"=>"200","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Url Img0=>","titulo_listado"=>"","type"=>"textarea","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"","pk"=>"","extra"=>""),array("column_name"=>"url_img1","nullable"=>"YES","data_type"=>"varchar","max_length"=>"200","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Url Img1=>","titulo_listado"=>"","type"=>"textarea","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"","pk"=>"","extra"=>""),array("column_name"=>"url_img2","nullable"=>"YES","data_type"=>"varchar","max_length"=>"200","numeric_pres"=>"","dec"=>"","titulo_campo"=>"Url Img3=>","titulo_listado"=>"","type"=>"textarea","required"=>"","inline"=>"false","editable"=>"Yes","insert"=>"Yes","default"=>"","pk"=>"","extra"=>"")];    
     private $primary_key = 'id_diag';
     private $limit = 100;
 
@@ -26,7 +26,7 @@ class Diagnosticos {
 
     function main() {
         
-	    $columns = "";
+	$columns = "";
         foreach ($this->items as $array){ 
             $titulo_listado = $array['titulo_listado'];
             
@@ -35,9 +35,6 @@ class Diagnosticos {
                 if($data_type == "date"){
                     $colname = $array['column_name'];
                     $columns .= "DATE_FORMAT($colname,'%d-%m-%Y') as $colname,";
-                }else if($data_type == "datetime"){ 
-                   $colname = $array['column_name'];
-                   $columns .= "DATE_FORMAT($colname,'%d-%m-%Y %H:%i') as $colname,";                  
                 }else{
                     $columns .= $array['column_name'].",";   
                 }                
@@ -51,8 +48,10 @@ class Diagnosticos {
         $t->Show("headers");
 	$t->Show("insert_edit_form");// Empty div to load here  formulary for edit or new register 	  
         $db = new My();     
-        $Qry = "SELECT  $columns FROM  $this->table LIMIT $this->limit"; 
-        //echo $Qry;
+        //$Qry = "SELECT  $columns FROM  $this->table LIMIT $this->limit"; 
+        $Qry = "SELECT id_diag,c.nombre AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag desc";
+        
+        
         $db->Query($Qry);
 
         if ($db->NumRows() > 0) {
@@ -97,16 +96,20 @@ class Diagnosticos {
              $insert = $arr['insert'];
              $type = $arr['type'];
              $dec = $arr['dec'];
-             
-             
+              
              
              if($insert === 'Yes'){
                   
                 if($type == "db_select"){
                     $db_options = "\n";
                     $default = $arr['default'];
-                    list($tablename,$columns) = explode("=>",$default);        
-                    $query = "SELECT $columns FROM $tablename"; 
+                    list($tablename,$columns) = explode("=>",$default);    
+                    $order_by = "";
+                    if($tablename == "marcas"){
+                        $order_by = " order by hits desc";
+                    }
+                    $query = "SELECT $columns FROM $tablename $order_by"; 
+                     
                     $tmp_con->Query($query);
                     $col_array = explode(",",$columns);
                     while($tmp_con->NextRecord()){ 
@@ -123,11 +126,14 @@ class Diagnosticos {
                         $db_options.='<option value="'.$key.'">'.$values.'</option>'."\n";
                     }                        
                     $t->Set("value_of_".$column_name,$db_options);
-                }
-                if($column_name == "fecha"){
-                    $t->Set("value_of_".$column_name,date("Y-m-d"));
                 }                
                 
+             }
+             if($insert === "Auto"){   
+                 if($type === "date"){  
+                     $current_date = date("Y-m-d");   
+                     $t->Set("value_of_".$column_name,$current_date);
+                 }
              }
            }
                
@@ -172,8 +178,12 @@ class Diagnosticos {
                 if($type == "db_select"){
                     $db_options = "\n";
                     $default = $arr['default'];
-                    list($tablename,$columns) = explode("=>",$default);        
-                    $query = "SELECT $columns FROM $tablename"; 
+                    list($tablename,$columns) = explode("=>",$default);  
+                    $order_by = "";
+                    if($tablename == "marcas"){
+                        $order_by = " order by hits desc";
+                    }
+                    $query = "SELECT $columns FROM $tablename $order_by"; 
                     $tmp_con->Query($query);
                     $col_array = explode(",",$columns);
                     while($tmp_con->NextRecord()){ 
@@ -281,10 +291,17 @@ class Diagnosticos {
        $data = $master['data'];
        $colnames = "";
        $insert_vlues = "";
+       
+       $my = new My();
         
        foreach ($data as $key => $value) {
+            
+           if($key == "marca"){
+              $my->Query("update marcas set hits = hits + 1 where marca = '$value'");  
+           }  
            foreach ($this->items as $arr) {
               if($arr["column_name"] == $key){
+                  
                  $colnames .="$key,";   
                  if($this->isCharOrNumber( $arr["data_type"]) == "number" ){
                      if($value != ''){    
@@ -293,17 +310,10 @@ class Diagnosticos {
                         $insert_vlues .="null,";
                      }
                  }else{
-                   if($key == "fecha"){
-                      $insert_vlues .="CURRENT_TIMESTAMP,";  
-                   }else{
-                       $insert_vlues .="'$value',";  
-                   }
+                   $insert_vlues .="'$value',";  
                  }
-              }
-              
-           }
-               
-           
+              }    
+           }            
        }
        $colnames = substr($colnames, 0,-1);
        $insert_vlues = substr($insert_vlues, 0,-1);
@@ -313,7 +323,7 @@ class Diagnosticos {
        
        //echo $Qry;
        
-       $my = new My();
+      
        $my->Query($Qry);
        if($my->AffectedRows() > 0){
            echo json_encode(array("mensaje"=>"Ok"));

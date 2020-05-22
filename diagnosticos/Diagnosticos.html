@@ -1,6 +1,6 @@
 <!-- begin: headers -->   
     <head>  
-        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=0000" />      
+        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=666" />      
         <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
@@ -16,7 +16,7 @@
     <table id="diagnosticos"  border="1" class="display responsive nowrap db_tablename"  >
         <thead>
             <tr>
-                <th>Chapa</th><th>Fecha</th><th>Descrip</th><th></th>
+                <th>Chapa</th><th>Cliente</th><th>Marca</th><th></th>
             </tr>
         </thead>
 
@@ -24,7 +24,7 @@
 
 
 <!-- begin: data_line -->     
-    <tr>  <td>{chapa}</td> <td>{fecha}</td> <td>{descrip}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editUI("{id_diag}") ></td>  </tr>
+    <tr>   <td onclick=editUI("{id_diag}")>{chapa}</td><td class="cliente" onclick=editUI("{id_diag}")>{cod_cli}</td> <td>{marca}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editUI("{id_diag}") ></td>  </tr>
 <!-- end:   data_line -->
 
 
@@ -43,7 +43,7 @@
     <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
     <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript" src="js/functions.js" ></script>    
-    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=0000" ></script>
+    <script type="text/javascript" src="diagnosticos/Diagnosticos.js" ></script>
     
 <!-- end:   script -->
 
@@ -55,11 +55,19 @@
 
 
 <!-- begin: edit_form_data -->     
-<tr> <td class="form_label">Id Diag:</td> <td><input class="form_number PRI" type="number" id="form_id_diag"  readonly="readonly" required="required" size="10" onkeypress="return onlyNumbers(event)" value="{value_of_id_diag}" >*</td>  </tr>
-<tr> <td class="form_label">Usuario:</td> <td><input class="form_text MUL" type="text" id="form_usuario"  readonly="readonly" required="required" size="30"  value="{value_of_usuario}" >*</td>  </tr>
-<tr> <td class="form_label">Chapa:</td> <td><input class="form_text MUL" type="text" id="form_chapa"    size="30"  value="{value_of_chapa}" ></td>  </tr>
-<tr> <td class="form_label">Fecha:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha"      value="{value_of_fecha}" ></td>  </tr>
+<tr style="display: none" > <td class="form_label">Id Diag:</td> <td><input class="form_number PRI" type="number" id="form_id_diag"  readonly="readonly" required="required" size="10" onkeypress="return onlyNumbers(event)" value="{value_of_id_diag}" >*</td>  </tr>
+
+<tr> <td class="form_label">Chapa:</td> <td><input class="form_text MUL" type="text" id="form_chapa"  readonly="readonly"  required="required"  size="30"  value="{value_of_chapa}" ></td>  </tr>
+<tr> <td class="form_label">Marca:</td> <td>
+<select class="form_db_select MUL" id="form_marca"   >{value_of_marca}</select>
+</td>  </tr>
+<tr> <td class="form_label">Cliente:</td> <td>
+<select class="form_db_select MUL" id="form_cod_cli"   >{value_of_cod_cli}</select>
+</td>  </tr>
 <tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   >{value_of_descrip}</textarea></td>  </tr>
+<tr> <td class="form_label">Diag 1:</td> <td><textarea class="form_textarea" id="form_url_img0" cols="40" rows="3"   >{value_of_url_img0}</textarea></td>  </tr>
+<tr> <td class="form_label">Diag 2:</td> <td><textarea class="form_textarea" id="form_url_img1" cols="40" rows="3"   >{value_of_url_img1}</textarea></td>  </tr>
+<tr> <td class="form_label">Diag 3:</td> <td><textarea class="form_textarea" id="form_url_img3" cols="40" rows="3"   >{value_of_url_img3}</textarea></td>  </tr>
 
 <!-- end:   edit_form_data -->
 
@@ -88,10 +96,20 @@
 
 
 <!-- begin: add_form_data -->     
-<tr  style="display: none" > <td class="form_label">Usuario:</td> <td><input class="form_text MUL" type="text" id="form_usuario"    required="required"  size="30"  value="" readonly="readonly" >*</td>  </tr>
-<tr > <td class="form_label">Chapa:</td> <td><input class="form_text MUL" type="text" id="form_chapa"   size="30"  value="" ></td>  </tr>
-<tr style="display: none"> <td class="form_label">Fecha:</td> <td><input class="form_datetime-local" readonly="readonly" type="datetime-local" id="form_fecha"      value="{value_of_fecha}" ></td>  </tr>
+
+<tr style="display:none"> <td class="form_label">Usuario:</td> <td><input class="form_text MUL" type="text" id="form_usuario"      size="30"  value="" ></td>  </tr>
+<tr> <td class="form_label">Chapa:</td> <td><input class="form_text MUL" type="text" id="form_chapa"    required="required"  size="30"  value="" >*</td>  </tr>
+<tr> <td class="form_label">Marca:</td> <td>
+<select class="form_db_select MUL" id="form_marca"  >{value_of_marca}</select>
+</td>  </tr>
+<tr> <td class="form_label">Cliente:</td> <td>
+<select class="form_db_select MUL" id="form_cod_cli"  >{value_of_cod_cli}</select>
+</td>  </tr>
+<tr style="display:none"> <td class="form_label">Fecha</td> <td><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
 <tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 1:</td> <td> <input type="file" id="file_0" > <textarea class="form_textarea diag_img" id="form_url_img0" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 2:</td> <td> <input type="file" id="file_0" > <textarea class="form_textarea diag_img" id="form_url_img1" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 3:</td> <td> <input type="file" id="file_0" > <textarea class="form_textarea diag_img" id="form_url_img3" cols="40" rows="3"   ></textarea></td>  </tr>
 
 <!-- end:   add_form_data -->
 

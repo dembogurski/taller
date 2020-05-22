@@ -8,10 +8,6 @@ body{
     position: absolute;
 }
 
-#form_chapa{
-    text-transform: capitalize;
-}
-
 .form_table{
     margin: 1cm auto;
     background-color: white;
@@ -42,13 +38,13 @@ body{
 }
 
 .list_container { 
-   margin: 30px 10px 10px 10px;
+   margin: 10px 10px;
    max-width: 1280px
 }
 
 .db_tablename{
-	width:100%;
-	border-collapse:collapse
+    width:100%;
+    border-collapse:collapse
 }
 
 #diagnosticos tr th {
@@ -112,3 +108,20 @@ input[type=number] {
 .required{
     border:solid red 1px;
 } 
+
+.diag_img{
+    display: none;
+}
+#form_chapa{
+   text-transform: uppercase;
+}
+.cliente { 
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  width: 80px; 
+  height: 1.2em; 
+  white-space: nowrap;
+}
+.form_db_select{
+  height: 30px;   
+}

@@ -33,7 +33,6 @@ function configurar(){
     });   
      
 }  
-
  
 
 function editUI(pk){
@@ -52,8 +51,7 @@ function editUI(pk){
                 var form = objeto.responseText;                  
                 centerForm(); 
                 $(".form").html(form);
-                $("#msg").html("");  
-                
+                $("#msg").html("");                
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
             }
@@ -80,7 +78,7 @@ function addUI(){
                 var form = objeto.responseText;                  
                 centerForm(); 
                 $(".form").html(form);
-                $("#msg").html("");   
+                $("#msg").html("");  
                 $("#form_usuario").val(getNick());
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
@@ -144,7 +142,8 @@ function addData(form){
               }else{
                   $("#"+form+" input[id="+table+"_save_button]").prop("disabled",false);
                   $("#msg_diagnosticos").html(data.mensaje+" Rellene los campos requeridos y vuelva a intentarlo si el problema persiste contacte con el Administrador del sistema.");
-              }           
+              }   
+              genericLoad("diagnosticos/Diagnosticos.class.php");
           },
           error: function (err) { 
             $("#msg_diagnosticos").addClass("error");
