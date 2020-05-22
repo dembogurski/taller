@@ -12,20 +12,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/wamp/www/sistema/utils/NumPad.class.php</file>
-            <file>file:/D:/wamp/www/sistema/caja/reportes/Arqueo.html</file>
-            <file>file:/D:/wamp/www/sistema/ventas/FacturaVenta.html</file>
-            <file>file:/D:/wamp/www/sistema/ventas/FacturaVenta.class.php</file>
-            <file>file:/D:/wamp/www/sistema/ventas/FacturaVenta.js</file>
-            <file>file:/D:/wamp/www/sistema/productos/Articulos.class.php</file>
-            <file>file:/D:/wamp/www/sistema/caja/VentasEnCaja.js</file>
-            <file>file:/D:/wamp/www/sistema/caja/ArqueoCaja.class.php</file>
-            <file>file:/D:/wamp/www/sistema/reportes/ReportesUI.class.php</file>
-            <file>file:/D:/wamp/www/sistema/caja/VentasEnCaja.html</file>
-            <file>file:/D:/wamp/www/sistema/caja/reportes/Arqueo.class.php</file>
-            <file>file:/D:/wamp/www/sistema/caja/Pagare.html</file>
-            <file>file:/D:/wamp/www/sistema/caja/ImpresorFactura.class.php</file>
-            <file>file:/D:/wamp/www/sistema/caja/Pagare.class.php</file>
+            <file>file:/D:/wamp/www/sistema/diagnosticos/Diagnosticos.class.php</file>
+            <file>file:/D:/wamp/www/sistema/diagnosticos/Diagnosticos.html</file>
+            <file>file:/D:/wamp/www/sistema/diagnosticos/Diagnosticos.js</file>
+            <file>file:/D:/wamp/www/sistema/diagnosticos/Diagnosticos.css</file>
         </group>
     </open-files>
 </project-private>

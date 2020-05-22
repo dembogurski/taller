@@ -115,13 +115,7 @@ input[type=number] {
 #form_chapa{
    text-transform: uppercase;
 }
-.cliente { 
-  text-overflow: ellipsis;
-  overflow: hidden; 
-  width: 80px; 
-  height: 1.2em; 
-  white-space: nowrap;
-}
+ 
 .form_db_select{
   height: 30px;   
 }

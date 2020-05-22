@@ -11,19 +11,21 @@ function configurar(){
             "search":"Buscar",
 	    "paginate": {
              "previous": "Anterior",
-             "next": "Siguiente"
+             "next": "Siguiente" 
             }
         },
         responsive: true,
-		"lengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "All"]],
+		"lengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "Todas"]],
 		"pageLength": 20,
         dom: 'l<"toolbar">frtip',
         initComplete: function(){
            $("div.toolbar").html('<button type="button" id="add_button_diagnosticos" onclick="addUI()">Nuevo Registro</button>');           
         },
-        "autoWidth": false
+        "autoWidth": false,
+         "order": [[ 0, "desc" ]]
     } );
     
+     
      
     
     window.addEventListener('resize', function(event){
@@ -217,6 +219,24 @@ function updateData(form){
     $("#msg_diagnosticos").addClass("error");  
     $("#msg_diagnosticos").html("Rellene los campos requeridos...");
   }
+}
+
+function buscarPropietario(){
+    
+}
+
+function buscarLogo(){
+    var marca = $("#form_marca").val();
+    checkImage("img/car_logos/"+marca+".png", function() {
+       $("#logo").attr("src","img/car_logos/"+marca+".png"); 
+    }, function() {  });  
+}
+
+function checkImage(src, good, bad) {
+  var img = new Image();
+  img.onload = good;
+  img.onerror = bad;
+  img.src = src;
 }
 
 function closeForm(){
