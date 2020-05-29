@@ -1,7 +1,7 @@
 var map;
 var markers = [];
 
-function configurar() {
+$(function(){
     $.ajaxSetup({
         beforeSend: function() {
             $('div#bc_loader').show();
@@ -10,10 +10,11 @@ function configurar() {
             $('div#bc_loader').hide();
         }
     });
-    $("input#fecha_nac").mask("99/99/9999");
+    //$("input#fecha_nac").mask("99/99/9999");
     checkGeo();
     $("#tabs").tabs();
-}
+     
+});
 var clientes = [];
 var bc_callBuscarClienteTimeOut;
 
@@ -87,6 +88,7 @@ function bc_seleccionar(target) {
        $("#nombre").prop("readonly",false);  
     }
     $("#contactos_tab").fadeIn();
+    $("#vehiculos_tab").fadeIn();
     getContactos();
 }
 // Quien Registro
@@ -469,5 +471,91 @@ function delContacto(id){
     var cod_cli = $("#cod_cli").val();
     $.post("proveedores/Proveedores.class.php", { action: "delContacto", cod_ent: cod_cli,id:id} , function(data) {
        getContactos()
+    });
+}
+function nuevoCliente(){  
+     
+    var window_width = $(document).width()  / 2;
+    var abm_width = $("#abm_cliente").width()  / 2;        
+    var posx = (window_width - abm_width) ;   
+    $("#abm_cliente").css({left:posx,top:36});   
+    $( "#abm_cliente" ).fadeIn();   
+     
+}
+
+function updateListaClientes(nombre){
+    $("#bc_buscar").val(nombre);
+    bc_callBuscarCliente();
+}
+
+function addMovil(){
+   var c_id = $("#m_id").val();
+   var cod_prov = $("#cod_cli").val();
+   var rua = $("#rua").val();
+   var chapa = $("#chapa").val();
+   var marca = $("#marca").val();
+   var modelo = $("#modelo").val();
+   var anio_fab = $("#anio_fab").val();
+   var vim = $("#vim").val();
+   $.ajax({
+        type: "POST",
+        url: "proveedores/Proveedores.class.php",
+        data: {action: "addMovil" ,c_id:c_id, cod_ent: cod_prov,  usuario: getNick(),rua:rua,chapa:chapa,marca:marca,modelo:modelo,anio_fab:anio_fab,vim:vim},
+        async: true,
+        dataType: "html",
+        beforeSend: function () {            
+             $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+        },
+        complete: function (objeto, exito) {
+            if (exito === "success") {                          
+                var result = objeto.responseText;                                 
+                $("#msg").html(result); 
+                getMoviles();
+            }else{
+                $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
+            }
+        },
+        error: function () {
+           $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
+        }
+    });       
+ }
+
+function getMoviles(){
+   $(".new_movil").val("");
+    var cod_prov = $("#cod_cli").val();
+    $.ajax({
+        type: "POST",
+        url: "proveedores/Proveedores.class.php",
+        data: {action: "getMoviles", cod_ent: cod_prov},
+        async: true,
+        dataType: "json",
+        beforeSend: function () {
+            $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+            $(".movil_row").remove();
+        },
+        success: function (data) {   
+            for(var i in data){
+                var id = data[i].id;
+                var rua = data[i].rua;
+                var chapa = data[i].chapa;
+                var marca = data[i].marca;
+                var modelo = data[i].modelo;
+                var vim = data[i].vim;
+                var anio_fab = data[i].anio_fab;
+                $("#moviles").append("<tr class='movil_row'><td class='item'>"+id+"</td><td class='item'>"+vim+"</td><td class='item'>"+chapa+"</td><td class='item'>"+marca+"</td><td class='item'>"+modelo+"</td><td class='item'>"+rua+"</td><td class='itemc'>"+anio_fab+"</td><td class='itemc'><img src='img/trash_mini.png' style='cursor:pointer' onclick=delMovil('"+id+"')></td></tr>")
+            }             
+        },
+        error: function (e) {                 
+            $("#msg").html("Error obtener moviles:  " + e);   
+            errorMsg("Error obtener moviles:  " + e, 10000);
+        }
+    });     
+} 
+
+function delMovil(id){
+    var cod_prov = $("#cod_cli").val();
+    $.post("proveedores/Proveedores.class.php", { action: "delMovil", cod_ent: cod_prov,id:id} , function(data) {
+       getMoviles()
     });
 }

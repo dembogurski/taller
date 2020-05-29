@@ -427,8 +427,7 @@ function resizedataURL(datas, wantedWidth, wantedHeight)  {
             };
 
         // We put the Data URI in the image's src attribute
-        img.src = datas;
-         
+        img.src = datas; 
 }
     
 function reload(){

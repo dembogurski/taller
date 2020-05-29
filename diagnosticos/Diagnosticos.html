@@ -1,6 +1,6 @@
 <!-- begin: headers -->   
     <head>  
-        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=8888" />      
+        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=666545454545" />      
         <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
@@ -39,11 +39,13 @@
 <!-- end:   data_foot -->
 
 <!-- begin: script -->      
+    <script type="text/javascript" src="clientes/clientes.js?_=4564545" ></script>      
     <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
     <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
     <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript" src="js/functions.js" ></script>    
-    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=6666" ></script>
+    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=888999999" ></script>
+     
     
 <!-- end:   script -->
 
@@ -110,9 +112,9 @@
 </td>  </tr>
 <tr style="display:none"> <td class="form_label">Fecha</td> <td><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
 <tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
-<tr> <td class="form_label">Diag 1:</td> <td> <input type="file" id="file_0" > <textarea class="form_textarea diag_img" id="form_url_img0" cols="40" rows="3"   ></textarea></td>  </tr>
-<tr> <td class="form_label">Diag 2:</td> <td> <input type="file" id="file_0" > <textarea class="form_textarea diag_img" id="form_url_img1" cols="40" rows="3"   ></textarea></td>  </tr>
-<tr> <td class="form_label">Diag 3:</td> <td> <input type="file" id="file_0" > <textarea class="form_textarea diag_img" id="form_url_img3" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 1:</td> <td> <input type="file" id="file_0" accept="image/*"    onchange="loadImageFileAsURL(0)" > <textarea class="form_textarea diag_img" id="form_url_img_0" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 2:</td> <td> <input type="file" id="file_1"   onchange="loadImageFileAsURL(1)" > <textarea class="form_textarea diag_img" id="form_url_img_1" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 3:</td> <td> <input type="file" id="file_2" accept="image/*"  capture="camera" onchange="loadImageFileAsURL(2)" > <textarea class="form_textarea diag_img" id="form_url_img_2" cols="40" rows="3"   ></textarea></td>  </tr>
 
 <!-- end:   add_form_data -->
 

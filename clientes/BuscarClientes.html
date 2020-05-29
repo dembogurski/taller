@@ -1,6 +1,13 @@
 <!-- begin: header -->
-<link rel="stylesheet" type="text/css" href="clientes/BuscarClientes.css?_=000000000" /> 
-<script type="text/javascript" src="clientes/BuscarClientes.js?_=454646465" ></script>
+
+ 
+<link rel="stylesheet" type="text/css" href="clientes/BuscarClientes.css?action=00" /> 
+  
+<script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js?action=45545454" ></script>
+<script type="text/javascript" src="js/jquery.maskedinput.min.js?action=45545454" ></script>
+
+<script type="text/javascript" src="clientes/BuscarClientes.js?_=9999999999999999" ></script>
+
 <script>
       var bc_url = "{url}";
 </script>
@@ -14,7 +21,8 @@
          <tr><th colspan="4">Buscar cliente</th></tr>
          <tr><th colspan="4">
             Buscar: <div id="bc_buscar_containter">
-               <input type="text" id="bc_buscar" placeholder="COD, RUC/CI o Nombre" onclick="bc_mostrarlista()" onkeyup="bc_callBuscarCliente()">
+                <input type="text" id="bc_buscar" placeholder="COD, RUC/CI o Nombre" onclick="bc_mostrarlista()" onkeyup="bc_callBuscarCliente()"> 
+                <input type="button" value="Nuevo" onclick="nuevoCliente()" style="width: 60px">
                <div id="bc_loader" style="display:none"></div>
                <ul id="bc_lista_clientes"></ul>
             </div>
@@ -63,7 +71,7 @@
                  </select>
             </td></tr>
             <tr><td class="cb_label">Fecha Nac:</td><td colspan="3"><input  class="cb_datos" onchange="bc_verificarCambios()" id="fecha_nac" type="text"></td></tr>
-            <tr><td class="cb_label">Ocupaci&oacute;n:</td>
+            <tr style="display:none"><td class="cb_label" >Ocupaci&oacute;n:</td>
                 <td colspan="3">
                    <select id="ocupacion" onchange="bc_verificarCambios()" class="cb_datos">                     
                             <option value="Particular">Particular</option>        
@@ -74,7 +82,7 @@
                             <option value="Tienda" title="Comerciante<br>Boutique">Tienda</option>                                  
                     </select>
                 </td></tr>
-            <tr><td class="cb_label">Situaci&oacute;n:</td><td colspan="3">                  
+            <tr style="display:none"><td class="cb_label" >Situaci&oacute;n:</td><td colspan="3">                  
                   <select class="cb_datos" onchange="bc_verificarCambios()" id="situacion">                     
                         <option value=""></option>        
                         <option value="Dependiente">Dependiente</option>        
@@ -90,7 +98,7 @@
                 <ul>
                  <li><a href="#linea_credito">Linea Credito</a></li>
                  <li><a href="#autorizados" id="contactos_tab" style="display: none" >Contactos/Autorizados</a></li>
-             
+                 <li><a href="#vehiculos" id="vehiculos_tab" class="vehiculos" onclick="getMoviles()" style="display: none">Vehiculos</a></li>  
                 </ul>
                 <div id="linea_credito" style="text-align: left;min-height: 190px">
                 <table >                    
@@ -143,7 +151,34 @@
                     
                </table>
                 </div> 
-                    
+                <div id="vehiculos" style="padding: 0;margin:0">
+                    <table border="0" style="width: 100%;margin: 0 auto">
+                       <tr>
+                           <th style="width: auto" class="titulo">Nuevo Vehiculo</th>
+                           <th  class="titulo">Vehiculos</th>
+                       </tr>
+                       <tr>
+                           <td style="height: 100px;width: 35%">
+                               <table border="0">
+                                   <tr> <td style="font-weight: bolder">Chapa:</td><td><input style="height: 20px;font-size: 11px" type="text" id="chapa" size="24" class="new_contact" >*</td></tr>
+                                   <tr> <td style="font-weight: bolder">VIM:</td><td><input style="height: 20px;font-size: 11px" type="text" id="vim" class="new_contact" size="24" ></td></tr>
+                                   <tr> <td style="font-weight: bolder">RUA:</td><td><input style="height: 20px;font-size: 11px" type="text" id="rua" class="new_contact" size="24" ></td></tr>
+                                   <tr> <td style="font-weight: bolder">Marca:</td> <td> <select style="width:70%;height:24px" id="marca" class="new_contact">{marcas}</select>  </td></tr>
+                                   <tr> <td style="font-weight: bolder">Modelo:</td><td><input style="height: 20px;font-size: 11px" type="text" id="modelo" size="24" class="new_contact" ></td></tr>
+                                   <tr> <td style="font-weight: bolder">A&ntilde;o Fab.:</td><td><input style="height: 20px;font-size: 11px" type="text" id="anio_fab" class="new_contact" size="24" ></td>  
+                                   <td><input type="button" value="Agregar ->" onclick="addMovil()" style="font-size:11px"></td></tr>
+
+                               </table> 
+                           </td>
+                           <td style="text-align: center;vertical-align: top;width: 65%">
+                               <table style="width: 100%;border-collapse: collapse" id="moviles" border="1" >
+                                   <tr style="background-color: lightskyblue"><th>Id</th><th>Vim</th><th>Chapa</th><th>Marca</th><th>Modelo</th><th>RUA</th><th>An&ntilde;o Fab.</th><th>-</th></tr>
+                               </table>                           
+                           </td>
+                       </tr>
+
+                    </table>                     
+                </div>    
             </div>
                     </td>
             </tr>

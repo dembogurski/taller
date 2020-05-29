@@ -363,16 +363,24 @@ class Proveedores {
        $rua = strtoupper( $_POST['rua']);
        $chapa = strtoupper( $_POST['chapa']); 
        $marca = strtoupper( $_POST['marca']); 
+       $modelo = strtoupper( $_POST['modelo']); 
        $cod_ent = $_POST['cod_ent']; 
+       
+       $vim = strtoupper( $_POST['vim']); 
+       $anio_fab =  $_POST['anio_fab']; 
+       if(is_nan($anio_fab)){
+           $anio_fab = 1900;
+       }
+       
        $my = new My();
-       $my->Query(" INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca)VALUES ('$id', '$cod_ent', '$rua', '$chapa', '$marca');");
+       $my->Query(" INSERT INTO moviles( codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('$cod_ent', '$rua', '$chapa', '$marca','$modelo','$vim',$anio_fab);");
        echo "Ok";
     }
     function getMoviles(){
        require_once("../Functions.class.php");
        $cod_ent = $_POST['cod_ent'];
        $fn = new Functions();       
-       $contacts = $fn->getResultArray("SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = '$cod_ent' ORDER BY id_movil ASC");
+       $contacts = $fn->getResultArray("SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = '$cod_ent' ORDER BY id_movil ASC");
        echo json_encode($contacts);        
     }
     function delMovil(){

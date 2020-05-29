@@ -7,7 +7,8 @@
 
 
 <!-- begin: abm -->
-<link rel="stylesheet" type="text/css" href="clientes/clientes.css?_=000000000000000" /> 
+ 
+<link rel="stylesheet" type="text/css" href="clientes/clientes.css?_=000000000000000" />  
 <script type="text/javascript" src="clientes/clientes.js?_=66666666666666666" ></script>
 
 <div id="anchorTitle" class="anchorTitle"></div>
@@ -27,10 +28,10 @@
                 </select>   
             </td>
             <td> <input type="text" data-required=true placeholder="CI o RUC" class="numpad" id="ruc" data-msg="" data-next="nombre" size="16" maxlength="13" onblur="checkRUC($(this))"  >*<br><span id="msg_ruc" class="error"></span> </td></tr>
-        <tr><td><label>Nombre:</label></td> <td> <input id="nombre" data-required=true class="keyboard" data-next="tel" placeholder="Nombre del Cliente" onchange="checkNombre($(this))" onblur="checkNombre($(this))" type="text" size="40" maxlength="60" style="text-transform: uppercase;" >*<br><span  id="msg_nombre"  class="error"></span> </td></tr>        
-        <tr><td><label>Telefono:</label></td> <td> <input id="tel" data-required=true class="numpad" data-next="fecha_nac" placeholder="000-000000" onchange="checkTel($(this))" onblur="checkTel($(this))" type="tel" size="24" maxlength="40" >*<br><span id="msg_tel" class="error"></span> </td></tr>
+        <tr><td><label>Nombre:</label></td> <td> <input id="nombre_cli" data-required=true class="keyboard" data-next="tel" placeholder="Nombre del Cliente" onchange="checkNombre($(this))" onblur="checkNombre($(this))" type="text" size="40" maxlength="60" style="text-transform: uppercase;" >*<br><span  id="msg_nombre"  class="error"></span> </td></tr>        
+        <tr><td><label>Telefono:</label></td> <td> <input id="tel_cli" data-required=true class="numpad" data-next="fecha_nac" placeholder="000-000000" onchange="checkTel($(this))" onblur="checkTel($(this))" type="tel" size="24" maxlength="40" >*<br><span id="msg_tel" class="error"></span> </td></tr>
         <tr><td><label>Fecha Nac:</label></td> <td> <input id="fecha_nac" class="numpad" data-next="pais" type="text" maxlength="10" size="10" placeholder="dd/mm/aaaa" onchange="checkDate($(this))" onblur="checkDate($(this))" ><br><span id="msg_fecha" class="error"></span>  </td></tr>
-        <tr><td><label>Pais Residencia:<label></td>
+        <tr><td><label>Pais:<label></td>
         <td>
             <select id="pais" data-next="tipo_cliente" >
                 <option value="PY">Paraguay</option>    
@@ -51,17 +52,17 @@
         </tr>
         <tr><td><label>Ciudad:<label></td> <td> <input id="ciudad" class="keyboard" data-next="dir" placeholder="Ciudad en la que vive" type="text" size="30" maxlength="60" > </td></tr>
         <tr><td><label>Direcci&oacute;n:<label></td> <td> <textarea class="keyboard" placeholder="" id="dir"  data-next="ocupacion" cols="36" rows="2" ></textarea> </td></tr> 
-        <tr><td><label>Ocupaci&oacute;n:<label></td> 
+                        <tr style="display:none"><td><label>Ocupaci&oacute;n:<label></td> 
                         <td> <select id="ocupacion">                     
                             <option value="Particular">Particular</option>        
-                            <option value="Estudiante" title="Del Rubro Textil <br>">Estudiante (Del Rubro Textil)</option>      
+                            <option value="Estudiante" title="Estudiante <br>">Estudiante</option>      
                             <option value="Decorador" title="Clubes<br>Eventos<br>Insitucionales<br>Entidades Publicas y Privadas">Decorador</option>                              
                             <option value="Confeccionista" title="Sastrero<br>Cortinero<br>Fabricante<br>Artesano">Confeccionista</option> 
                             <option value="Tapicero" title="De Sillones<br>Colchoneria<br>Autos<br>Termos<br>Regalos Empresariales">Tapicero</option>   
                             <option value="Tienda" title="Comerciante<br>Boutique">Tienda</option>                                  
                         </select>
                         </td></tr> 
-        <tr>
+        <tr style="display:none">
             <td>  <label>Situaci&oacute;n:<label></td>
             <td>
                 <select id="situacion">                     

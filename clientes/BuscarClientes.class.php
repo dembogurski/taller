@@ -2,6 +2,7 @@
 require_once("../Y_Template.class.php");
 //require_once("../Y_DB_MSSQL.class.php");
 require_once("../Y_DB_MySQL.class.php");
+require_once("../Clientes/Clientes.class.php");
 
 class BuscarClientes{
    private $template;
@@ -16,8 +17,18 @@ class BuscarClientes{
        $this->url = "http://$this->host:8081";
        $this->template->Set("url",$this->url);
        $this->template->Show("header");
-       $this->template->Set("canModCat",$this->canModCat($_REQUEST['usuario'])?"":"disabled");       
+       $this->template->Set("canModCat",$this->canModCat($_REQUEST['usuario'])?"":"disabled");  
+       $db = new My();
+       $db->Query("SELECT marca FROM marcas ORDER BY hits DESC");
+       $marcas = "";
+       while($db->NextRecord()){
+           $marca = $db->Record['marca'];
+           $marcas.="<option value='$marca'>$marca</option>";
+       }
+       $this->template->Set("marcas",$marcas);
        $this->template->Show("body");
+       $c = new Clientes();
+       $c->getABM();
    }
 
    public function buscar_clientes(){
@@ -43,7 +54,8 @@ class BuscarClientes{
        $CodCli = $_REQUEST['CodCli'];
        $my = new My();
        $regCli = array();
-       $my->Query("SELECT c.usuario AS Usuario,u.nombre AS Nombre, u.apellido AS Apellido,  c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = '$CodCli'");
+       //$my->Query("SELECT c.usuario AS Usuario,u.nombre AS Nombre, u.apellido AS Apellido,  c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = '$CodCli'");
+       $my->Query("SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = '$CodCli'");
        if($my->NextRecord()){
            $regCli = array_map('utf8_encode',$my->Record);
        }

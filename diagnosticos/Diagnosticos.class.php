@@ -2,6 +2,7 @@
 
 require_once("../Y_Template.class.php");
 require_once("../Y_DB_MySQL.class.php");
+require_once("../Clientes/Clientes.class.php");
 
 /**
  * Description of Audit
@@ -138,7 +139,9 @@ class Diagnosticos {
            }
                
         $t->Show("add_form_data");
-        $t->Show("add_form_foot");         
+        $t->Show("add_form_foot");  
+        $c = new Clientes();
+        $c->getABM();
     }
     
 

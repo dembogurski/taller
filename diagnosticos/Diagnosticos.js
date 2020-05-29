@@ -24,16 +24,13 @@ function configurar(){
         "autoWidth": false,
          "order": [[ 0, "desc" ]]
     } );
-    
-     
-     
-    
+      
     window.addEventListener('resize', function(event){
         if(openForm){
            centerForm();
         }
     });   
-     
+    
 }  
  
 
@@ -82,6 +79,7 @@ function addUI(){
                 $(".form").html(form);
                 $("#msg").html("");  
                 $("#form_usuario").val(getNick());
+                buscarLogo(); 
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
             }
@@ -229,8 +227,10 @@ function buscarLogo(){
     var marca = $("#form_marca").val();
     checkImage("img/car_logos/"+marca+".png", function() {
        $("#logo").attr("src","img/car_logos/"+marca+".png"); 
-    }, function() {  });  
-}
+    }, function() { 
+       $("#logo").attr("src","img/car_logos/no_logo.png"); 
+    });  
+} 
 
 function checkImage(src, good, bad) {
   var img = new Image();
@@ -243,4 +243,77 @@ function closeForm(){
     $(".form").html("");
     $(".form").fadeOut();
     openForm = false;
+}
+function nuevoCliente(){  
+     
+    var window_width = $(document).width()  / 2;
+    var abm_width = $("#abm_cliente").width()  / 2;        
+    var posx = (window_width - abm_width) ;   
+    $("#abm_cliente").css({left:posx,top:36});   
+    $( "#abm_cliente" ).fadeIn();   
+     
+}
+
+function updateListaClientes(){
+    // Buscar Ultimo cliente y Seleccinar
+}
+
+
+function loadImageFileAsURL(id){ 
+          
+    var filesSelected = document.getElementById("file_"+id).files;
+    
+    if (filesSelected.length > 0)  {
+        var fileToLoad = filesSelected[0];  
+        var fileReader = new FileReader(); 
+        fileReader.onload = function(fileLoadedEvent){   
+            $("#form_url_img_"+id).val(fileLoadedEvent.target.result); 
+            var base64 = $("#form_url_img_"+id).val();     
+            resizedataURL(base64, 1024, 1632,id);      
+    
+            $("#msg").html("Reduciendo el tama&ntilde;o...<img src='img/activity.gif' width='24px' height='8px' >");
+           
+        };        
+        fileReader.readAsDataURL(fileToLoad);    
+         
+    }else{
+        alert("No se ha tomado ninguna imagen");
+    }
+}
+
+function resizedataURL(datas, wantedWidth, wantedHeight,id)  {
+        // We create an image to receive the Data URI
+        var img = document.createElement('img');
+        
+        // When the event "onload" is triggered we can resize the image.
+        img.onload = function() {        
+                // We create a canvas and get its context.
+                
+                var originalwidth = img.width;
+                var originalheight = img.height;
+                if(originalwidth > originalheight ){
+                    wantedWidth = 1632;
+                    wantedHeight = 1024;
+                }                
+                var canvas = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
+
+                // We set the dimensions at the wanted size.
+                canvas.width = wantedWidth;
+                canvas.height = wantedHeight;
+
+                // We resize the image with the canvas method drawImage();
+                ctx.drawImage(this, 0, 0, wantedWidth, wantedHeight);
+
+                imagen = canvas.toDataURL();
+              //console.log(dataURI);
+                /////////////////////////////////////////
+                // Use and treat your Data URI here !! //
+                /////////////////////////////////////////
+                $("#msg").html(document.getElementById("file_"+id).files[0].name); 
+                
+            };
+
+        // We put the Data URI in the image's src attribute
+        img.src = datas; 
 }

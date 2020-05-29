@@ -119,3 +119,7 @@ input[type=number] {
 .form_db_select{
   height: 30px;   
 }
+.car_logo{
+    margin-bottom: -14px;
+    margin-left: 10px;
+}

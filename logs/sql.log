@@ -671,3 +671,879 @@
 (douglas)[22-05-2020 23:24:48],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
 (douglas)[22-05-2020 23:24:49],[::1] SELECT cod_cli,nombre FROM clientes   0  
 (douglas)[22-05-2020 23:24:49],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 21:55:34],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[25-05-2020 21:55:35],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','34a905645c54eb4f331154e85799d87af3fd626b',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[25-05-2020 21:55:35],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[25-05-2020 21:55:35],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[25-05-2020 21:55:35],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[25-05-2020 21:55:35],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = '34a905645c54eb4f331154e85799d87af3fd626b'  0  
+(douglas)[25-05-2020 21:55:35],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[25-05-2020 21:55:41],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 21:55:48],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 21:55:48],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:00:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '34a905645c54eb4f331154e85799d87af3fd626b' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 22:19:36],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:19:37],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:19:37],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:20:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '34a905645c54eb4f331154e85799d87af3fd626b' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 22:22:13],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:22:15],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:22:15],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:22:41],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:22:42],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:22:42],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:24:38],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[25-05-2020 22:24:38],[192.168.0.42] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'192.168.0.42','192b42c3d30872294f0b6c2cfc9ea517571b3135',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[25-05-2020 22:24:39],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[25-05-2020 22:24:39],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[25-05-2020 22:24:39],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[25-05-2020 22:24:39],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = '192b42c3d30872294f0b6c2cfc9ea517571b3135'  0  
+(douglas)[25-05-2020 22:24:39],[192.168.0.42] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[25-05-2020 22:24:41],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:24:43],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:24:43],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:25:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '34a905645c54eb4f331154e85799d87af3fd626b' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 22:26:26],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:26:27],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:26:27],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:26:57],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[25-05-2020 22:26:57],[192.168.0.42] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'192.168.0.42','dec15ae547599b265eb722fd14efea33ba5a68e6',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[25-05-2020 22:26:58],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[25-05-2020 22:26:58],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[25-05-2020 22:26:58],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[25-05-2020 22:26:58],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'dec15ae547599b265eb722fd14efea33ba5a68e6'  0  
+(douglas)[25-05-2020 22:26:58],[192.168.0.42] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[25-05-2020 22:27:00],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:27:02],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:27:02],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:27:31],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:27:34],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:27:34],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:28:33],[::1] SELECT valor FROM parametros WHERE clave = 'vent_det_limit'  0  
+(douglas)[25-05-2020 22:28:33],[::1] SELECT m_descri AS m, m_cod AS moneda FROM monedas WHERE m_ref <> 'Si';  0  
+(douglas)[25-05-2020 22:28:33],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'P$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[25-05-2020 22:28:33],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'R$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[25-05-2020 22:28:33],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'U$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[25-05-2020 22:28:33],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'Y$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[25-05-2020 22:30:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '34a905645c54eb4f331154e85799d87af3fd626b' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 22:34:06],[::1] SELECT valor FROM parametros WHERE clave = 'vent_det_limit'  0  
+(douglas)[25-05-2020 22:34:06],[::1] SELECT m_descri AS m, m_cod AS moneda FROM monedas WHERE m_ref <> 'Si';  0  
+(douglas)[25-05-2020 22:34:06],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'P$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[25-05-2020 22:34:06],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'R$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[25-05-2020 22:34:06],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'U$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[25-05-2020 22:34:06],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'Y$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[25-05-2020 22:35:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '34a905645c54eb4f331154e85799d87af3fd626b' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 22:38:05],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:38:10],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:38:10],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:40:08],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:40:09],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:40:09],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+()[25-05-2020 22:40:23],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '5872469';  0  
+(douglas)[25-05-2020 22:40:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '34a905645c54eb4f331154e85799d87af3fd626b' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 22:40:39],[::1] SELECT CONCAT('C',LPAD((SUBSTRING(cod_cli,2) +1),6,'0')) as CardCode   FROM clientes ORDER BY cod_cli DESC LIMIT 1  0  
+(douglas)[25-05-2020 22:40:39],[::1] INSERT INTO clientes (cod_cli, tipo_doc, ci_ruc, nombre, cat, suc, tel, email, fecha_nac, pais, estado, ciudad, dir, ocupacion, situacion,tipo,usuario, e_sap,fecha_reg,cta_cont )
+            VALUES ('C000004', 'C.I.', '5872469-9', upper('carmelo peralta'), 1, '01', '0983-596542', '', '2020-05-25', 'PY', '', '', '', 'Particular', 'Dependiente','local','douglas', 0,CURRENT_TIMESTAMP,'112202' );  0  
+(douglas)[25-05-2020 22:40:45],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:40:45],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:40:59],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:41:01],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:41:01],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:43:57],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:43:59],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:43:59],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+()[25-05-2020 22:44:34],[192.168.0.42] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '6543788';  0  
+(douglas)[25-05-2020 22:44:49],[192.168.0.42] SELECT CONCAT('C',LPAD((SUBSTRING(cod_cli,2) +1),6,'0')) as CardCode   FROM clientes ORDER BY cod_cli DESC LIMIT 1  0  
+(douglas)[25-05-2020 22:44:49],[192.168.0.42] INSERT INTO clientes (cod_cli, tipo_doc, ci_ruc, nombre, cat, suc, tel, email, fecha_nac, pais, estado, ciudad, dir, ocupacion, situacion,tipo,usuario, e_sap,fecha_reg,cta_cont )
+            VALUES ('C000005', 'C.I.', '6543788-8', upper('Gloria Belen'), 1, '01', '0985-101740', '', '1994-10-18', 'PY', '', 'Capitán Miranda', 'Ruta 6ta km 11 Itapúa', 'Particular', 'Dependiente','local','douglas', 0,CURRENT_TIMESTAMP,'112202' );  0  
+(douglas)[25-05-2020 22:45:18],[192.168.0.42] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'dec15ae547599b265eb722fd14efea33ba5a68e6' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 22:45:31],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:45:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '34a905645c54eb4f331154e85799d87af3fd626b' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 22:45:40],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:45:40],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:46:05],[192.168.0.42] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[25-05-2020 22:46:16],[192.168.0.42] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%Gloria%' limit 20  0  
+()[25-05-2020 22:46:18],[192.168.0.42] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%Gloria%' limit 20  0  
+()[25-05-2020 22:46:19],[192.168.0.42] SELECT c.usuario AS Usuario,u.nombre AS Nombre, u.apellido AS Apellido,  c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000005'  0  
+()[25-05-2020 22:46:19],[192.168.0.42] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000005' ORDER BY id_contacto ASC  0  
+(douglas)[25-05-2020 22:46:39],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = 'da39a3ee5e6b4b0d3255bfef95601890afd80709' and estado = 'Activo'  0  
+(douglas)[25-05-2020 22:46:43],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[25-05-2020 22:46:43],[192.168.0.42] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'192.168.0.42','ba3d689bdd3d1a6e33dc6699fd30270bcb54c562',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[25-05-2020 22:46:43],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[25-05-2020 22:46:43],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[25-05-2020 22:46:43],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[25-05-2020 22:46:43],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'ba3d689bdd3d1a6e33dc6699fd30270bcb54c562'  0  
+(douglas)[25-05-2020 22:46:43],[192.168.0.42] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[25-05-2020 22:46:46],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:46:49],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 22:46:50],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 22:47:03],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:47:57],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:48:29],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:49:33],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:49:45],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[25-05-2020 22:49:45],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','d0c3123d35f2bd3899e74892fb5f49d855c4af5d',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[25-05-2020 22:49:45],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[25-05-2020 22:49:45],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[25-05-2020 22:49:45],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[25-05-2020 22:49:45],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'd0c3123d35f2bd3899e74892fb5f49d855c4af5d'  0  
+(douglas)[25-05-2020 22:49:45],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[25-05-2020 22:49:47],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 22:49:55],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:51:34],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:52:37],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:53:30],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:53:37],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 22:55:40],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[25-05-2020 22:55:40],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','4a39b75bc0db4931362ccdf475282f2c21fea75a',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[25-05-2020 22:55:40],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[25-05-2020 22:55:40],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[25-05-2020 22:55:40],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[25-05-2020 22:55:40],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = '4a39b75bc0db4931362ccdf475282f2c21fea75a'  0  
+(douglas)[25-05-2020 22:55:40],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[25-05-2020 22:55:44],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 23:00:41],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '4a39b75bc0db4931362ccdf475282f2c21fea75a' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 23:06:48],[192.168.0.42] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[25-05-2020 23:07:11],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 23:07:12],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 23:07:12],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 23:10:41],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '4a39b75bc0db4931362ccdf475282f2c21fea75a' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 23:17:17],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[25-05-2020 23:17:17],[192.168.0.42] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'192.168.0.42','e7061013a63fac5b64969490c116168019eeef8f',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[25-05-2020 23:17:17],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[25-05-2020 23:17:17],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[25-05-2020 23:17:17],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[25-05-2020 23:17:17],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'e7061013a63fac5b64969490c116168019eeef8f'  0  
+(douglas)[25-05-2020 23:17:17],[192.168.0.42] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[25-05-2020 23:17:19],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 23:17:21],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 23:17:21],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 23:17:25],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 23:17:25],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 23:20:36],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 23:20:38],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 23:20:38],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[25-05-2020 23:20:41],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '4a39b75bc0db4931362ccdf475282f2c21fea75a' AND s.estado = 'Activa';  0  
+(douglas)[25-05-2020 23:21:44],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[25-05-2020 23:21:46],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[25-05-2020 23:21:46],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+()[25-05-2020 23:22:14],[192.168.0.42] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '8273728';  0  
+(douglas)[26-05-2020 23:04:10],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[26-05-2020 23:04:10],[192.168.0.42] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'192.168.0.42','589a64e51d17814e3554913e562ed73e0d30ed5a',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[26-05-2020 23:04:10],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[26-05-2020 23:04:10],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[26-05-2020 23:04:10],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[26-05-2020 23:04:10],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = '589a64e51d17814e3554913e562ed73e0d30ed5a'  0  
+(douglas)[26-05-2020 23:04:10],[192.168.0.42] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.2'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.1'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.3'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.4'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.6'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.7'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.8'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.36'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.11'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.12'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.13'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.14'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.15'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.16'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.17'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.18'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.19'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.20'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.21'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.22'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.23'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.24'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.25'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.26'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.27'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.28'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.29'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.30'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.31'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.32'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.33'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.34'  0  
+(douglas)[26-05-2020 23:04:23],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.35'  0  
+()[26-05-2020 23:04:23],[192.168.0.42] select cuenta,m_cod,cta_cont from bcos_ctas where id_banco='' order by cuenta*1 asc,m_cod asc  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.2'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.1'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.3'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.4'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.6'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.7'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.8'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.36'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.11'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.12'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.13'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.14'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.15'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.16'  0  
+(douglas)[26-05-2020 23:04:27],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.17'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.18'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.19'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.20'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.21'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.22'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.23'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.24'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.25'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.26'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.27'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.28'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.29'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.30'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.31'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.32'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.33'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.34'  0  
+(douglas)[26-05-2020 23:04:28],[192.168.0.42] SELECT u.nombre AS usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+        FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr 
+        WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso  AND ug.usuario = 'douglas'
+        AND  p.id_permiso = '10.35'  0  
+()[26-05-2020 23:04:28],[192.168.0.42] select cuenta,m_cod,cta_cont from bcos_ctas where id_banco='' order by cuenta*1 asc,m_cod asc  0  
+(douglas)[26-05-2020 23:04:31],[192.168.0.42] SELECT count(*) as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '3.8.1'  0  
+(douglas)[26-05-2020 23:04:31],[192.168.0.42] SELECT suc,nombre FROM sucursales  where tipo != 'Sub-Deposito'  order by  suc asc  0  
+(douglas)[26-05-2020 23:04:36],[192.168.0.42] SELECT m_descri AS m, m_cod AS moneda FROM monedas WHERE m_ref <> 'Si' and m_cod != 'Y$';  0  
+(douglas)[26-05-2020 23:04:37],[192.168.0.42] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'P$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:04:37],[192.168.0.42] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'R$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:04:37],[192.168.0.42] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'U$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:04:37],[192.168.0.42] SELECT f.f_nro as nro, DATE_FORMAT(f.fecha,'%d-%m-%Y') AS fecha, f.cod_cli ,f.ruc_cli AS ruc,f.tipo_doc_cli, cliente, cat ,   total ,  total_desc,cod_desc,   total_bruto,desc_sedeco, empaque,pref_pago, usuario as vendedor, f.estado,moneda FROM factura_venta f  WHERE f.estado = 'En_caja' AND suc = '01'    0  
+(douglas)[26-05-2020 23:04:37],[192.168.0.42] SELECT cod_tarjeta AS CreditCard,nombre AS CardName,tipo AS Tipo FROM tarjetas WHERE tipo != 'Asociacion' ORDER BY nombre ASC  0  
+(douglas)[26-05-2020 23:04:37],[192.168.0.42] SELECT id_banco,nombre FROM bancos order by nombre asc  0  
+(douglas)[26-05-2020 23:04:37],[192.168.0.42] SELECT m_cod AS moneda, m_descri FROM monedas where m_cod != 'Y$'   0  
+(douglas)[26-05-2020 23:04:53],[192.168.0.42] SELECT valor FROM parametros WHERE clave = 'vent_det_limit'  0  
+(douglas)[26-05-2020 23:04:53],[192.168.0.42] SELECT m_descri AS m, m_cod AS moneda FROM monedas WHERE m_ref <> 'Si';  0  
+(douglas)[26-05-2020 23:04:53],[192.168.0.42] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'P$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:04:53],[192.168.0.42] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'R$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:04:53],[192.168.0.42] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'U$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:04:53],[192.168.0.42] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'Y$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:05:07],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[26-05-2020 23:05:07],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','96c74a3475dfeb61df38cbb2e6ff05ac38a75589',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[26-05-2020 23:05:07],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[26-05-2020 23:05:07],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[26-05-2020 23:05:08],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[26-05-2020 23:05:08],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = '96c74a3475dfeb61df38cbb2e6ff05ac38a75589'  0  
+(douglas)[26-05-2020 23:05:08],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[26-05-2020 23:05:10],[::1] SELECT valor FROM parametros WHERE clave = 'vent_det_limit'  0  
+(douglas)[26-05-2020 23:05:10],[::1] SELECT m_descri AS m, m_cod AS moneda FROM monedas WHERE m_ref <> 'Si';  0  
+(douglas)[26-05-2020 23:05:10],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'P$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:05:10],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'R$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:05:10],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'U$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+(douglas)[26-05-2020 23:05:10],[::1] SELECT compra,venta FROM cotizaciones WHERE suc = '01' AND m_cod = 'Y$' and fecha <= current_date ORDER BY id_cotiz DESC LIMIT 1;  0  
+()[26-05-2020 23:05:22],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '4933243';  0  
+()[26-05-2020 23:05:28],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '4851225';  0  
+(douglas)[26-05-2020 23:05:50],[::1] SELECT CONCAT('C',LPAD((SUBSTRING(cod_cli,2) +1),6,'0')) as CardCode   FROM clientes ORDER BY cod_cli DESC LIMIT 1  0  
+(douglas)[26-05-2020 23:05:50],[::1] INSERT INTO clientes (cod_cli, tipo_doc, ci_ruc, nombre, cat, suc, tel, email, fecha_nac, pais, estado, ciudad, dir, ocupacion, situacion,tipo,usuario, e_sap,fecha_reg,cta_cont )
+            VALUES ('C000006', 'C.I.', '4851225-7', upper('romina delgado graz'), 1, '01', '0983-596254', '', '2020-05-26', 'PY', '', '', '', 'Particular', 'Dependiente','local','douglas', 0,CURRENT_TIMESTAMP,'112202' );  0  
+()[26-05-2020 23:05:51],[::1] SELECT  cod_cli AS Codigo,nombre AS Cliente,ci_ruc AS RUC,cat AS Cat,IF(moneda IS NULL,'G$',moneda) AS Moneda,IF( tipo_doc IS NULL,'C.I.',tipo_doc) AS TipoDoc, ciudad AS Ciudad,tel AS Tel,dir AS Dir FROM clientes WHERE  ci_ruc like '4851225-7%'    LIMIT   30   0  
+()[26-05-2020 23:05:51],[::1] SELECT limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes WHERE cod_cli =   'C000006';  0  
+()[26-05-2020 23:05:51],[::1] SELECT IF(SUM(saldo) IS NULL,0,SUM(saldo)) AS Cuotas FROM factura_venta f,cuotas c WHERE  f.f_nro = c.f_nro AND f.cod_cli = 'C000006' AND c.estado ='Pendiente'  0  
+()[26-05-2020 23:05:51],[::1] SELECT IF(SUM(valor_ref) IS NULL,0,SUM(valor_ref)) AS VarlorCheque FROM factura_venta f,cheques_ter c WHERE  f.f_nro = c.f_nro AND f.cod_cli = 'C000006' AND c.estado ='Pendiente'  0  
+()[26-05-2020 23:05:51],[::1] SELECT  SUM(e.entrada_ref) AS EfectivoNoProcesado FROM pagos_recibidos p,  efectivo e  WHERE p.id_pago = e.trans_num  AND p.estado =  'Cerrado' AND p.e_sap IS NULL AND id_concepto = 7 AND p.cod_cli = 'C000006'  0  
+()[26-05-2020 23:05:51],[::1] SELECT  SUM(valor) AS ChequesNoProcesados FROM pagos_recibidos p,  cheques_ter t  WHERE p.id_pago = t.trans_num  AND p.estado =  'Cerrado' AND p.e_sap IS NULL AND id_concepto = 8  AND tipo = 'Al_Dia'  AND p.cod_cli = 'C000006'  0  
+()[26-05-2020 23:05:51],[::1] SELECT SUM(d.subtotal * cotiz) AS VentasNoProcesadas FROM fact_vent_det d INNER JOIN factura_venta f ON d.f_nro = f.f_nro WHERE f.cod_cli = 'C000006' AND (f.e_sap <= 0 OR f.e_sap IS NULL)  AND f.estado <> 'Abierta'  0  
+()[26-05-2020 23:05:51],[::1] SELECT COUNT(*) AS cuotas_atrasadas FROM factura_venta f,cuotas c WHERE  f.f_nro = c.f_nro AND f.cod_cli = 'C000006' AND c.estado ='Pendiente'  AND c.vencimiento < CURRENT_DATE   0  
+(douglas)[26-05-2020 23:05:54],[::1] select nombre,ci_ruc, cat, tipo_doc from clientes WHERE cod_cli = 'C000006'  0  
+(douglas)[26-05-2020 23:05:54],[::1] INSERT INTO factura_venta(cod_cli,cliente,usuario,fecha,hora,turno,ruc_cli,tipo_doc_cli,suc,cat,total,total_desc,total_bruto,estado,cod_desc,moneda,cotiz,turno_id, turno_fecha, turno_llamada,empaque,nro_reserva)
+    VALUES ('C000006','ROMINA DELGADO GRAZ','douglas',current_date,'23:05',1,'4851225-7','C.I.','01',1,0,0,0,'Abierta',0,'G$',1,0, NULL, NULL,'No',NULL);  0  
+(douglas)[26-05-2020 23:05:54],[::1] SELECT f_nro AS NRO FROM factura_venta WHERE estado = 'Abierta' AND usuario = 'douglas'  ORDER BY f_nro DESC LIMIT 1  0  
+()[26-05-2020 23:06:05],[::1] SELECT codigo,descrip FROM articulos WHERE mnj_x_lotes = 'No' and (codigo like 'a' or descrip like 'a%')  0  
+()[26-05-2020 23:06:05],[::1] SELECT codigo,descrip FROM articulos WHERE mnj_x_lotes = 'No' and (codigo like 'ac' or descrip like 'ac%')  0  
+()[26-05-2020 23:06:07],[::1] SELECT l.codigo, b.barcode, l.lote,clase,descrip,um as um_prod,costo_prom, composicion,mnj_x_lotes,a.art_inv,gramaje,gramaje_m,l.ancho, tara,l.kg_desc, pantone, s.cantidad AS stock, s.cant_ent as cant_ini, l.img,s.suc,padre,s.ubicacion,color_cod_fabric,s.estado_venta   FROM articulos a INNER JOIN lotes l INNER JOIN stock s   
+    ON a.codigo = l.codigo AND l.codigo = s.codigo AND l.lote = s.lote  LEFT  JOIN codigos_barras b ON a.codigo = b.codigo WHERE (a.codigo ='IN0001' OR b.barcode = 'IN0001' OR  l.lote = 'IN0001') AND suc = '01' LIMIT 1  0  
+()[26-05-2020 23:06:07],[::1] SELECT a.codigo,clase,descrip,um,mnj_x_lotes, s.cantidad AS stock,a.art_inv, img,s.estado_venta,a.um AS um_prod,a.ancho,a.gramaje_prom AS gramaje,s.suc   FROM articulos a left JOIN stock s ON a.codigo = s.codigo  LEFT JOIN codigos_barras b ON a.codigo = b.codigo   WHERE (a.codigo ='IN0001' OR b.barcode = 'IN0001') AND estado = 'Activo' LIMIT 1  0  
+()[26-05-2020 23:06:07],[::1] SELECT  DISTINCT um,precio FROM lista_prec_x_art WHERE codigo = 'IN0001' AND moneda = 'G$' and num = 1  0  
+()[26-05-2020 23:06:07],[::1] SELECT precio,0 as descuento FROM lista_prec_x_art WHERE codigo = 'IN0001' AND moneda = 'G$' AND um = 'Unid' AND num = 1;  0  
+(douglas)[26-05-2020 23:06:12],[::1] SELECT estado, e_sap FROM factura_venta f WHERE f_nro = 28  0  
+(douglas)[26-05-2020 23:06:12],[::1] SELECT count(lote) as cant FROM fact_vent_det WHERE f_nro = 28 and codigo = 'IN0001' and lote = 'IN0001';  0  
+(douglas)[26-05-2020 23:06:12],[::1] INSERT INTO fact_vent_det (f_nro, codigo, lote,um_prod, descrip, um_cod,cod_falla,cant_falla,cod_falla_e,falla_real, cantidad, precio_venta, descuento, precio_neto, subtotal, estado,gramaje,ancho,kg_calc,cant_med,estado_venta)VALUES (28, 'IN0001', '','Unid', 'ACETE 20-50 BARDHAL', 'Unid','',0,'',0, 1 , 25000, 0,25000, 25000, 'Pendiente',0,0,0, 1,'Normal');  0  
+(douglas)[26-05-2020 23:06:12],[::1] SELECT SUM(subtotal) AS Total,SUM(IF(estado_venta='Normal',subtotal,0)) AS TotalNormal, SUM(descuento) AS Descuento, SUM(IF(estado_venta='Normal',descuento,0)) AS DescuentoNormal, desc_sedeco FROM fact_vent_det d, factura_venta f WHERE f.f_nro = d.f_nro AND d.f_nro =  28  0  
+(douglas)[26-05-2020 23:06:12],[::1] update fact_vent_det set descuento = 0,subtotal = round((cantidad * precio_venta),2) WHERE f_nro = 28 and estado_venta != 'Normal'  0  
+(douglas)[26-05-2020 23:06:12],[::1] update fact_vent_det set descuento = 0,subtotal = round(cantidad * precio_venta,2) WHERE f_nro = 28  0  
+(douglas)[26-05-2020 23:06:12],[::1]  SELECT f.moneda, IF(SUM(subtotal) IS NULL,0,SUM(subtotal)) AS Total, IF(SUM(descuento) IS NULL,0,SUM(descuento)) AS total_descuento FROM fact_vent_det d, factura_venta f WHERE f.f_nro = d.f_nro AND f.f_nro = 28;  0  
+(douglas)[26-05-2020 23:06:12],[::1] update factura_venta set total = 25000, total_desc = 0.00, desc_sedeco =  0, total_bruto = total + total_desc where f_nro = 28  0  
+(douglas)[26-05-2020 23:06:12],[::1] SELECT cat FROM factura_venta f WHERE f_nro = 28  0  
+(douglas)[26-05-2020 23:06:12],[::1] update fact_vent_det set subtotal = round((((precio_venta * cantidad) - descuento ) / 1 ),2) where f_nro = 28;  0  
+(douglas)[26-05-2020 23:06:12],[::1] update fact_vent_det set precio_neto = round((subtotal - descuento) / cantidad,2) where f_nro = 28;  0  
+(douglas)[26-05-2020 23:06:12],[::1] SELECT  SUM(subtotal) as Total,SUM(descuento) as Descuento FROM fact_vent_det WHERE f_nro = 28 GROUP BY f_nro  HAVING SUM(subtotal) >0  0  
+(douglas)[26-05-2020 23:06:12],[::1]  SELECT f.moneda, IF(SUM(subtotal) IS NULL,0,SUM(subtotal)) AS Total, IF(SUM(descuento) IS NULL,0,SUM(descuento)) AS total_descuento FROM fact_vent_det d, factura_venta f WHERE f.f_nro = d.f_nro AND f.f_nro = 28;  0  
+(douglas)[26-05-2020 23:06:12],[::1] update factura_venta set total = 25000, total_desc = 0.00, desc_sedeco =  0, total_bruto = total + total_desc where f_nro = 28  0  
+(douglas)[26-05-2020 23:06:12],[::1] update fact_vent_det set precio_neto = round((subtotal - descuento) / cantidad,2) where f_nro = 28;  0  
+(douglas)[26-05-2020 23:06:13],[::1] SELECT SUM(subtotal) AS Total,SUM(IF(estado_venta='Normal',subtotal,0)) AS TotalNormal, SUM(descuento) AS Descuento, SUM(IF(estado_venta='Normal',descuento,0)) AS DescuentoNormal, desc_sedeco FROM fact_vent_det d, factura_venta f WHERE f.f_nro = d.f_nro AND d.f_nro =  28  0  
+(douglas)[26-05-2020 23:06:13],[::1] SELECT codigo,lote,descuento,subtotal FROM fact_vent_det WHERE f_nro = 28  0  
+()[26-05-2020 23:06:13],[::1] SELECT limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes WHERE cod_cli =   'C000006';  0  
+()[26-05-2020 23:06:13],[::1] SELECT IF(SUM(saldo) IS NULL,0,SUM(saldo)) AS Cuotas FROM factura_venta f,cuotas c WHERE  f.f_nro = c.f_nro AND f.cod_cli = 'C000006' AND c.estado ='Pendiente'  0  
+()[26-05-2020 23:06:13],[::1] SELECT IF(SUM(valor_ref) IS NULL,0,SUM(valor_ref)) AS VarlorCheque FROM factura_venta f,cheques_ter c WHERE  f.f_nro = c.f_nro AND f.cod_cli = 'C000006' AND c.estado ='Pendiente'  0  
+()[26-05-2020 23:06:13],[::1] SELECT  SUM(e.entrada_ref) AS EfectivoNoProcesado FROM pagos_recibidos p,  efectivo e  WHERE p.id_pago = e.trans_num  AND p.estado =  'Cerrado' AND p.e_sap IS NULL AND id_concepto = 7 AND p.cod_cli = 'C000006'  0  
+()[26-05-2020 23:06:13],[::1] SELECT  SUM(valor) AS ChequesNoProcesados FROM pagos_recibidos p,  cheques_ter t  WHERE p.id_pago = t.trans_num  AND p.estado =  'Cerrado' AND p.e_sap IS NULL AND id_concepto = 8  AND tipo = 'Al_Dia'  AND p.cod_cli = 'C000006'  0  
+()[26-05-2020 23:06:13],[::1] SELECT SUM(d.subtotal * cotiz) AS VentasNoProcesadas FROM fact_vent_det d INNER JOIN factura_venta f ON d.f_nro = f.f_nro WHERE f.cod_cli = 'C000006' AND (f.e_sap <= 0 OR f.e_sap IS NULL)  AND f.estado <> 'Abierta'  0  
+()[26-05-2020 23:06:13],[::1] SELECT COUNT(*) AS cuotas_atrasadas FROM factura_venta f,cuotas c WHERE  f.f_nro = c.f_nro AND f.cod_cli = 'C000006' AND c.estado ='Pendiente'  AND c.vencimiento < CURRENT_DATE   0  
+(douglas)[26-05-2020 23:06:29],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[26-05-2020 23:06:37],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[26-05-2020 23:06:37],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[26-05-2020 23:10:08],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '96c74a3475dfeb61df38cbb2e6ff05ac38a75589' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 00:26:54],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[27-05-2020 00:26:59],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[27-05-2020 00:26:59],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[27-05-2020 00:27:03],[192.168.0.42] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '589a64e51d17814e3554913e562ed73e0d30ed5a' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 00:28:33],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[27-05-2020 00:28:35],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[27-05-2020 00:28:35],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[27-05-2020 00:30:22],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[27-05-2020 00:30:22],[192.168.0.42] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'192.168.0.42','4669f823b42c84cce8fce9149f1f3fa107f7312d',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[27-05-2020 00:30:22],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[27-05-2020 00:30:22],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[27-05-2020 00:30:22],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[27-05-2020 00:30:22],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = '4669f823b42c84cce8fce9149f1f3fa107f7312d'  0  
+(douglas)[27-05-2020 00:30:22],[192.168.0.42] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[27-05-2020 22:10:12],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:12:06],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '96c74a3475dfeb61df38cbb2e6ff05ac38a75589' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 22:13:00],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:13:16],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 22:15:22],[::1] update sesiones s set estado = 'Inactiva' where s.usuario = '' and s.serial = '' and s.estado = 'Activa';  0  
+(douglas)[27-05-2020 22:15:29],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[27-05-2020 22:15:29],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','88bb29f6729431f581f13c7b951593010ae589a8',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[27-05-2020 22:15:29],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[27-05-2020 22:15:29],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[27-05-2020 22:15:29],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[27-05-2020 22:15:29],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = '88bb29f6729431f581f13c7b951593010ae589a8'  0  
+(douglas)[27-05-2020 22:15:29],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[27-05-2020 22:15:33],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:16:36],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:16:59],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 22:18:29],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE ( cod_cli like '%4933243%' OR  ci_ruc like '%4933243%')  limit 20  0  
+()[27-05-2020 22:18:29],[::1] SELECT c.usuario AS Usuario,u.nombre AS Nombre, u.apellido AS Apellido,  c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[27-05-2020 22:18:29],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[27-05-2020 22:18:48],[::1] SELECT c.usuario AS Usuario,u.nombre AS Nombre, u.apellido AS Apellido,  c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[27-05-2020 22:18:48],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[27-05-2020 22:19:59],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[27-05-2020 22:20:00],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+(douglas)[27-05-2020 22:20:30],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '88bb29f6729431f581f13c7b951593010ae589a8' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 22:21:38],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:25:30],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = '88bb29f6729431f581f13c7b951593010ae589a8' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 22:26:08],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:27:22],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:27:28],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:28:06],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:28:47],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:28:53],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:29:00],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 22:29:02],[::1] update sesiones s set estado = 'Inactiva' where s.usuario = '' and s.serial = '' and s.estado = 'Activa';  0  
+(douglas)[27-05-2020 22:29:09],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[27-05-2020 22:29:09],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','c9bbd95c964120b8750248fa00af84d26166ed2a',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[27-05-2020 22:29:09],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[27-05-2020 22:29:09],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[27-05-2020 22:29:09],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[27-05-2020 22:29:09],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'c9bbd95c964120b8750248fa00af84d26166ed2a'  0  
+(douglas)[27-05-2020 22:29:09],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[27-05-2020 22:29:21],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:30:07],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:30:16],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 22:30:39],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = '' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:32:01],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:32:09],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:32:42],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:35:13],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[27-05-2020 22:35:13],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','faa55a3b7a4d892b2bad9167435e5b64f40ca718',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[27-05-2020 22:35:13],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[27-05-2020 22:35:13],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[27-05-2020 22:35:13],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[27-05-2020 22:35:13],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'faa55a3b7a4d892b2bad9167435e5b64f40ca718'  0  
+(douglas)[27-05-2020 22:35:13],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[27-05-2020 22:35:16],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:35:41],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:36:46],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:42:35],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[27-05-2020 22:42:35],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','05a89b14828f68e76fb97939533db1eac626df55',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[27-05-2020 22:42:35],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[27-05-2020 22:42:35],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[27-05-2020 22:42:35],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[27-05-2020 22:42:35],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = '05a89b14828f68e76fb97939533db1eac626df55'  0  
+(douglas)[27-05-2020 22:42:35],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+()[27-05-2020 22:46:24],[::1] update sesiones s set estado = 'Inactiva' where s.usuario = '' and s.serial = '' and s.estado = 'Activa';  0  
+(douglas)[27-05-2020 22:46:33],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[27-05-2020 22:46:33],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','feed539ea5398c5460a1f50ee999a159a669227e',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[27-05-2020 22:46:33],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[27-05-2020 22:46:33],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[27-05-2020 22:46:33],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[27-05-2020 22:46:33],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'feed539ea5398c5460a1f50ee999a159a669227e'  0  
+(douglas)[27-05-2020 22:46:33],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[27-05-2020 22:46:40],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:47:21],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:48:31],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:50:04],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:50:16],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:51:34],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'feed539ea5398c5460a1f50ee999a159a669227e' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 22:52:00],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:53:08],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:53:34],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 22:56:08],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = '';  0  
+()[27-05-2020 22:56:08],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+()[27-05-2020 22:56:08],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+()[27-05-2020 22:56:08],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = '' AND SERIAL = ''  0  
+(douglas)[27-05-2020 22:56:15],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[27-05-2020 22:56:15],[192.168.0.42] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'192.168.0.42','fc06aa09cfa5e6cfcaf15b7ed5dcd2dfb18fa9ea',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[27-05-2020 22:56:15],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[27-05-2020 22:56:15],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[27-05-2020 22:56:15],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[27-05-2020 22:56:15],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'fc06aa09cfa5e6cfcaf15b7ed5dcd2dfb18fa9ea'  0  
+(douglas)[27-05-2020 22:56:15],[192.168.0.42] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[27-05-2020 22:56:20],[192.168.0.42] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 22:56:34],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'feed539ea5398c5460a1f50ee999a159a669227e' AND s.estado = 'Activa';  0  
+()[27-05-2020 22:57:30],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '4252125';  0  
+()[27-05-2020 22:58:07],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '4252125-4';  0  
+(douglas)[27-05-2020 22:59:05],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 22:59:11],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '87245215';  0  
+(douglas)[27-05-2020 23:01:34],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'feed539ea5398c5460a1f50ee999a159a669227e' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 23:09:24],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 23:09:28],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '454562';  0  
+()[27-05-2020 23:09:52],[::1] update sesiones s set estado = 'Inactiva' where s.usuario = '' and s.serial = '' and s.estado = 'Activa';  0  
+(douglas)[27-05-2020 23:09:57],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[27-05-2020 23:09:57],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','b18a1ae680653ee481613d2f4d161981dba9b85c',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[27-05-2020 23:09:57],[::1] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[27-05-2020 23:09:57],[::1] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[27-05-2020 23:09:57],[::1] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[27-05-2020 23:09:57],[::1] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'b18a1ae680653ee481613d2f4d161981dba9b85c'  0  
+(douglas)[27-05-2020 23:09:57],[::1] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[27-05-2020 23:10:00],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 23:10:06],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '41545';  0  
+()[27-05-2020 23:10:09],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '14545452';  0  
+(douglas)[27-05-2020 23:11:30],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 23:12:30],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '14212125';  0  
+()[27-05-2020 23:12:40],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '4933245';  0  
+(douglas)[27-05-2020 23:14:28],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 23:14:33],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '45212015';  0  
+(douglas)[27-05-2020 23:14:46],[::1] SELECT CONCAT('C',LPAD((SUBSTRING(cod_cli,2) +1),6,'0')) as CardCode   FROM clientes ORDER BY cod_cli DESC LIMIT 1  0  
+(douglas)[27-05-2020 23:14:46],[::1] INSERT INTO clientes (cod_cli, tipo_doc, ci_ruc, nombre, cat, suc, tel, email, fecha_nac, pais, estado, ciudad, dir, ocupacion, situacion,tipo,usuario, e_sap,fecha_reg,cta_cont )
+            VALUES ('C000007', 'C.I.', '45212015-2', upper('federico bordon'), 1, '01', '0982-451215', '', '2020-05-27', 'PARAGUAY', '', '', '', 'Particular', '','local','douglas', 0,CURRENT_TIMESTAMP,'112201' );  0  
+()[27-05-2020 23:14:54],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%fede%' limit 20  0  
+()[27-05-2020 23:14:56],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%%' limit 20  0  
+(douglas)[27-05-2020 23:14:57],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 23:17:09],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 23:17:23],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '498725';  0  
+()[27-05-2020 23:17:28],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '4987225-0';  0  
+()[27-05-2020 23:17:33],[::1] SELECT 'Ok' AS Status, nombre AS Cliente, ci_ruc AS RUC FROM clientes WHERE ci_ruc = '4987225';  0  
+(douglas)[27-05-2020 23:17:51],[::1] SELECT CONCAT('C',LPAD((SUBSTRING(cod_cli,2) +1),6,'0')) as CardCode   FROM clientes ORDER BY cod_cli DESC LIMIT 1  0  
+(douglas)[27-05-2020 23:17:51],[::1] INSERT INTO clientes (cod_cli, tipo_doc, ci_ruc, nombre, cat, suc, tel, email, fecha_nac, pais, estado, ciudad, dir, ocupacion, situacion,tipo,usuario, e_sap,fecha_reg,cta_cont )
+            VALUES ('C000008', 'C.I.', '4987225-7', upper('miguel angel garcete'), 1, '01', '0984-552155', '', '2020-05-27', 'PARAGUAY', '', '', '', 'Particular', '','local','douglas', 0,CURRENT_TIMESTAMP,'112201' );  0  
+()[27-05-2020 23:18:35],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%mig%' limit 20  0  
+()[27-05-2020 23:18:36],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%migu%' limit 20  0  
+()[27-05-2020 23:18:37],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000008'  0  
+()[27-05-2020 23:18:38],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000008' ORDER BY id_contacto ASC  0  
+(douglas)[27-05-2020 23:19:39],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[27-05-2020 23:19:45],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%migue%' limit 20  0  
+()[27-05-2020 23:19:47],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%miguel%' limit 20  0  
+()[27-05-2020 23:19:48],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000008'  0  
+()[27-05-2020 23:19:48],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000008' ORDER BY id_contacto ASC  0  
+(douglas)[27-05-2020 23:19:57],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 23:22:34],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 23:24:11],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[27-05-2020 23:24:57],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[27-05-2020 23:26:17],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 22:07:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 22:11:57],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 22:12:25],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 22:12:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+()[28-05-2020 22:13:49],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:13:50],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:13:50],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+(douglas)[28-05-2020 22:16:17],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[28-05-2020 22:16:21],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:16:22],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:16:22],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+(douglas)[28-05-2020 22:17:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 22:25:39],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[28-05-2020 22:25:43],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:25:43],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:25:43],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+(douglas)[28-05-2020 22:25:58],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[28-05-2020 22:26:02],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:26:03],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:26:03],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+(douglas)[28-05-2020 22:27:17],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[28-05-2020 22:27:21],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%dog%' limit 20  0  
+()[28-05-2020 22:27:21],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:27:21],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 22:27:24],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = '' ORDER BY id_movil ASC  0  
+()[28-05-2020 22:27:26],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = '' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:27:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 22:30:27],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[28-05-2020 22:30:31],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:30:31],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:30:31],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 22:30:38],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+()[28-05-2020 22:30:44],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:31:50],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[28-05-2020 22:31:53],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:31:54],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:31:54],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 22:31:55],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:32:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 22:33:41],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+()[28-05-2020 22:33:45],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:33:45],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:33:45],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 22:33:47],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:37:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 22:38:00],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 22:38:00],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+()[28-05-2020 22:38:03],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:38:04],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:38:04],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 22:38:05],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:40:42],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 22:40:42],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+()[28-05-2020 22:40:45],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:40:46],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:40:46],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 22:40:47],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:40:56],[::1] 
+(douglas)[28-05-2020 22:40:56],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca)VALUES ('', 'C000002', '', '', 'CORVETTE');  0  
+()[28-05-2020 22:40:56],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:42:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 22:47:50],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 22:47:50],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+()[28-05-2020 22:47:55],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:47:55],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:47:56],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 22:48:24],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:48],[::1] 
+(douglas)[28-05-2020 22:48:48],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:48],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:50],[::1] 
+(douglas)[28-05-2020 22:48:50],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:50],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:56],[::1] 
+(douglas)[28-05-2020 22:48:56],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:56],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:57],[::1] 
+(douglas)[28-05-2020 22:48:57],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:57],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:57],[::1] 
+(douglas)[28-05-2020 22:48:57],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:57],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:57],[::1] 
+(douglas)[28-05-2020 22:48:57],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:57],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:57],[::1] 
+(douglas)[28-05-2020 22:48:57],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:57],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:57],[::1] 
+(douglas)[28-05-2020 22:48:57],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:57],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:48:58],[::1] 
+(douglas)[28-05-2020 22:48:58],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:48:58],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:49:12],[::1] 
+(douglas)[28-05-2020 22:49:12],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','452456612',2004);  0  
+()[28-05-2020 22:49:12],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:49:33],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 22:49:33],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+()[28-05-2020 22:49:40],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 22:49:41],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 22:49:41],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+(douglas)[28-05-2020 22:49:54],[::1] UPDATE clientes SET  suc='01', usuario='douglas', pais='Paraguay', plazo_maximo=''    WHERE cod_cli = 'C000002';  0  
+()[28-05-2020 22:50:00],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:51:29],[::1] 
+(douglas)[28-05-2020 22:51:29],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:51:30],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:51:34],[::1] 
+(douglas)[28-05-2020 22:51:34],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:51:34],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:51:35],[::1] 
+(douglas)[28-05-2020 22:51:35],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:51:35],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:51:35],[::1] 
+(douglas)[28-05-2020 22:51:35],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:51:35],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:51:35],[::1] 
+(douglas)[28-05-2020 22:51:35],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:51:35],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:51:44],[::1] 
+(douglas)[28-05-2020 22:51:44],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:51:44],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:52:03],[::1] 
+(douglas)[28-05-2020 22:52:03],[::1]  INSERT INTO moviles(id_movil, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('', 'C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:52:03],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:52:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 22:57:14],[::1] 
+(douglas)[28-05-2020 22:57:14],[::1]  INSERT INTO moviles( codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:57:15],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:57:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+()[28-05-2020 22:58:58],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 22:59:05],[::1]  INSERT INTO moviles( codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('C000002', '', 'NAH 367', 'NISSAN','SUNNY','12132314564564',2004);  0  
+()[28-05-2020 22:59:05],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:02:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 23:04:05],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 23:04:05],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+()[28-05-2020 23:04:08],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 23:04:09],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 23:04:09],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 23:04:10],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+()[28-05-2020 23:04:17],[::1] delete from moviles where id_movil = '3' and codigo_entidad = 'C000002'  0  
+()[28-05-2020 23:04:17],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:04:43],[::1]  INSERT INTO moviles( codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('C000002', '123456', 'NAH 367', 'NISSAN','SUNNY','FB-12545125',2004);  0  
+()[28-05-2020 23:04:43],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:07:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 23:08:22],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 23:08:22],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+()[28-05-2020 23:08:24],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 23:10:00],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 23:10:00],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 23:10:01],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:12:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 23:17:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+()[28-05-2020 23:18:12],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:18:51],[::1]  INSERT INTO moviles( codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('C000002', '', 'NAS 886', 'NISSAN','BLUEBIRD','515245121215',2001);  0  
+()[28-05-2020 23:18:51],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:19:26],[::1]  INSERT INTO moviles( codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('C000002', '', 'AJU 898', 'VOLVO','S80 T6','1321255548',2001);  0  
+()[28-05-2020 23:19:26],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:22:35],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 23:22:35],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+(douglas)[28-05-2020 23:22:37],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+()[28-05-2020 23:22:38],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 23:22:40],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 23:22:40],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 23:22:41],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+()[28-05-2020 23:23:09],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+()[28-05-2020 23:23:22],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:27:38],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 23:31:21],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[28-05-2020 23:31:21],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+()[28-05-2020 23:31:24],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%doglas%' limit 20  0  
+()[28-05-2020 23:31:25],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000002'  0  
+()[28-05-2020 23:31:25],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000002' ORDER BY id_contacto ASC  0  
+()[28-05-2020 23:31:28],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000002' ORDER BY id_movil ASC  0  
+(douglas)[28-05-2020 23:32:38],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[28-05-2020 23:37:38],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[29-05-2020 00:42:38],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[29-05-2020 00:47:09],[::1] SELECT trustee as permiso from usuarios u inner join usuarios_x_grupo g using(usuario) inner join permisos_x_grupo p using(id_grupo) where u.usuario = 'douglas' AND  p.id_permiso = '6.1.1'  0  
+(douglas)[29-05-2020 00:47:09],[::1] SELECT marca FROM marcas ORDER BY hits DESC  0  
+()[29-05-2020 00:47:23],[::1] SELECT cod_cli ,nombre , dir, tel ,ci_ruc , cat , ciudad , pais , ocupacion, situacion, email, date_format(fecha_nac,'%d/%m/%Y') as fecha_nac,tipo_doc  ,geoloc,limite_credito,plazo_maximo,cant_cuotas,cuotas_atrasadas FROM clientes  WHERE nombre like '%andre%' limit 20  0  
+()[29-05-2020 00:47:25],[::1] SELECT c.usuario AS Usuario, c.suc AS Suc, date_format(fecha_reg,'%d/%m/%Y')  AS Fecha FROM clientes c LEFT JOIN usuarios u ON c.usuario = u.usuario WHERE cod_cli = 'C000003'  0  
+()[29-05-2020 00:47:25],[::1] SELECT id_contacto AS id, nombre,doc,tel FROM contactos WHERE codigo_entidad = 'C000003' ORDER BY id_contacto ASC  0  
+()[29-05-2020 00:47:28],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000003' ORDER BY id_movil ASC  0  
+(douglas)[29-05-2020 00:47:38],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[29-05-2020 00:48:05],[::1]  INSERT INTO moviles( codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab)VALUES ('C000003', '', 'NAS 886', 'NISSAN','BLUEBIRD','1562123131',2001);  0  
+()[29-05-2020 00:48:05],[::1] SELECT id_movil as id, codigo_entidad, rua, chapa, marca,modelo,vim,anio_fab FROM moviles WHERE codigo_entidad = 'C000003' ORDER BY id_movil ASC  0  
+(douglas)[29-05-2020 00:52:38],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[29-05-2020 00:55:37],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[29-05-2020 00:55:40],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[29-05-2020 00:55:40],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  

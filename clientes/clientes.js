@@ -6,8 +6,8 @@ var escribiendo = false;
 
 function configurar() {
     //$("#ruc").mask("999999?ddddddd",{placeholder:""});   
-    $("#nombre").mask("***?*********************************************************", { placeholder: "" });
-    //$("#tel").mask("999dd999?99999999",{placeholder:""}); 
+    $("#nombre_cli").mask("***?*********************************************************", { placeholder: "" });
+    //$("#tel_cli").mask("999dd999?99999999",{placeholder:""}); 
     $("#fecha_nac").mask("99/99/9999");
     $("#ruc").focus();
 
@@ -21,6 +21,9 @@ function configurar() {
         }
     });
     setAnchorTitle();
+    if(is_mobile){  alert("Mobile");
+        $("#nombre_cli").attr("size","30");
+    }
 }
 
 
@@ -317,12 +320,12 @@ function setHotKeysListaCliente() {
 }
 var cli; 
 
-function registrarCliente() {
-
+function registrarCliente(callback) {
+     
     var usuario = getNick();
     var ruc = $.trim($("#ruc").val());
-    var nombre = $.trim($("#nombre").val());
-    var tel = $.trim($("#tel").val());
+    var nombre = $.trim($("#nombre_cli").val());
+    var tel = $.trim($("#tel_cli").val());
     var fecha_nac = $("#fecha_nac").val();
     var pais = $("#pais").val();
     var ciudad = $.trim($("#ciudad").val());
@@ -358,6 +361,8 @@ function registrarCliente() {
                     buscarCliente($("#ruc_cliente"));
                     $("#boton_generar").focus();
                     //alert(data.status);
+                    updateListaClientes(nombre); // En la interfaz que se llama debe tener esta funcion
+ 
                 } else {
                     $("#msg_cliente").html("Ocurrio un Error al intentar registrar el cliente " +data.msj);
                     $("#msg").html(data.msj);
@@ -379,6 +384,7 @@ function registrarCliente() {
 
     //console.log(usuario+"  "+ruc+"  "+nombre+"  "+tel+"  "+fecha_nac+"  "+pais+"  "+ciudad+"  "+dir);
 }
+
 
 function selectRow(row) {
     $(".cliente_selected").removeClass("cliente_selected");
