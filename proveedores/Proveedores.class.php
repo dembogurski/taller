@@ -362,7 +362,7 @@ class Proveedores {
        $id = $_POST['c_id'];
        $rua = strtoupper( $_POST['rua']);
        $chapa = strtoupper( $_POST['chapa']); 
-       $marca = strtoupper( $_POST['marca']); 
+       $marca =   $_POST['marca']  ; 
        $modelo = strtoupper( $_POST['modelo']); 
        $cod_ent = $_POST['cod_ent']; 
        

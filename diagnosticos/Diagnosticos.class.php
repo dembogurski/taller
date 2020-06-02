@@ -86,6 +86,13 @@ class Diagnosticos {
             $t->Show("no_result");
         }
     }
+    function getDatos(){
+        require_once '../Functions.class.php';
+        $f = new Functions();
+        $chapa = $_REQUEST['chapa'];
+        $arr = $f->getResultArray("SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = '$chapa'");
+        echo json_encode($arr);
+    }
     
     function addUI(){
         $tmp_con = new My();

@@ -61,8 +61,9 @@
 
 <tr> <td class="form_label">Chapa:</td> <td><input class="form_text MUL" type="text" id="form_chapa"  readonly="readonly"  required="required"  size="30"  value="{value_of_chapa}" ></td>  </tr>
 <tr> <td class="form_label">Marca:</td> <td>
-<select class="form_db_select MUL" id="form_marca"   >{value_of_marca}</select>
-</td>  </tr>
+<select class="form_db_select MUL" id="form_marca" onchange="buscarLogo()"  >{value_of_marca}</select>
+<img id="logo" src="img/car_logos/no_logo.png" class="car_logo" width="40">
+</td>   </tr>
 <tr> <td class="form_label">Cliente:</td> <td>
 <select class="form_db_select MUL" id="form_cod_cli"   >{value_of_cod_cli}</select>
 </td>  </tr>

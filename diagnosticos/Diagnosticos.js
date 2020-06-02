@@ -50,7 +50,8 @@ function editUI(pk){
                 var form = objeto.responseText;                  
                 centerForm(); 
                 $(".form").html(form);
-                $("#msg").html("");                
+                $("#msg").html("");  
+                buscarLogo(); 
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
             }
@@ -80,6 +81,9 @@ function addUI(){
                 $("#msg").html("");  
                 $("#form_usuario").val(getNick());
                 buscarLogo(); 
+                $("#form_chapa").change(function(){
+                    getDatos($(this).val());
+                });
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
             }
@@ -89,7 +93,36 @@ function addUI(){
         }
     });   
 }
+function getDatos(chapa){
+    $.ajax({
+        type: "POST",
+        url: "diagnosticos/Diagnosticos.class.php",
+        data: {action: "getDatos" , chapa: chapa,  usuario: getNick()},        
+        async: true,
+        dataType: "json",
+        beforeSend: function () {             
+            $("#msg_diagnosticos").html("<img src='img/loading_fast.gif'  >");
+        },
+        success: function (data) {   
 
+            if(data.length > 0){ 
+                var marca = data[0].marca;
+                var cod_cli = data[0].cod_cli;
+                $("#form_marca").val(marca);
+                $("#form_cod_cli").val(cod_cli);
+                
+                buscarLogo(); 
+            }else{
+                $("#form_cod_cli").val("C000001");
+            }    
+            $("#msg_diagnosticos").html("");   
+        },
+        error: function (err) { 
+          $("#msg_diagnosticos").addClass("error");
+          $("#msg_diagnosticos").html(err);
+        }
+    });     
+}
 
 function centerForm(){
    var w = $(document).width();
@@ -132,7 +165,7 @@ function addData(form){
           beforeSend: function () {
               $("#msg_diagnosticos").addClass("error");
               $("#"+form+" input[id="+table+"_save_button]").prop("disabled",true);
-              $("#msg_diagnosticos").html("Insertando... <img src='../img/loading_fast.gif'  >");
+              $("#msg_diagnosticos").html("Insertando... <img src='img/loading_fast.gif'  >");
           },
           success: function (data) {   
 
@@ -196,7 +229,7 @@ function updateData(form){
               dataType: "json",
               beforeSend: function () {
                   $("#"+form+" input[id="+table+"_update_button]").prop("disabled",true);
-                  $("#msg_diagnosticos").html("Actualizando... <img src='../img/loading_fast.gif'  >");
+                  $("#msg_diagnosticos").html("Actualizando... <img src='img/loading_fast.gif'  >");
               },
               success: function (data) {                
                   if(data.mensaje === "Ok"){ 
@@ -219,10 +252,7 @@ function updateData(form){
   }
 }
 
-function buscarPropietario(){
-    
-}
-
+ 
 function buscarLogo(){
     var marca = $("#form_marca").val();
     checkImage("img/car_logos/"+marca+".png", function() {
