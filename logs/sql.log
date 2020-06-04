@@ -1547,3 +1547,109 @@
 (douglas)[29-05-2020 00:55:37],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
 (douglas)[29-05-2020 00:55:40],[::1] SELECT cod_cli,nombre FROM clientes   0  
 (douglas)[29-05-2020 00:55:40],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[29-05-2020 00:57:38],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[01-06-2020 22:27:03],[::1] update sesiones s set estado = 'Inactiva' where s.usuario = 'douglas' and s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' and s.estado = 'Activa';  0  
+(douglas)[01-06-2020 23:57:39],[::1] SELECT COUNT(*) AS usu,usuario FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113';  0  
+(douglas)[01-06-2020 23:57:39],[::1] SELECT COUNT(*) AS res FROM sesiones s WHERE s.fecha = CURRENT_DATE AND s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c';  0  
+(douglas)[01-06-2020 23:57:39],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[01-06-2020 23:57:39],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','0530d10c7fe61782c1036df4bde0e3abc4cf2034',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[01-06-2020 23:57:39],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[02-06-2020 00:01:58],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[02-06-2020 00:06:58],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[02-06-2020 00:17:45],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[02-06-2020 00:17:47],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:17:47],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:17:55],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nah 367'  0  
+(douglas)[02-06-2020 00:19:38],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nah 367 '  0  
+(douglas)[02-06-2020 00:19:46],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nah 367  '  0  
+(douglas)[02-06-2020 00:19:54],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nah 367'  0  
+(douglas)[02-06-2020 00:20:30],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[02-06-2020 00:20:31],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:20:31],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:20:40],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nah 367'  0  
+(douglas)[02-06-2020 00:21:06],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nab 368'  0  
+(douglas)[02-06-2020 00:21:59],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[02-06-2020 00:26:59],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[02-06-2020 00:28:19],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[02-06-2020 00:28:35],[::1] SELECT id_diag,cod_cli,usuario,chapa,marca,date_format(fecha,'%Y-%m-%d') as fecha,descrip,url_img0,url_img1,url_img2 FROM diagnosticos WHERE  id_diag = '12'  0  
+(douglas)[02-06-2020 00:28:35],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:28:35],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:28:52],[::1] SELECT id_diag,cod_cli,usuario,chapa,marca,date_format(fecha,'%Y-%m-%d') as fecha,descrip,url_img0,url_img1,url_img2 FROM diagnosticos WHERE  id_diag = '7'  0  
+(douglas)[02-06-2020 00:28:52],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:28:52],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:29:15],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[02-06-2020 00:29:17],[::1] SELECT id_diag,cod_cli,usuario,chapa,marca,date_format(fecha,'%Y-%m-%d') as fecha,descrip,url_img0,url_img1,url_img2 FROM diagnosticos WHERE  id_diag = '13'  0  
+(douglas)[02-06-2020 00:29:17],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:29:17],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:30:51],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[02-06-2020 00:30:54],[::1] SELECT id_diag,cod_cli,usuario,chapa,marca,date_format(fecha,'%Y-%m-%d') as fecha,descrip,url_img0,url_img1,url_img2 FROM diagnosticos WHERE  id_diag = '14'  0  
+(douglas)[02-06-2020 00:30:54],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:30:54],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:31:59],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[02-06-2020 00:33:22],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[02-06-2020 00:33:24],[::1] SELECT id_diag,cod_cli,usuario,chapa,marca,date_format(fecha,'%Y-%m-%d') as fecha,descrip,url_img0,url_img1,url_img2 FROM diagnosticos WHERE  id_diag = '14'  0  
+(douglas)[02-06-2020 00:33:24],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:33:24],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:34:03],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[02-06-2020 00:34:04],[::1] SELECT id_diag,cod_cli,usuario,chapa,marca,date_format(fecha,'%Y-%m-%d') as fecha,descrip,url_img0,url_img1,url_img2 FROM diagnosticos WHERE  id_diag = '14'  0  
+(douglas)[02-06-2020 00:34:04],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:34:04],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:34:34],[::1] UPDATE diagnosticos SET  chapa = 'HGD 827', marca = 'Aston Martin', cod_cli = 'C000003', fecha = '2020-05-22', descrip = 'Prueba 300 500', url_img0 = '', url_img1 = '' WHERE   id_diag = '14';  0  
+(douglas)[02-06-2020 00:34:38],[::1] SELECT id_diag,cod_cli,usuario,chapa,marca,date_format(fecha,'%Y-%m-%d') as fecha,descrip,url_img0,url_img1,url_img2 FROM diagnosticos WHERE  id_diag = '14'  0  
+(douglas)[02-06-2020 00:34:38],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:34:38],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[02-06-2020 00:34:43],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[02-06-2020 00:34:44],[::1] SELECT id_diag,cod_cli,usuario,chapa,marca,date_format(fecha,'%Y-%m-%d') as fecha,descrip,url_img0,url_img1,url_img2 FROM diagnosticos WHERE  id_diag = '14'  0  
+(douglas)[02-06-2020 00:34:44],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[02-06-2020 00:34:44],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 21:50:04],[::1] update sesiones s set estado = 'Inactiva' where s.usuario = 'douglas' and s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' and s.estado = 'Activa';  0  
+(douglas)[04-06-2020 21:53:04],[::1] SELECT COUNT(*) AS usu,usuario FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113';  0  
+(douglas)[04-06-2020 21:53:04],[::1] SELECT COUNT(*) AS res FROM sesiones s WHERE s.fecha = CURRENT_DATE AND s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c';  0  
+(douglas)[04-06-2020 21:53:04],[::1] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[04-06-2020 21:53:04],[::1] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'::1','f0ae2fb507370ef6566fd2dd9e13775f6127a693',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[04-06-2020 21:53:04],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[04-06-2020 21:53:33],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[04-06-2020 21:53:33],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 21:55:00],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[04-06-2020 21:56:04],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nah 367'  0  
+(douglas)[04-06-2020 21:56:09],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nah 367 '  0  
+(douglas)[04-06-2020 21:56:11],[::1] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'nah 367'  0  
+(douglas)[04-06-2020 21:59:59],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[04-06-2020 22:19:59],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[04-06-2020 22:24:09],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[04-06-2020 22:24:11],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[04-06-2020 22:24:11],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 22:24:59],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[04-06-2020 22:26:40],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[04-06-2020 22:26:42],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[04-06-2020 22:26:42],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 22:28:11],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[04-06-2020 22:28:13],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[04-06-2020 22:28:13],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 22:29:18],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[04-06-2020 22:29:19],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[04-06-2020 22:29:19],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 22:29:59],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[04-06-2020 22:31:20],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[04-06-2020 22:31:22],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[04-06-2020 22:31:22],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 22:32:20],[::1] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[04-06-2020 22:32:22],[::1] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[04-06-2020 22:32:22],[::1] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 22:34:59],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'b18a1ae680653ee481613d2f4d161981dba9b85c' AND s.estado = 'Activa';  0  
+(douglas)[04-06-2020 22:35:01],[192.168.0.42] SELECT usuario, limite_sesion,suc FROM usuarios WHERE  usuario = 'douglas' AND passw = '2e6060b4c6b95c2ee886735b669eae29ab1d3113' and estado = 'Activo'  0  
+(douglas)[04-06-2020 22:35:02],[192.168.0.42] INSERT INTO sesiones(usuario,fecha,hora,ip,serial,limite_sesion,expira,estado)VALUES('douglas', current_date, current_time,'192.168.0.42','d1d13c71ca78e981c8f10fea0cc1796d1cec91a4',3600, NOW() + INTERVAL 3600 MINUTE , 'Activa')  0  
+(douglas)[04-06-2020 22:35:02],[192.168.0.42] SELECT suc FROM usuarios_x_suc WHERE usuario = 'douglas';  0  
+(douglas)[04-06-2020 22:35:02],[192.168.0.42] SELECT valor AS nombre_empresa FROM parametros WHERE clave = 'nombre_empresa'  0  
+(douglas)[04-06-2020 22:35:02],[192.168.0.42] UPDATE sesiones SET estado = 'Inactiva' WHERE CURRENT_TIMESTAMP > expira  0  
+(douglas)[04-06-2020 22:35:02],[192.168.0.42] SELECT estado FROM sesiones WHERE  usuario = 'douglas' AND SERIAL = 'd1d13c71ca78e981c8f10fea0cc1796d1cec91a4'  0  
+(douglas)[04-06-2020 22:35:02],[192.168.0.42] SELECT u.nombre as usu,ug.usuario,g.nombre,p.id_permiso AS id_permiso,descripcion,trustee 
+               FROM  usuarios u,grupos g, usuarios_x_grupo ug, permisos_x_grupo p, permisos pr WHERE u.usuario = ug.usuario AND ug.id_grupo = p.id_grupo AND g.id_grupo = ug.id_grupo AND p.id_permiso = pr.id_permiso AND trustee != '---'  AND ug.usuario = 'douglas'  0  
+(douglas)[04-06-2020 22:35:05],[192.168.0.42] SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC  0  
+(douglas)[04-06-2020 22:35:15],[192.168.0.42] SELECT cod_cli,nombre FROM clientes   0  
+(douglas)[04-06-2020 22:35:15],[192.168.0.42] SELECT marca,marca FROM marcas  order by hits desc  0  
+(douglas)[04-06-2020 22:35:26],[192.168.0.42] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'NAH 376'  0  
+(douglas)[04-06-2020 22:35:49],[192.168.0.42] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'NAH 367'  0  
+(douglas)[04-06-2020 22:36:03],[192.168.0.42] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'NAH 36'  0  
+(douglas)[04-06-2020 22:36:08],[192.168.0.42] SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = 'NAH 367'  0  
+(douglas)[04-06-2020 22:40:03],[192.168.0.42] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'd1d13c71ca78e981c8f10fea0cc1796d1cec91a4' AND s.estado = 'Activa';  0  

@@ -113,9 +113,9 @@
 </td>  </tr>
 <tr style="display:none"> <td class="form_label">Fecha</td> <td><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
 <tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
-<tr> <td class="form_label">Diag 1:</td> <td> <input type="file" id="file_0" accept="image/*"    onchange="loadImageFileAsURL(0)" > <textarea class="form_textarea diag_img" id="form_url_img_0" cols="40" rows="3"   ></textarea></td>  </tr>
-<tr> <td class="form_label">Diag 2:</td> <td> <input type="file" id="file_1"   onchange="loadImageFileAsURL(1)" > <textarea class="form_textarea diag_img" id="form_url_img_1" cols="40" rows="3"   ></textarea></td>  </tr>
-<tr> <td class="form_label">Diag 3:</td> <td> <input type="file" id="file_2" accept="image/*"  capture="camera" onchange="loadImageFileAsURL(2)" > <textarea class="form_textarea diag_img" id="form_url_img_2" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 1:</td> <td> <img src="img/no_img.png" id="preview_0" width="46px"> <input type="file" id="file_0" accept="image/*"    onchange="loadImageFileAsURL(0)" > <textarea class="form_textarea diag_img" id="form_url_img_0" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 2:</td> <td> <img src="img/no_img.png" id="preview_1" width="46px"> <input type="file" id="file_1"   onchange="loadImageFileAsURL(1)" > <textarea class="form_textarea diag_img" id="form_url_img_1" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Diag 3:</td> <td> <img src="img/no_img.png" id="preview_2" width="46px"> <input type="file" id="file_2" accept="image/*"  capture="camera" onchange="loadImageFileAsURL(2)" > <textarea class="form_textarea diag_img" id="form_url_img_2" cols="40" rows="3"   ></textarea></td>  </tr>
 
 <!-- end:   add_form_data -->
 
@@ -125,7 +125,7 @@
     <tr>
         <td colspan="2" style="text-align: center">
             <input type="button" value="Cancelar" onclick="closeForm()">
-            <input type="button" value=" Grabar " onclick=addData("add_diagnosticos") id="diagnosticos_save_button">
+            <input type="button" value=" Guardar " onclick=addData("add_diagnosticos") id="diagnosticos_save_button">
             <input type="button" value=" Cerrar " onclick="closeForm()" id="diagnosticos_close_button" style="display:none">
         </td>
     </tr>
@@ -134,5 +134,5 @@
 
 
 <!-- begin: no_result -->     
-<div style="text-align: center;margin: 2cm auto"> Ningun registro para Diagnosticos <button type="button" id="add_button_proveedores" onclick="addUI()">Agregar un nuevo registro para (Diagnosticos)</button></div> 
+<div style="text-align: center;margin: 2cm auto"> Ningun registro para Diagnosticos <button type="button" id="add_button_diagnosticos" onclick="addUI()">Agregar un nuevo registro para (Diagnosticos)</button></div> 
 <!-- end:   no_result -->

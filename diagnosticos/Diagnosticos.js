@@ -298,10 +298,11 @@ function loadImageFileAsURL(id){
         var fileReader = new FileReader(); 
         fileReader.onload = function(fileLoadedEvent){   
             $("#form_url_img_"+id).val(fileLoadedEvent.target.result); 
-            var base64 = $("#form_url_img_"+id).val();     
-            resizedataURL(base64, 1024, 1632,id);      
-    
-            $("#msg").html("Reduciendo el tama&ntilde;o...<img src='img/activity.gif' width='24px' height='8px' >");
+            var base64 = $("#form_url_img_"+id).val();   
+             
+            var img = resizedataURL(base64, 100, 60,id);      
+            $("#preview_"+id).attr("src",img.src);
+            //$("#msg").html("Reduciendo el tama&ntilde;o...<img src='img/activity.gif' width='24px' height='8px' >");
            
         };        
         fileReader.readAsDataURL(fileToLoad);    
@@ -322,8 +323,8 @@ function resizedataURL(datas, wantedWidth, wantedHeight,id)  {
                 var originalwidth = img.width;
                 var originalheight = img.height;
                 if(originalwidth > originalheight ){
-                    wantedWidth = 1632;
-                    wantedHeight = 1024;
+                    wantedWidth = 1024;
+                    wantedHeight = 768;
                 }                
                 var canvas = document.createElement('canvas');
                 var ctx = canvas.getContext('2d');
@@ -345,5 +346,8 @@ function resizedataURL(datas, wantedWidth, wantedHeight,id)  {
             };
 
         // We put the Data URI in the image's src attribute
-        img.src = datas; 
+        img.src = datas;
+        return img;
+        
+        
 }
