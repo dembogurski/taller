@@ -308,8 +308,10 @@ class Diagnosticos {
 
         for($i = 0;$i < 3;$i++){
            ${"img_".$i}  = $data["url_img_$i"];
-           ${"filename_".$i} = "$path/diag_$i.jpg";
-           $this->base64ToImage(${"img_".$i}, ${"filename_".$i});
+           if(${"img_".$i} !== ""){           // Solo si no esta vacia
+              ${"filename_".$i} = "$path/diag_$i.jpg";
+              $this->base64ToImage(${"img_".$i}, ${"filename_".$i});
+           }
         }
         
         

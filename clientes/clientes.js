@@ -8,7 +8,7 @@ function configurar() {
     //$("#ruc").mask("999999?ddddddd",{placeholder:""});   
     $("#nombre_cli").mask("***?*********************************************************", { placeholder: "" });
     //$("#tel_cli").mask("999dd999?99999999",{placeholder:""}); 
-    $("#fecha_nac").mask("99/99/9999");
+    $("#fecha_nacc").mask("99/99/9999");
     $("#ruc").focus();
 
     $("#tipo_doc").change(function() {
@@ -21,7 +21,7 @@ function configurar() {
         }
     });
     setAnchorTitle();
-    if(is_mobile){  alert("Mobile");
+    if(is_mobile){   
         $("#nombre_cli").attr("size","30");
     }
 }
@@ -116,13 +116,13 @@ function checkDate(Obj) {
         var dia = fecha_.substring(0, 2);
         var mes = fecha_.substring(2, 4);
         var anio = fecha_.substring(4, 8);
-        $("#fecha_nac").val(dia + "/" + mes + "/" + anio);
+        $("#fecha_nacc").val(dia + "/" + mes + "/" + anio);
     }
 
     fecha_ = Obj.val();
     var result = validDate(fecha_);
     fecha_nac = result.fecha;
-    var anio = parseInt((validDate($("#fecha_nac").val()).fecha).substring(0, 4));
+    var anio = parseInt((validDate($("#fecha_nacc").val()).fecha).substring(0, 4));
     var mayor = anio > 1900;
     var anio_actual = new Date().getFullYear();
 
@@ -326,7 +326,7 @@ function registrarCliente(callback) {
     var ruc = $.trim($("#ruc").val());
     var nombre = $.trim($("#nombre_cli").val());
     var tel = $.trim($("#tel_cli").val());
-    var fecha_nac = $("#fecha_nac").val();
+    var fecha_nac = $("#fecha_nacc").val();
     var pais = $("#pais").val();
     var ciudad = $.trim($("#ciudad").val());
     var dir = $.trim($("#dir").val());
@@ -356,12 +356,9 @@ function registrarCliente(callback) {
                 if (data.status == "Ok" ) {
                     $("#msg").html("Cliente " + nombre + " registrado con exito.");
                     $("#abm_cliente").fadeOut();
-                    $("#ruc_cliente").val(ruc);
-                    $("#nombre_cliente").val(nombre);
-                    buscarCliente($("#ruc_cliente"));
-                    $("#boton_generar").focus();
+                     
                     //alert(data.status);
-                    updateListaClientes(nombre); // En la interfaz que se llama debe tener esta funcion
+                    updateListaClientes(nombre,ruc); // En la interfaz que se llama debe tener esta funcion
  
                 } else {
                     $("#msg_cliente").html("Ocurrio un Error al intentar registrar el cliente " +data.msj);

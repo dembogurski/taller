@@ -35,8 +35,20 @@ $(function () {
         touch = false; 
     }  
     is_mobile =  JSON.parse($("#is_mobile").val());
-    setTimeout("checkAvatar()",1000);  
+    
+    $(window).on("navigate", function (event, data) {
+        var direction = data.state.direction;
+        if (direction == 'back') {
+           showMenu();
+        }
+        if (direction == 'forward') {
+          // do something else
+        }
     });
+    
+    setTimeout("checkAvatar()",1000);  
+    
+});
 
 function checkAvatar(){         
     $.post('Ajax.class.php', {"action": "getAvatar",usuario:getNick()}, function (data) {

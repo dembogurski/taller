@@ -1,6 +1,6 @@
 <!-- begin: headers -->   
     <head>  
-        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=4444444444444444" />      
+        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=000000" />      
         <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
@@ -39,12 +39,14 @@
 <!-- end:   data_foot -->
 
 <!-- begin: script -->      
-    <script type="text/javascript" src="clientes/clientes.js?_=4564545" ></script>      
+             
     <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
     <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
     <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
-    <script type="text/javascript" src="js/functions.js" ></script>    
-    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=888999999" ></script>
+    <script type="text/javascript" src="js/functions.js" ></script>  
+    
+    <script type="text/javascript" src="clientes/clientes.js?_=4564545" ></script> 
+    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=666666666666666666" ></script>
      
     
 <!-- end:   script -->
@@ -115,20 +117,20 @@
 <tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
 <tr> <td class="fila_img">Diag 1:</td> 
     <td> 
-        <img src="img/no_img.png" id="preview_0" width="46" class="img_previw"> 
-        <input type="file" id="file_0" accept="image/*" multiple  onchange="loadImageFileAsURL(0)" class="inputfile" ><label class="capturar"   for="file_0"></label> <textarea class="form_textarea diag_img" id="form_url_img_0" cols="40" rows="3"   ></textarea>
+        <img src="img/no_img.png" id="preview_0" width="46" class="img_preview"> 
+        <input type="file" id="file_0" accept="image/*"   class="inputfile" ><label class="capturar"   for="file_0"></label> <textarea class="form_textarea diag_img" id="form_url_img_0" cols="40" rows="3"   ></textarea>
     </td>  
 </tr>
 <tr>  <td class="fila_img">Diag 2:</td> 
     <td>
-        <img src="img/no_img.png" id="preview_1" width="46" class="img_previw"> 
-        <input type="file" id="file_1"  accept="image/*" onchange="loadImageFileAsURL(1)" class="inputfile" ><label class="capturar" for="file_1"></label> <textarea class="form_textarea diag_img" id="form_url_img_1" cols="40" rows="3"   ></textarea>
+        <img src="img/no_img.png" id="preview_1" width="46" class="img_preview"> 
+        <input type="file" id="file_1"  accept="image/*"   class="inputfile" ><label class="capturar" for="file_1"></label> <textarea class="form_textarea diag_img" id="form_url_img_1" cols="40" rows="3"   ></textarea>
     </td>  
 </tr>
 <tr> <td class="fila_img">Diag 3:</td> 
     <td> 
-        <img src="img/no_img.png" id="preview_2" width="46" class="img_previw"> 
-        <input type="file" id="file_2" accept="image/*"  onchange="loadImageFileAsURL(2)" class="inputfile"><label class="capturar"  for="file_2"></label> <textarea class="form_textarea diag_img" id="form_url_img_2" cols="40" rows="3"   ></textarea></td>  
+        <img src="img/no_img.png" id="preview_2" width="46" class="img_preview"> 
+        <input type="file" id="file_2" accept="image/*"  onchange="takePhoto(2)" class="inputfile"><label class="capturar"  for="file_2"></label> <textarea class="form_textarea diag_img" id="form_url_img_2" cols="40" rows="3"   ></textarea></td>  
 </tr>
 
 <!-- end:   add_form_data -->

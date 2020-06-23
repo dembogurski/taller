@@ -2034,3 +2034,10 @@ function imprimirFactura(){
          alert("Debe Pre cargar las Facturas Contables para poder Imprimir");
      }
   }
+  
+function updateListaClientes(nombre,ruc){  
+   $("#ruc_cliente").val(ruc);
+   $("#nombre_cliente").val(nombre);
+   buscarCliente($("#ruc_cliente"));
+   $("#boton_generar").focus();
+}

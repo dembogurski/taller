@@ -139,7 +139,7 @@ input[type=number] {
 .capturar{
     height: 47px;
     width: 47px;
-    background-image: url(../img/yellow_camera.png);
+    background-image: url(../img/android_camera.jpg);
     background-repeat: no-repeat;
     cursor: pointer; /* "hand" cursor */
     border: solid gray 0px;
@@ -156,7 +156,7 @@ input[type=number] {
 .inputfile + label:hover {
     background-color: red;
 }
-.img_previw{
+.img_preview{
     margin-bottom: 0px
 }
 .fila_img{

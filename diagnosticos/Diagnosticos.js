@@ -71,7 +71,7 @@ function addUI(){
         dataType: "html",
         beforeSend: function () {
             $(".form").html("");
-             $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+            $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
         },
         complete: function (objeto, exito) {
             if (exito === "success") {                          
@@ -84,6 +84,7 @@ function addUI(){
                 $("#form_chapa").change(function(){
                     getDatos($(this).val());
                 });
+                configurarCamaras();
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
             }
@@ -92,6 +93,24 @@ function addUI(){
            $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
         }
     });   
+}
+function configurarCamaras(){
+   $('.inputfile').change(function(evt) {
+        var id = $(this).attr("id").substring(5,10);
+         
+        var files = evt.target.files;
+        var file = files[0];  
+
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview_'+id).src = e.target.result;
+                resizeImage(id);
+            };
+            reader.readAsDataURL(file);
+        }        
+            
+    });    
 }
 function getDatos(chapa){
     $.ajax({
@@ -136,7 +155,7 @@ function centerForm(){
 function addData(form){
    var data = {}; 
    
-   var table = form.substring(4,60);     console.log(table);
+   var table = form.substring(4,60);      
    $("#"+form+" [id^='form_']").each(function(){
      
      var pk = $(this).hasClass("PRI");
@@ -289,65 +308,53 @@ function updateListaClientes(){
 }
 
 
-function loadImageFileAsURL(id){ 
-          
-    var filesSelected = document.getElementById("file_"+id).files;
-    
-    if (filesSelected.length > 0)  {
-        var fileToLoad = filesSelected[0];  
-        var fileReader = new FileReader(); 
-        fileReader.onload = function(fileLoadedEvent){   
-            $("#form_url_img_"+id).val(fileLoadedEvent.target.result); 
-            var base64 = $("#form_url_img_"+id).val();   
-             
-            var img = resizedataURL(base64, 100, 60,id);      
-            $("#preview_"+id).attr("src",img.src);
-            //$("#msg").html("Reduciendo el tama&ntilde;o...<img src='img/activity.gif' width='24px' height='8px' >");
-           
-        };        
-        fileReader.readAsDataURL(fileToLoad);    
-         
-    }else{
-        alert("No se ha tomado ninguna imagen");
+function resizeImage(id) {  
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        var filesToUploads = document.getElementById('file_'+id).files;
+        var file = filesToUploads[0];
+        if (file) {
+
+            var reader = new FileReader();
+            // Set the image once loaded into file reader
+            reader.onload = function(e) {
+
+                var img = document.createElement("img");
+                img.src = e.target.result;
+
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+
+                var MAX_WIDTH = 800;
+                var MAX_HEIGHT = 600;
+                var width = img.width;
+                var height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                dataurl = canvas.toDataURL(file.type);
+                console.log(dataurl);
+                document.getElementById('form_url_img_'+id).value = dataurl;
+            }
+            reader.readAsDataURL(file);
+
+        }
+
+    } else {
+        alert('Esta Api no es soportada por este navegador');
     }
-}
-
-function resizedataURL(datas, wantedWidth, wantedHeight,id)  {
-        // We create an image to receive the Data URI
-        var img = document.createElement('img');
-        
-        // When the event "onload" is triggered we can resize the image.
-        img.onload = function() {        
-                // We create a canvas and get its context.
-                
-                var originalwidth = img.width;
-                var originalheight = img.height;
-                if(originalwidth > originalheight ){
-                    wantedWidth = 1024;
-                    wantedHeight = 768;
-                }                
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
-
-                // We set the dimensions at the wanted size.
-                canvas.width = wantedWidth;
-                canvas.height = wantedHeight;
-
-                // We resize the image with the canvas method drawImage();
-                ctx.drawImage(this, 0, 0, wantedWidth, wantedHeight);
-
-                imagen = canvas.toDataURL();
-              //console.log(dataURI);
-                /////////////////////////////////////////
-                // Use and treat your Data URI here !! //
-                /////////////////////////////////////////
-                $("#msg").html(document.getElementById("file_"+id).files[0].name); 
-                
-            };
-
-        // We put the Data URI in the image's src attribute
-        img.src = datas;
-        return img;
-        
-        
 }

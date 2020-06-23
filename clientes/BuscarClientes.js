@@ -483,7 +483,7 @@ function nuevoCliente(){
      
 }
 
-function updateListaClientes(nombre){
+function updateListaClientes(nombre,ruc){  console.log(nombre);
     $("#bc_buscar").val(nombre);
     bc_callBuscarCliente();
 }
