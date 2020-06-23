@@ -123,3 +123,42 @@ input[type=number] {
     margin-bottom: -14px;
     margin-left: 10px;
 }
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: relative;
+	z-index: -1;
+}
+.inputfile + label {
+    font-size: 1.25em;
+    font-weight: 700; 
+}
+.capturar{
+    height: 47px;
+    width: 47px;
+    background-image: url(../img/yellow_camera.png);
+    background-repeat: no-repeat;
+    cursor: pointer; /* "hand" cursor */
+    border: solid gray 0px;
+    border-radius: 3px;
+    margin-top: -2px;
+    margin-left: 30px;
+    padding: 2px;
+    display: inline-block;
+    color: white;
+    background-color: white; 
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: red;
+}
+.img_previw{
+    margin-bottom: 0px
+}
+.fila_img{
+    height: 60px
+}
