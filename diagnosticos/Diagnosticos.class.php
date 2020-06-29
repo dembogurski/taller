@@ -12,7 +12,14 @@ require_once("../Clientes/Clientes.class.php");
 class Diagnosticos {
 
     private $table = 'diagnosticos';
-    private $items = [array("column_name" => "id_diag", "nullable" => "NO", "data_type" => "int", "max_length" => "", "numeric_pres" => "10", "dec" => "0", "titulo_campo" => "Id Diag=>", "titulo_listado" => "Id Diag", "type" => "number", "required" => "required", "inline" => "false", "editable" => "readonly", "insert" => "Auto", "default" => "", "pk" => "PRI", "extra" => "auto_increment"), array("column_name" => "cod_cli", "nullable" => "YES", "data_type" => "varchar", "max_length" => "30", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Cod Cli=>", "titulo_listado" => "Cliente", "type" => "db_select", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "clientes=>cod_cli,nombre", "pk" => "MUL", "extra" => ""), array("column_name" => "usuario", "nullable" => "NO", "data_type" => "varchar", "max_length" => "30", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Usuario=>", "titulo_listado" => "", "type" => "text", "required" => "", "inline" => "false", "editable" => "No", "insert" => "Auto", "default" => "", "pk" => "MUL", "extra" => ""), array("column_name" => "chapa", "nullable" => "YES", "data_type" => "varchar", "max_length" => "30", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Chapa=>", "titulo_listado" => "Chapa", "type" => "text", "required" => "required", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "MUL", "extra" => ""), array("column_name" => "marca", "nullable" => "YES", "data_type" => "varchar", "max_length" => "100", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Marca=>", "titulo_listado" => "Marca", "type" => "db_select", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "marcas=>marca,marca", "pk" => "MUL", "extra" => ""), array("column_name" => "fecha", "nullable" => "YES", "data_type" => "datetime", "max_length" => "", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Fecha", "titulo_listado" => "", "type" => "date", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Auto", "default" => "", "pk" => "", "extra" => ""), array("column_name" => "descrip", "nullable" => "YES", "data_type" => "varchar", "max_length" => "10000", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Descrip=>", "titulo_listado" => "", "type" => "textarea", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "", "extra" => ""), array("column_name" => "url_img0", "nullable" => "YES", "data_type" => "varchar", "max_length" => "200", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Url Img0=>", "titulo_listado" => "", "type" => "textarea", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "", "extra" => ""), array("column_name" => "url_img1", "nullable" => "YES", "data_type" => "varchar", "max_length" => "200", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Url Img1=>", "titulo_listado" => "", "type" => "textarea", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "", "extra" => ""), array("column_name" => "url_img2", "nullable" => "YES", "data_type" => "varchar", "max_length" => "200", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Url Img3=>", "titulo_listado" => "", "type" => "textarea", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "", "extra" => "")];
+    private $items = [
+        array("column_name" => "id_diag", "nullable" => "NO", "data_type" => "int", "max_length" => "", "numeric_pres" => "10", "dec" => "0", "titulo_campo" => "Id Diag=>", "titulo_listado" => "Id Diag", "type" => "number", "required" => "required", "inline" => "false", "editable" => "readonly", "insert" => "Auto", "default" => "", "pk" => "PRI", "extra" => "auto_increment"),
+        array("column_name" => "cod_cli", "nullable" => "YES", "data_type" => "varchar", "max_length" => "30", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Cod Cli=>", "titulo_listado" => "Cliente", "type" => "db_select", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "clientes=>cod_cli,nombre", "pk" => "MUL", "extra" => ""), 
+        array("column_name" => "usuario", "nullable" => "NO", "data_type" => "varchar", "max_length" => "30", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Usuario=>", "titulo_listado" => "", "type" => "text", "required" => "", "inline" => "false", "editable" => "No", "insert" => "Auto", "default" => "", "pk" => "MUL", "extra" => ""), 
+        array("column_name" => "chapa", "nullable" => "YES", "data_type" => "varchar", "max_length" => "30", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Chapa=>", "titulo_listado" => "Chapa", "type" => "text", "required" => "required", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "MUL", "extra" => ""), 
+        array("column_name" => "marca", "nullable" => "YES", "data_type" => "varchar", "max_length" => "100", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Marca=>", "titulo_listado" => "Marca", "type" => "db_select", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "marcas=>marca,marca", "pk" => "MUL", "extra" => ""), 
+        array("column_name" => "fecha", "nullable" => "YES", "data_type" => "datetime", "max_length" => "", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Fecha", "titulo_listado" => "", "type" => "date", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Auto", "default" => "", "pk" => "", "extra" => ""), 
+        array("column_name" => "descrip", "nullable" => "YES", "data_type" => "varchar", "max_length" => "10000", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Descrip=>", "titulo_listado" => "", "type" => "textarea", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "", "extra" => "")];
     private $primary_key = 'id_diag';
     private $limit = 100;
 
@@ -306,15 +313,7 @@ class Diagnosticos {
         
         @mkdir($path);
 
-        for($i = 0;$i < 3;$i++){
-           ${"img_".$i}  = $data["url_img_$i"];
-           if(${"img_".$i} !== ""){           // Solo si no esta vacia
-              ${"filename_".$i} = "$path/diag_$i.jpg";
-              $this->base64ToImage(${"img_".$i}, ${"filename_".$i});
-           }
-        }
-        
-        
+         
 
         $my = new My();
 
@@ -344,12 +343,29 @@ class Diagnosticos {
 
 
         $Qry = "INSERT INTO $table ($colnames) VALUES($insert_vlues);";
-
-        //echo $Qry;
-
-
         $my->Query($Qry);
+           
+          
+        
         if ($my->AffectedRows() > 0) {
+          $my->Query("select id_diag from diagnosticos order by id_diag desc limit 1");  
+          $my->NextRecord();
+          $id_diag = $my->Record['id_diag'];
+          for($i = 0;$i < 20;$i++){
+            ${"img_".$i}  = $data["url_img_$i"];
+            ${"img_descrip_".$i}  = $data["img_descrip_$i"];
+            if(${"img_".$i} !== ""){           // Solo si no esta vacia
+               ${"filename_".$i} = "$path/diag_$i.jpg";
+               ${"fileonly_".$i} = "diag_$i.jpg";
+               $this->base64ToImage(${"img_".$i}, ${"filename_".$i});
+               
+               $db->Query("INSERT INTO  imagenes(id_diag, url, descrip)VALUES ($id_diag, '${"fileonly_".$i}', '${"img_descrip_".$i}');");
+
+            }else{
+                break;
+            }
+          }
+            
             echo json_encode(array("mensaje" => "Ok"));
         }
         $my->Close();

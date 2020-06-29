@@ -1,6 +1,6 @@
 <!-- begin: headers -->   
     <head>  
-        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=000000" />      
+        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=222" />      
         <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
@@ -46,7 +46,7 @@
     <script type="text/javascript" src="js/functions.js" ></script>  
     
     <script type="text/javascript" src="clientes/clientes.js?_=4564545" ></script> 
-    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=666666666666666666" ></script>
+    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=454545445" ></script>
      
     
 <!-- end:   script -->
@@ -114,24 +114,34 @@
 <input type="button" value="Nuevo" onclick="nuevoCliente()">
 </td>  </tr>
 <tr style="display:none"> <td class="form_label">Fecha</td> <td><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
-<tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
-<tr> <td class="fila_img">Diag 1:</td> 
-    <td> 
-        <img src="img/no_img.png" id="preview_0" width="46" class="img_preview"> 
-        <input type="file" id="file_0" accept="image/*"   class="inputfile" ><label class="capturar"   for="file_0"></label> <textarea class="form_textarea diag_img" id="form_url_img_0" cols="40" rows="3"   ></textarea>
-    </td>  
+<tr> <td class="form_label">Descrip. Gral. :</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
+     <tr>
+         <td colspan="2" style="text-align: left;padding: 2px 2px 2px 4px">
+             <label class="modo">Modo de captura:</label> &nbsp;&nbsp;&nbsp;&nbsp;
+             <label for="explorer" class="modo">Explorador</label><input type="radio" name="modo" class="explorer" id="explorer" value="explorer">
+             <label for="camera"  class="modo">Camara</label><input type="radio" name="modo" class="explorer" id="camera" value="camera" checked="checked" >
+         </td>
+     </tr>
+<tr> 
+    <td colspan="3">
+        <table id="photo_container" border="0" style="margin: 0;padding: 0;width: 100%;border-collapse: collapse">
+            <tr>
+                <td class="fila_img">Diag 1:</td> 
+                <td>
+                    <textarea class="form_textarea" id="form_img_descrip_0" cols="40" rows="3" style="height: auto"   ></textarea>
+                </td> 
+                <td>
+                    <img src="img/no_img.png" id="preview_0" width="46" class="img_preview"> 
+                    <input type="file" id="file_0" accept="image/*"   class="inputfile" ><label class="capturar"   for="file_0"></label> <textarea class="form_textarea diag_img" id="form_url_img_0" cols="40" rows="3"   ></textarea>
+                </td>
+            </tr>
+             
+        </table> 
+    </td> 
+     
 </tr>
-<tr>  <td class="fila_img">Diag 2:</td> 
-    <td>
-        <img src="img/no_img.png" id="preview_1" width="46" class="img_preview"> 
-        <input type="file" id="file_1"  accept="image/*"   class="inputfile" ><label class="capturar" for="file_1"></label> <textarea class="form_textarea diag_img" id="form_url_img_1" cols="40" rows="3"   ></textarea>
-    </td>  
-</tr>
-<tr> <td class="fila_img">Diag 3:</td> 
-    <td> 
-        <img src="img/no_img.png" id="preview_2" width="46" class="img_preview"> 
-        <input type="file" id="file_2" accept="image/*"  onchange="takePhoto(2)" class="inputfile"><label class="capturar"  for="file_2"></label> <textarea class="form_textarea diag_img" id="form_url_img_2" cols="40" rows="3"   ></textarea></td>  
-</tr>
+
+ 
 
 <!-- end:   add_form_data -->
 

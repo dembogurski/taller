@@ -1,5 +1,7 @@
 var openForm = false;
 
+var current_id = 0;
+
 function configurar(){
     $('#diagnosticos').DataTable( {
         "language": {
@@ -84,6 +86,9 @@ function addUI(){
                 $("#form_chapa").change(function(){
                     getDatos($(this).val());
                 });
+                $(".explorer").change(function(){
+                    addCaptureMode();  
+                });
                 configurarCamaras();
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
@@ -108,10 +113,38 @@ function configurarCamaras(){
                 resizeImage(id);
             };
             reader.readAsDataURL(file);
-        }        
-            
-    });    
+        }   
+    });  
+     
+    addCaptureMode();  
+     
 }
+
+function addCaptureMode(){
+    var chk = $(".explorer:checked").val();
+    if(chk === "camera"){
+        $(".inputfile").prop("capture","camera");
+    }else{
+        $(".inputfile").removeAttr("capture");
+    }    
+}
+
+function addPhotoButton(){
+    current_id++;
+    var curplus = current_id + 1;
+    var photoButton = '\
+       <tr> <td class="fila_img">Diag '+curplus+':</td> <td>\n\
+        <textarea class="form_textarea" id="form_img_descrip_'+current_id+'" cols="40" rows="3" style="height: auto"   ></textarea>\n\
+       </td>\n\
+       <td>\n\
+           <img src="img/no_img.png" id="preview_'+current_id+'" width="46" class="img_preview">\n\
+           <input type="file" id="file_'+current_id+'" accept="image/*"   class="inputfile" ><label class="capturar"   for="file_'+current_id+'"></label> <textarea class="form_textarea diag_img" id="form_url_img_'+current_id+'" cols="40" rows="3"   ></textarea> \n\
+        </td>\n\
+      </tr>';
+    $("#photo_container").append(photoButton);
+    configurarCamaras();
+}
+
 function getDatos(chapa){
     $.ajax({
         type: "POST",
@@ -150,6 +183,9 @@ function centerForm(){
    $(".form").height(h);   
    $(".form").fadeIn();
    openForm = true; 
+   if(is_mobile){
+       $(".form_table").width("98%");
+   }
 }
 
 function addData(form){
@@ -349,7 +385,8 @@ function resizeImage(id) {
                 dataurl = canvas.toDataURL(file.type);
                 console.log(dataurl);
                 document.getElementById('form_url_img_'+id).value = dataurl;
-            }
+                addPhotoButton();
+            };
             reader.readAsDataURL(file);
 
         }
