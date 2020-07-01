@@ -21,7 +21,7 @@ function configurar(){
 		"pageLength": 20,
         dom: 'l<"toolbar">frtip',
         initComplete: function(){
-           $("div.toolbar").html('<button type="button" id="add_button_diagnosticos" onclick="addUI()">Nuevo Registro</button>');           
+           $("div.toolbar").html('<img src="img/turbo.png" height="24" onclick="turboFind()" style="margin-botom:-6px;cursor:pointer"><button type="button" id="add_button_diagnosticos" onclick="addUI()" style="margin:0px 20px 4px 4px;font-size:16px;font-weight:bolder">Nuevo Registro</button>');           
         },
         "autoWidth": false,
          "order": [[ 0, "desc" ]]
@@ -35,6 +35,10 @@ function configurar(){
     
 }  
  
+function turboFind(){
+    var search = $("#diagnosticos_filter").find("[type=search]").val();
+    genericLoad("diagnosticos/Diagnosticos.class.php?filter="+search+"");
+} 
 
 function editUI(pk){
     $.ajax({

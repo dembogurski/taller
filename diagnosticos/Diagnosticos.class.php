@@ -33,7 +33,9 @@ class Diagnosticos {
     }
 
     function main() {
-
+        $filter = $_REQUEST['filter'];
+         
+        
         $columns = "";
         foreach ($this->items as $array) {
             $titulo_listado = $array['titulo_listado'];
@@ -316,12 +318,27 @@ class Diagnosticos {
          
 
         $my = new My();
-
+        
+        $cod_cli = 0;
+        $chapa = "";
+        $marca = "";
+        
         foreach ($data as $key => $value) {
 
-            if ($key == "marca") {
+             
+            if ($key == "cod_cli") {
+                $cod_cli = $value;
                 $my->Query("update marcas set hits = hits + 1 where marca = '$value'");
             }
+            if ($key == "chapa") {
+                $value = strtoupper($value); 
+                $chapa = $value; 
+            }
+            if ($key == "marca") {
+                $marca = $value; 
+                $my->Query("update marcas set hits = hits + 1 where marca = '$value'");
+            }
+            
             foreach ($this->items as $arr) {
                 if ($arr["column_name"] == $key) {
 
@@ -338,6 +355,15 @@ class Diagnosticos {
                 }
             }
         }
+        $chapas = "SELECT COUNT(*) AS cant FROM moviles WHERE codigo_entidad = '$cod_cli' AND chapa = '$chapa'";
+          
+        $my->Query($chapas);
+        $my->NextRecord();
+        $cant = $my->Record['cant'];
+        if($cant == 0 && $cod_cli !== 'C000001'){
+            $my->Query("INSERT INTO moviles( codigo_entidad,chapa, marca)VALUES ('$cod_cli','$chapa', '$marca');"); 
+        }
+        
         $colnames = substr($colnames, 0, -1);
         $insert_vlues = substr($insert_vlues, 0, -1);
 
