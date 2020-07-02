@@ -32,7 +32,13 @@ function configurar(){
            centerForm();
         }
     });   
-    
+    $("#diagnosticos_filter").find("[type=search]").val($("#filter").val());
+    $(window).on("navigate", function (event, data) {
+        var direction = data.state.direction; alert(direction);
+        if (direction == 'back') {  
+           showMenu();
+        } 
+    });    
 }  
  
 function turboFind(){
@@ -54,10 +60,12 @@ function editUI(pk){
         complete: function (objeto, exito) {
             if (exito === "success") {                          
                 var form = objeto.responseText;                  
-                centerForm(); 
+                
                 $(".form").html(form);
                 $("#msg").html("");  
                 buscarLogo(); 
+                centerForm(); 
+                getImagesOfDiagnostics();
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
             }
@@ -66,6 +74,44 @@ function editUI(pk){
            $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
         }
     });   
+}
+function getImagesOfDiagnostics(){
+    var id_diag = $("#form_id_diag").val();
+    $.ajax({
+        type: "POST",
+        url: "diagnosticos/Diagnosticos.class.php",
+        data: {action: "getImagesOfDiagnostics" , id_diag: id_diag,  usuario: getNick()},        
+        async: true,
+        dataType: "json",
+        beforeSend: function () {             
+            $("#msg_diagnosticos").html("<img src='img/loading_fast.gif'  >");
+        },
+        success: function (data) {   
+
+            if(data.length > 0){ 
+                for(var i in data){
+                    var url = data[i].url;
+                    var descrip = data[i].descrip;
+                    var img_path = "files/diagnosticos/"+id_diag+"/"+url;
+                    var tr = '<tr><td>Diag '+i+'</td><td>'+descrip+'</td><td><img onclick=verImagen("'+img_path+'") src="'+img_path+'" width="50"></td></tr>';
+                    $("#photo_container").append(tr);
+                }
+            }else{
+                $("#form_cod_cli").val("C000001");
+            }    
+            $("#msg_diagnosticos").html("");   
+        },
+        error: function (err) { 
+          $("#msg_diagnosticos").addClass("error");
+          $("#msg_diagnosticos").html(err);
+        }
+    });        
+}
+
+function verImagen(url){
+    var params = "width=1024,height=760,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=no,location=no";
+    var title = "Imagen de Diagnostico";
+    window.open(url,title,params);
 }
 
 function addUI(){

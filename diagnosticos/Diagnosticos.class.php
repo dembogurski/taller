@@ -55,12 +55,15 @@ class Diagnosticos {
 
 
         $t = new Y_Template("Diagnosticos.html");
+        $t->Set("filter",$filter);
         $t->Show("headers");
         $t->Show("insert_edit_form"); // Empty div to load here  formulary for edit or new register 	  
         $db = new My();
         //$Qry = "SELECT  $columns FROM  $this->table LIMIT $this->limit"; 
         $Qry = "SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC";
-
+        if($filter !== ""){
+            $Qry = "SELECT DISTINCT g.id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca             FROM diagnosticos g, clientes c, imagenes i WHERE g.cod_cli = c.cod_cli AND g.id_diag = i.id_diag   AND (g.descrip LIKE '%$filter%' OR i.descrip LIKE '%$filter%')   ORDER BY id_diag DESC";
+        }
 
         $db->Query($Qry);
 
@@ -252,7 +255,14 @@ class Diagnosticos {
         $t->Show("edit_form_data");
         $t->Show("edit_form_foot");
     }
-
+    function getImagesOfDiagnostics(){
+        $id_diag = $_REQUEST['id_diag'];
+        require_once '../Functions.class.php';
+        $f = new Functions();
+        
+        $arr = $f->getResultArray("SELECT url,descrip FROM imagenes WHERE id_diag = $id_diag;");
+        echo json_encode($arr);
+    }
     function updateData() {
         $master = $_REQUEST['master'];
         $table = $this->table;

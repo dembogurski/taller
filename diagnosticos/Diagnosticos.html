@@ -12,6 +12,7 @@
 <!-- end:   insert_edit_form -->
 
 <!-- begin: data_header -->
+<input type="hidden" id="filter" value="{filter}">
 <div class="list_container">      
     <table id="diagnosticos"  border="1" class="display responsive nowrap db_tablename"  >
         <thead>
@@ -46,7 +47,7 @@
     <script type="text/javascript" src="js/functions.js" ></script>  
     
     <script type="text/javascript" src="clientes/clientes.js?_=4564545" ></script> 
-    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=454545445" ></script>
+    <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=6666666666666666" ></script>
      
     
 <!-- end:   script -->
@@ -70,11 +71,14 @@
 <select class="form_db_select MUL" id="form_cod_cli"   >{value_of_cod_cli}</select>
 </td>  </tr>
 <tr > <td class="form_label">Fecha</td> <td><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
-<tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   >{value_of_descrip}</textarea></td>  </tr>
-<tr> <td class="form_label">Diag 1:</td> <td><textarea class="form_textarea" id="form_url_img0" cols="40" rows="3"   >{value_of_url_img0}</textarea></td>  </tr>
-<tr> <td class="form_label">Diag 2:</td> <td><textarea class="form_textarea" id="form_url_img1" cols="40" rows="3"   >{value_of_url_img1}</textarea></td>  </tr>
-<tr> <td class="form_label">Diag 3:</td> <td><textarea class="form_textarea" id="form_url_img3" cols="40" rows="3"   >{value_of_url_img3}</textarea></td>  </tr>
-
+<tr> <td class="form_label">Descrip Gral:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   >{value_of_descrip}</textarea></td>  </tr>
+ 
+<tr> 
+    <td colspan="3">
+        <table id="photo_container" border="0" style="margin: 0;padding: 0;width: 100%;border-collapse: collapse"></table> 
+    </td> 
+     
+</tr>
 <!-- end:   edit_form_data -->
 
 
@@ -90,9 +94,7 @@
 </table> 
 <!-- end:   edit_form_foot -->
 
-
-
-
+ 
 
 
 <!-- begin: add_form_cab -->  
