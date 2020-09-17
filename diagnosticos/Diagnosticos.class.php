@@ -103,7 +103,7 @@ class Diagnosticos {
         require_once '../Functions.class.php';
         $f = new Functions();
         $chapa = $_REQUEST['chapa'];
-        $arr = $f->getResultArray("SELECT marca, c.cod_cli FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = '$chapa'");
+        $arr = $f->getResultArray("SELECT marca, c.cod_cli,nombre FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = '$chapa'");
         echo json_encode($arr);
     }
 

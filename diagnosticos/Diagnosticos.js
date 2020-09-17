@@ -93,7 +93,7 @@ function getImagesOfDiagnostics(){
                     var url = data[i].url;
                     var descrip = data[i].descrip;
                     var img_path = "files/diagnosticos/"+id_diag+"/"+url;
-                    var tr = '<tr><td>Diag '+i+'</td><td>'+descrip+'</td><td><img onclick=verImagen("'+img_path+'") src="'+img_path+'" width="50"></td></tr>';
+                    var tr = '<tr class="fila_diag"><td style="width:10%;font-weight:bolder" >Diag '+i+'</td><td class="diag_descrip">'+descrip+'</td><td><img onclick=verImagen("'+img_path+'") src="'+img_path+'" width="50"></td></tr>';
                     $("#photo_container").append(tr);
                 }
             }else{
@@ -210,8 +210,10 @@ function getDatos(chapa){
             if(data.length > 0){ 
                 var marca = data[0].marca;
                 var cod_cli = data[0].cod_cli;
+                var cliente = data[0].nombre;
                 $("#form_marca").val(marca);
-                $("#form_cod_cli").val(cod_cli);
+                $("#form_cod_cli").attr("data-cod_cli",cod_cli);
+                $("#form_cod_cli").val(cliente);
                 
                 buscarLogo(); 
             }else{
