@@ -61,10 +61,10 @@ class Diagnosticos {
         $db = new My();
         //$Qry = "SELECT  $columns FROM  $this->table LIMIT $this->limit"; 
         $Qry = "SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC";
-        if($filter !== ""){
-            $Qry = "SELECT DISTINCT g.id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca             FROM diagnosticos g, clientes c, imagenes i WHERE g.cod_cli = c.cod_cli AND g.id_diag = i.id_diag   AND (g.descrip LIKE '%$filter%' OR i.descrip LIKE '%$filter%')   ORDER BY id_diag DESC";
+        if(isset($_REQUEST['filter'])){
+            $Qry = "SELECT DISTINCT g.id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca   FROM diagnosticos g, clientes c, imagenes i WHERE g.cod_cli = c.cod_cli AND g.id_diag = i.id_diag   AND (g.descrip LIKE '%$filter%' OR i.descrip LIKE '%$filter%')   ORDER BY id_diag DESC";
         }
-
+ 
         $db->Query($Qry);
 
         if ($db->NumRows() > 0) {
@@ -425,6 +425,19 @@ class Diagnosticos {
         fclose($file);
 
         return $output_file;
+    }
+    function buscarClientes(){ 
+        require_once '../Functions.class.php'; 
+        $filter = $_REQUEST['filter'];
+         
+        $sql = "SELECT cod_cli, nombre FROM clientes WHERE nombre LIKE '$filter%'";
+        
+        
+        $f = new Functions();
+        
+        $arr = $f->getResultArray($sql);
+        echo json_encode($arr);
+         
     }
 
 }

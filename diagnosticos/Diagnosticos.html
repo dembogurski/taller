@@ -45,9 +45,10 @@
     <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
     <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript" src="js/functions.js" ></script>  
-    
+    <script type="text/javascript" src="js/jquery.autocomplete.js" ></script>
     <script type="text/javascript" src="clientes/clientes.js?_=4564545" ></script> 
     <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=6666666666666666" ></script>
+    
      
     
 <!-- end:   script -->
@@ -113,7 +114,8 @@
 </td>  </tr>
 <tr> <td class="form_label">Cliente:</td> <td>
         <input class="form_text MUL" id="form_cod_cli" value="" data-cod_cli="" size="30"  >  
-<input type="button" value="Nuevo" onclick="nuevoCliente()">
+        <input type="button" value="Nuevo" onclick="nuevoCliente()">
+        <div id="suggesstion-box"></div>
 </td>  </tr>
 <tr style="display:none"> <td class="form_label">Fecha</td> <td><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
 <tr> <td class="form_label">Descrip. Gral. :</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>

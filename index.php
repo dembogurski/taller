@@ -25,7 +25,7 @@
 
 <body>
     <div> 
-        <div style="text-align: center" > <img src="img/logo.png" width="424px" height="124" alt="  "> </div>
+        <div style="text-align: center" > <img src="img/ElZar.jpeg" width="324px" height="144" alt="  "> </div>
            <h2 class="titulo_inicial">   Inicia sesi&oacute;n para acceder al Sistema    </h2> 
            <div name="login" class="login">
                <form method="post" name="loginform" action="Main.class.php">

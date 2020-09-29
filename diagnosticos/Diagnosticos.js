@@ -2,6 +2,12 @@ var openForm = false;
 
 var current_id = 0;
 
+var clientes = null;
+
+var availableTags = [
+	{key: "1",value: "NAME 1"},{key: "2",value: "NAME 2"},{key: "3",value: "NAME 3"},{key: "4",value: "NAME 4"},{key: "5",value: "NAME 5"}
+	 ];
+
 function configurar(){
     $('#diagnosticos').DataTable( {
         "language": {
@@ -140,6 +146,11 @@ function addUI(){
                     addCaptureMode();  
                 });
                 configurarCamaras();
+                 $("#form_cod_cli").keyup(function(){
+                    buscarClientes();  
+                 });
+                
+                
             }else{
                 $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
             }
@@ -148,6 +159,42 @@ function addUI(){
            $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
         }
     });   
+}
+function buscarClientes(){
+   var filter = $("#form_cod_cli").val();
+   $.ajax({
+        type: "POST",
+        url: "diagnosticos/Diagnosticos.class.php",
+        data: {action: "buscarClientes" , filter: filter },        
+        async: true,
+        dataType: "json",
+        beforeSend: function () {             
+           $("#form_cod_cli").css("background","#FFF url(img/loading_fast.gif) no-repeat 165px");  
+        },
+        success: function (data) {   
+            var clientes = "<ul id='lista_clientes'>";
+            if(data.length > 0){ 
+               for(var i in data){
+                  var codigo = data[i].cod_cli;
+                  var nombre = data[i].nombre;
+                  clientes+="<li class='cli_"+codigo+"' onclick=selectCliente('"+codigo+"')>"+nombre+"</li>"; 
+               }                
+               $("#suggesstion-box").show();
+	       $("#suggesstion-box").html(clientes);
+	        
+            } ; 
+            clientes+="</ul>";
+            $("#form_cod_cli").css("background","#FFF");
+        },
+        error: function (err) { 
+           console.log("Error: "+err);
+        }
+    });     
+}
+function selectCliente(codigo) {
+    $("#form_cod_cli").val($(".cli_"+codigo).text());
+    $("#form_cod_cli").attr("data-cod_cli",codigo);
+    $("#suggesstion-box").hide();
 }
 function configurarCamaras(){
    $('.inputfile').change(function(evt) {
@@ -250,6 +297,9 @@ function addData(form){
      var column_name = $(this).attr("id").substring(5,60);
      var val = $(this).val(); 
      var req = $(this).attr("required");
+     if(column_name === "cod_cli"){
+         val = $(this).attr("data-cod_cli");
+     }
       
      if(req === "required" && val === ""){
          $(this).addClass("required");     

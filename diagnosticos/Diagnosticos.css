@@ -173,3 +173,25 @@ input[type=number] {
 .diag_descrip{
     border:solid orange 1px
 }
+
+
+#lista_clientes{
+    float:left;
+    list-style:none;
+    margin-top:-3px;
+    padding:0;
+    width:190px;
+    position: absolute;
+}
+#lista_clientes li{
+    padding: 10px; 
+    background: #f0f0f0; 
+    border-bottom: #bbb9b9 1px solid;
+}
+#lista_clientes li:hover{
+    background:#ece3d2;
+    cursor: pointer;
+}
+#form_cod_cli{
+    padding: 2px;   
+}
