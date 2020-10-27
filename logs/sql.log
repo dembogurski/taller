@@ -4515,3 +4515,4 @@ Nsnsnnsnnsnsms');  0
 ()[29-09-2020 00:00:41],[::1] SELECT cod_cli, nombre FROM clientes WHERE nombre LIKE 'mi%'  0  
 ()[29-09-2020 00:00:41],[::1] SELECT cod_cli, nombre FROM clientes WHERE nombre LIKE 'mi%'  0  
 ()[29-09-2020 00:00:42],[::1] SELECT cod_cli, nombre FROM clientes WHERE nombre LIKE 'mi%'  0  
+(douglas)[29-09-2020 00:05:31],[::1] update sesiones s set expira = (SELECT NOW()+INTERVAL 3600 MINUTE) WHERE  s.usuario = 'douglas' AND s.serial = 'cf5cb0ca68fddd311b37d5cc26dd8d2d22fdcf01' AND s.estado = 'Activa';  0  
