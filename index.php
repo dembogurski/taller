@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="img/logo.png" />
     <?php
     if(!isset($_REQUEST['relogin'])){
-        echo '<script type="text/javascript" src="js/jquery-3.3.1.min" > </script>';        
+        echo '<script type="text/javascript" src="js/jquery-3.3.1.min.js" > </script>';        
     }
     ?>
     <script type="text/javascript" src="js/login.js?_=000000000000000111111" > </script>
