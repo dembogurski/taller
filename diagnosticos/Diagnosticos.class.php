@@ -102,8 +102,10 @@ class Diagnosticos {
     function getDatos() {
         require_once '../Functions.class.php';
         $f = new Functions();
-        $chapa = $_REQUEST['chapa'];
-        $arr = $f->getResultArray("SELECT marca, c.cod_cli,nombre FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = '$chapa'");
+        $chapa = trim($_REQUEST['chapa']);
+        $sql = "SELECT marca, c.cod_cli,nombre FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = '$chapa'";
+         
+        $arr = $f->getResultArray($sql);
         echo json_encode($arr);
     }
 
@@ -439,6 +441,7 @@ class Diagnosticos {
         echo json_encode($arr);
          
     }
+     
 
 }
 

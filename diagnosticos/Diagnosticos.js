@@ -46,6 +46,39 @@ function configurar(){
         } 
     });    
 }  
+function buscarPropietario(){
+    var form_chapa = $("#form_chapa").val();
+    $.ajax({
+        type: "POST",
+        url: "diagnosticos/Diagnosticos.class.php",
+        data: {action: "buscarPropietario" , form_chapa: form_chapa,  usuario: getNick()},        
+        async: true,
+        dataType: "json",
+        beforeSend: function () {             
+            $("#msg_diagnosticos").html("<img src='img/loading_fast.gif'  >");
+        },
+        success: function (data) {   
+
+            if(data.length > 0){  
+                var nombre = data[0].cliente;
+                var codigo_entidad = data[0].codigo_entidad;
+                var marca = data[0].marca; 
+                $("#form_marca").val(marca);
+                $("#form_cod_cli").val(nombre);
+                $("#form_cod_cli").attr("data-cod_cli",codigo_entidad);
+                $("#form_marca").val(marca);
+                buscarLogo();                
+            }else{
+                $("#msg_diagnosticos").val("C000001");
+            }    
+            $("#msg_diagnosticos").html("");   
+        },
+        error: function (err) { 
+          $("#msg_diagnosticos").addClass("error");
+          $("#msg_diagnosticos").html(err);
+        }
+    });         
+}
  
 function turboFind(){
     var search = $("#diagnosticos_filter").find("[type=search]").val();
