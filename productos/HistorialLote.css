@@ -145,3 +145,63 @@ datalist {
 .no_mnj_x_lotes{
     display:none;
 }
+.dato_lote{
+    display:none;
+}
+.item{
+    padding-left: 2px;
+    font-size: 12px;
+    font-family: cambria;
+}
+.itemc {
+    text-align: center;
+    font-size: 12px;
+    font-family: cambria;
+}
+.num{
+    text-align: right;
+    padding-right: 2px;
+    font-size: 12px;
+    font-family: cambria;
+}
+.Normal{
+    color:black;  
+    background-color: #4cd137;
+}
+.Arribos{
+    color:white;  
+    background-color: #fbc531;
+}
+.Oferta{
+    color:white; 
+    background-color: #00a8ff;    
+}
+.Retazo{
+    color:white;
+    background-color: #AD8BFE;
+}
+.Promocion{
+    color:black; 
+    background-color: orange;
+}
+.FP{
+    color:white; 
+    background-color: #c23616;  
+}
+.Bloqueado{
+    color:black; 
+    background-color: gray; 
+}
+
+.tabla_stock_comprometido{ 
+    border-collapse: collapse;
+    border:solid gray 1px;;
+    margin: 0 auto;
+}
+.tabla_stock_comprometido td{
+    margin: 0 4px;
+    padding:3px; 
+}  
+.cursor{
+    cursor: pointer
+}

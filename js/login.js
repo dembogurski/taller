@@ -78,7 +78,7 @@ $(document).ready(function () {
     }else{
         touch = false; 
     }
-     
+    // alert( $(document).width());
 });
 // device detection
 function is_mobile(){

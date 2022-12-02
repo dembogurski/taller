@@ -1,0 +1,110 @@
+
+/* 
+    Created on : 16-mar-2021, 9:40:48
+    Author     : Doglas
+*/
+
+.col_grupo{   
+    width: 60px;
+    min-width: 54px    
+}
+.mate{    
+    padding-left: 1.5%
+}
+.oculto{
+    display: none;
+}
+ 
+.check_permiso{
+    margin: 1px;  
+    display: none;
+}
+.unselected{
+    background-color: orange
+}    
+.selected{
+    background-color: white
+}
+.selectable{
+    border:solid orange 1px;
+    border-radius: 3px 3px  3px 3px;
+    font-weight: bolder;
+    cursor: pointer;    
+    padding: 2px;
+    margin: 2px;
+    float:left;
+    width: 76px;
+    height: 28px;
+}
+
+.marcada{
+    background-color: #dddccc;
+}
+
+.selectors{
+    font-size: 11px;
+    border-radius: 6px;
+    background-color: lightskyblue
+}
+
+.check_permiso[type="checkbox"]{
+    display: none;
+}
+  
+.v:not(:checked) + div.chv{
+    margin: 2px 2px;
+    height: 8px;
+    width: 8px;
+    background-color: lightsteelblue;
+}
+
+.v:checked + div.chv{
+    margin: 2px 2px;
+    height: 8px;
+    width: 8px;
+    -webkit-border-radius: 11px;
+    -moz-border-radius: 11px;
+    border-radius: 11px;
+    background-color: green;
+}
+.e:not(:checked) + div.che{
+    margin: 2px 2px;
+    height: 8px;
+    width: 8px;
+    background-color: lightsteelblue;
+}
+
+.e:checked + div.che{
+    margin: 2px 2px;
+    height: 8px;
+    width: 8px;
+    -webkit-border-radius: 11px;
+    -moz-border-radius: 11px;
+    border-radius: 11px;
+    background-color: green;
+}
+
+.m:not(:checked) + div.chm{
+    margin: 2px 2px;
+    height: 8px;
+    width: 8px;
+    background-color: lightsteelblue;
+}
+
+.m:checked + div.chm{
+    margin: 2px 2px;
+    height: 8px;
+    width: 8px;
+    -webkit-border-radius: 11px;
+    -moz-border-radius: 11px;
+    border-radius: 11px;
+    background-color: green;
+}
+
+div[class^=ch]{
+    float: left; 
+}
+
+.foco{
+   background-color: #cccfff; 
+}

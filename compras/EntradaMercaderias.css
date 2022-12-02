@@ -44,7 +44,7 @@
     font-family: sans-serif;
     font-size: 12px;
     font-weight: normal;
-    background-color: #F0F0F0; //Casi blanco    
+    background-color: #F0F0F0; /*Casi blanco   */
     border-color: #999999;
     border-collapse: collapse;
     margin: 10px; 
@@ -82,7 +82,7 @@
     font-family: sans-serif;
     font-size: 12px;
     font-weight: normal;
-    background-color: whitesmoke; //Casi blanco
+    background-color: whitesmoke; /*Casi blanco */
     border-color: #999999;
     border-collapse: collapse;
     margin-top: 10px;
@@ -97,18 +97,20 @@
 }
 #area_carga{
     display: none; 
-    padding-left: 4px;
-    padding-top: 10px;
+    padding-left: 2px;
+    padding-top: 4px;
 }
 #ui_proveedores{
     padding-left: 4px;
+    position:absolute;
+    width:80%;
 }
 #lista_proveedores{
-    width: auto;
+    width: 80%;
     font-size: 12px;
     font-family: sans-serif;
     margin-top: 5px;
-    min-width: 46%;
+    
 }
 #lista_proveedores tr:hover td{
     background-color: #dddacd;
@@ -118,7 +120,7 @@
     padding-left: 4px;
 }
 .tr_cli_data{
-     background-color: #F0F0F0; //Casi blanco
+     background-color: #F0F0F0; /*Casi blanco*/
 } 
 
 #ventas{
@@ -182,8 +184,9 @@
         width: 800px;         
         display:none;
         text-align: left;
-        height: auto;        
+        height: 500px;        
         margin: 10% 1px 1px 10%;    
+        overflow-y: scroll
 }
 .fila_ent{
     background-color: white;
@@ -310,13 +313,12 @@ div#toolbox{
     position: fixed;
     top: 50%;
     left: 355px;
-    height: 325px;
-    width: 282px;
-    background-color: brown;
+    /*height: 325px;
+    width: 282px; */
 }
 div#toolbox div.header{
     position: relative;
-    width: 282px;
+    width: 310px;
     height: 18px;
 }
 div#toolbox div.header span{
@@ -344,8 +346,13 @@ div#toolbox div.toolbox_colores ul{
     list-style:none;    
     z-index: 1;
     left: 5px;
-    top: 16px;
-    
+    top: 16px;    
+}
+.edit_table{   
+    background-color: #ffc048
+}
+.tbColor{
+    width: 200px;
 }
 div#toolbox div.toolbox_colores ul li{
     padding: 0px 5px 3px;
@@ -359,8 +366,9 @@ div#toolbox label{
     font-family: "Courier New", Courier, monospace;
     letter-spacing: -1px;
     text-align: left;
-    color: lightblue;
+    cursor:pointer;
     width: 100%;
+    font-weight: bold
 }
 div#toolbox input[type="checkbox"]{
     vertical-align: middle;   
@@ -399,4 +407,13 @@ div#toolbox button#guardarColor img{
 #expenses input{
     padding: 0px 2px 0px 2px;
     margin: 0px
+}
+.novisible{
+    display:none
+}
+#td_img{
+   text-align: center    
+}    
+.cotizacion{
+    display: none
 }

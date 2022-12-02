@@ -29,6 +29,8 @@ var max_mts_fp = 0;
 var art_inv = true; //Articulo de Inventario
 var mnj_x_lotes = 'Si'
 
+var total_valor_puntos = 0;
+
 var PORC_VALOR_MINIMO = 1.25;
 
 var UMBRAL_VENTA_MINORISTA = 9999999999;             
@@ -38,6 +40,20 @@ var UMBRAL_VENTA_MINORISTA_FORMATTED =  (UMBRAL_VENTA_MINORISTA).format(0, 3, '.
 
 var CI_DIP = "C.I. Diplomatica";
    
+/**************Caja*************/
+   var rs = 0; // Cotizacion en Reales Pesos y Dolares
+   var ps = 0;
+   var us = 0;
+   var factura = 0;
+   var mon_vuelto = "G$";
+   var vuelto_gs = 0;
+   var cotiz_vuelto = 1; // Cotizacion del Vuelto
+   var global_cotiz = 1; 
+   var errorVuelto = false;
+   var TOPE_ENTREGA = 40;
+   var clics_cc = 0;
+   var ventana;
+   var impresion_factura_cerrada = false;
 
 
 function inicializar(){
@@ -116,11 +132,11 @@ function inicializar(){
             e.preventDefault(); 
             if(data_next_time_flag){
                data_next_time_flag = false;   
-                if($("#fp").is(":checked")){ 
+                /*if($("#fp").is(":checked")){ 
                     $("#fp").prop('checked', false);
                 }else{
                     $("#fp").prop('checked', true); 
-                }
+                }*/
                 setTimeout("setDefaultDataNextFlag()",600);  
            } 
         }
@@ -182,7 +198,9 @@ function inicializar(){
             if(!shift){    $(".capslock").trigger("click");     }    
         });
     } 
-    var pref = $("#pref_pago").val();
+    // var pref = $("#pref_pago").val();
+    var pref = "Contado";
+    
     if(pref == "Contado" ){
         $("#contado").prop("checked",true);
         $("#tarjeta").prop("checked",false);
@@ -196,12 +214,107 @@ function inicializar(){
        $("#tarjeta").prop("checked",false); 
        $("#finalizar").prop("disabled",true); 
     }
+    /*
     var cat = $("#categoria").val();
     if(cat > 2){
         getHistorialPrecios();
-    }
-  
+    }  */
     setHotKeyArticulo();      
+    var auto_search = $("#auto_buscar_cliente").val();
+    if(auto_search == "true"){
+        buscarCliente("#nombre_cliente");
+    }
+    
+/*******************Caja*********************/
+        $(window).scroll(function(){
+             $('#popup_caja').animate({top:$(window).scrollTop()+"px" },{queue: false, duration: 350});
+         });
+         $(".entrega").change(function(){
+             var resto = 0;
+             if($(this).attr("id")=="entrega_gs"){
+                resto = $(this).val() % 50;    
+             }
+             if(resto > 0 ){
+                 errorMsg("Ingrese en multiplos de 50 guaranies",8000)
+             }
+             var n = parseFloat( $(this).val() - resto ).format(2, 3, '.', ',') ;
+             $(this).val( n  );
+             if($(this).val() =="" || $(this).val() =="NaN" ){
+                $(this).val( 0);
+             } 
+             setRef();
+         }); 
+         $("*[data-next]").keyup(function (e) {
+             if (e.keyCode == 13) {
+               var next =  $(this).attr("data-next");
+               $("#"+next).focus();  
+             } 
+         }); 
+         $(".efectivo").change(function(){
+             showMult($(this).attr("id"));
+         });
+         $(".efectivo").on("focus",function(){  
+            $(this).select()
+         });
+         $(".entrega_conv").change(function(){
+             var voucher = $.trim($("#voucher").val());
+             var monto_conv = float("monto_conv");
+             if(voucher !="" && monto_conv > 0){
+                 $("#add_conv").removeAttr("disabled");
+             }else{
+                 $("#add_conv").attr("disabled",true);
+             }        
+         });
+         $(".plan_pago").click(function(){
+             setPlanPago($(this).val());
+         });
+         
+         $("#nro_cheque").mask("9999?99999999").css("text-transform","uppercase");
+         $("#nro_cuenta").mask("****?********",{placeholder:""});
+         $("#voucher").mask("****?99999999",{placeholder:""});
+         //$("#benef").mask("***?********************************************************************************************************************************************",{placeholder:""});
+         $("#fecha_emision").mask("99/99/9999");
+         $("#fecha_pago").mask("99/99/9999");
+         $("#fecha_ret").mask("99/99/9999");
+         $("#fecha_inicio").mask("9?99");
+         $("#fecha_trasnf").mask("99/99/9999"); 
+         
+         $("#orden_benef").mask("***?*********************************************",{placeholder:""});
+         $("#monto_orden").mask("9?999999999");
+         $("#nro_orden").mask("9?999999999");
+           
+         $("select > option:nth-child(even)").css("background","#F0F0F5"); // Color Zebra para los Selects
+         $("#benef").css("text-transform","uppercase"); // Beneficiario en el Cheque todo en Mayusculas
+         $("#ui_add_cheque input").change(function(){ checkCheque() });
+         
+         $("#convenios").change(function(){
+             var val = $(this).val();
+             var tipo =   $("#convenios option:selected").attr("data-tipo");
+             if(val == 17){ // Retenciones
+                 $(".retencion").fadeIn();
+             }else{
+                 $(".retencion").fadeOut();
+             }
+             
+             if(tipo == "Asociacion"){
+                $("#tipo_nro").html("N&deg; Orden:"); 
+             }else if(tipo == "Tarjeta Credito" || tipo == "Tarjeta Debito" ){
+                 $("#tipo_nro").html("N&deg; Voucher:"); 
+             }if(tipo == "Criptomoneda"){
+                 $("#tipo_nro").html("N&deg; Cupon:"); 
+                 $("#voucher").unmask();
+             }else{ // Retencion
+                 $("#tipo_nro").html("N&deg; Retencion:"); 
+             }
+         });
+         statusInfo();
+         $( "#tabs" ).tabs();
+         
+         
+         if($("#estado").val() !== "Cerrada"){
+             $("#notas").removeAttr("readonly");
+         } 
+
 }
 function showKeyPad(){
     showNumpad("lote",buscarCodigo,false);
@@ -263,13 +376,20 @@ function mostrar(){
 function cambiarMonedaFactura(){ 
     var mon = $("#moneda").val();
     if(mon == "G$"){
-        moneda = "U$";$("#moneda").val("U$");
+        moneda = "U$";
+        $("#moneda").val("U$");
+        $(".cotiz").fadeIn();
         getCotiz();
     }else{
-        moneda = "G$";$("#moneda").val("G$");$("#cotiz").val("1");
+        moneda = "G$";
+        $("#moneda").val("G$");
+        $("#cotiz").val("1");
+        $(".cotiz").fadeOut();
     } 
 }
-function verificarMoneda(){ 
+function verificarMoneda(){
+    factura = $("#factura").val(); 
+   
     totalizar();
     
     var mon = $("#moneda").val();
@@ -375,6 +495,7 @@ function setFP(){
 }
     
 function mostrarAreaDeCarga(factura){
+    factura = factura;
     $("#msg").html("");
     $("#factura").val(factura); 
     $(".factura_inv").toggleClass("factura");
@@ -387,16 +508,18 @@ function crearFactura(){
     var usuario = getNick();
     var suc = getSuc();
     var cod_cli = $("#codigo_cliente").val();
-      
+    var nro_diag = $("#nro_diagnostico").val();  
      
     var moneda = $("#moneda").val();
     var cotiz = $("#cotiz").val();
+    var notas = $("#notas").val();
      
     if(moneda != "G$"){
         decimales = 2;
     }
     
     var tipo_doc = $("#tipo_doc").val();   
+    var estado = $("#estado").val(); 
     //var turno = parseFloat($("#turno").val()); //No utilizado
     var turno = 1;
     if(isNaN(turno)){
@@ -419,7 +542,7 @@ function crearFactura(){
         $.ajax({
                 type: "POST",
                 url: "ventas/NuevaVenta.class.php",
-                data: {"action":"crearFactura","usuario":usuario,"cod_cli":cod_cli,"suc":suc,"moneda":moneda,"cotiz":cotiz,turno:turno,"id":turnoData.id,"fecha":turnoData.fecha,"llamada":turnoData.llamada}, 
+                data: {"action":"crearFactura","usuario":usuario,"cod_cli":cod_cli,"suc":suc,"moneda":moneda,"cotiz":cotiz,estado:estado,notas:notas,turno:turno,"id":turnoData.id,"fecha":turnoData.fecha,"llamada":turnoData.llamada,nro_diag:nro_diag}, 
                 async:true,
                 dataType: "html",
                 beforeSend: function(){
@@ -431,6 +554,9 @@ function crearFactura(){
                       operacion = "editar";
                       $("#operacion").val("editar")
                       mostrarAreaDeCarga(factura);
+                      if(nro_diag != ""){
+                          $("#notas").val("Basado en Diagnostico Nro: "+nro_diag);
+                      }
                       $(".turno").fadeOut();
                     }
                 },
@@ -467,21 +593,20 @@ function chequearDatos(){
     var limiteCredito = parseFloat($("input#limite_credito").data('limite'));
     var limiteReal = parseFloat($("input#limite_credito").data('limiteReal'));
     var restantes = chequearLimite();
-    var cm_falla = float("cm_falla");   
-    var gramaje = float("gramaje");
-    var ancho = float("ancho");
+    var cm_falla = 0;   
+    var gramaje = 1;
+    var ancho = 1;
     var um = $("#um").val();   
     var fin_pieza = $("#estado_fp").html();
+    var limite_stock_negativo = parseFloat($("#limite_stock_negativo").val());
+     console.log("limite_stock_negativo  " +limite_stock_negativo);
 
     $("input#limite_credito").val((limiteCredito - subtotal).format(0,3,'.',','));
-    
-    if(lote.length > 2 && codigo.length > 2  && stock > 0 && cantidad > 0){
-        if(art_inv){
-           //getLotesMenores(lote,cantidad);
-        }
-    }
+     
+     console.log("(cantidad >= (stock - limite_stock_negativo)) "+ (cantidad >= (stock - limite_stock_negativo)));
 
-    if(lote.length > 2 && codigo.length > 2  && stock > 0 && (precio_venta >= precio) && precio > 0 && ((stock >= cantidad) && (cantidad > 0) )  && restantes > 0 && cm_falla <=40 && fin_pieza != "FP" /*&& ((limiteCredito - subtotal) > 0 || limiteReal == 0) */){// 40 Cm con la Autorizacion de la Gerente
+    // Se desabilito la opcion de controlar que no deje bajar mas el precio que lo que corresponde a la categoria del cliente
+    if(lote.length > 2 && codigo.length > 2  && stock > limite_stock_negativo /*&& (precio_venta >= precio) */ && ( ( (stock - limite_stock_negativo) >= cantidad) && (cantidad > 0) )  && restantes > 0   ){ 
        
         if($("#um").val()==="Kg" && (gramaje == 0 || ancho == 0)){
             $("#msg_codigo").html("Error de Gramaje, verifique los datos Gramaje o Ancho incorrectos...");
@@ -492,19 +617,21 @@ function chequearDatos(){
           $("#add_code").removeAttr("disabled");  
        } 
     }else{  
-       $("#add_code").attr("disabled",true);  
+       $("#add_code").attr("disabled",true);  console.log("Paso 2");
     }
      
-    if(cantidad > 0 && (cantidad > stock)){
-        errorMsg("Stock insuficiente...",10000);
-        $("#cantidad").focus();
-        $("#cantidad").select();
-        $("#cantidad").addClass("error");
-    }else{
-        $("#cantidad").removeClass("error");
-        if(mnj_x_lotes === "Si"){ // Solo buscar si es articulo de inventario y de venta
-           getFallas();
+    if(cantidad > 0 ){ 
+        if((stock > limite_stock_negativo) && (cantidad > (stock - limite_stock_negativo))){
+             errorMsg("Stock insuficiente... esta superando el limite de venta negativo de: "+limite_stock_negativo,10000);
+            $("#cantidad").focus();
+            $("#cantidad").select();
+            $("#cantidad").addClass("error");
+            $("#add_code").attr("disabled",true);
+        }else{
+            $("#cantidad").removeClass("error");     
         }
+    }else{
+        $("#cantidad").removeClass("error");        
     }
 
     if((limiteCredito - subtotal) <= 0  && limiteReal > 0){
@@ -522,76 +649,12 @@ function chequearDatos(){
        $("#add_code").attr("disabled",true);  
        errorMsg("Ha llegado al Limite de piezas en esta Factura, Genere una nueva Factura.",10000);
     }
-    //Habilitar o desabilitar FP
-    var log10 =  parseFloat( (Math.log10(stock) + 0.3).toFixed(2)  );  
 
-    var diff = stock - log10;
-
-    console.log("Log10 "+log10+"  Diff "+diff);
-    if(cantidad >= diff){
-        $(".fp").fadeIn();
-    }else{
-        $("#fp").removeAttr("checked");
-        $(".fp").fadeOut();
-        max_mts_fp = 0;
-    }
      
 }
 function getFallas(){
     
-  /*
-    var codigo = $("#codigo").val();
-    var lote = $("#lote").val();
-    var stock =  parseFloat( $("#stock").val().replace(/\./g, '').replace(/\,/g, '.')  );
-    var vender =  parseFloat( $("#cantidad").val().replace(/\./g, '').replace(/\,/g, '.')  );
-    $.ajax({
-        type: "POST",
-        url: "ventas/FacturaVenta.class.php",
-        data: {action: "getFallas", codigo: codigo, lote: lote,vender:vender},
-        async: true,
-        dataType: "json",
-        beforeSend: function () {
-            $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
-            $(".falla_indic").remove();
-            fallas = [];
-            max_mts_fallas = 0;
-            falla(false,"F");
-        },
-        success: function (data) { 
-            if(data.length > 0){
-                fallas = data;
-                max_mts_fallas = fallas.length * 30;
-                
-                falla(true,"F");
-                
-                $(".grafico_fallas").slideDown();                
-                var porc_vender = parseInt((vender * 100) / stock);
-                
-                $('#total_vender').animate({  
-                  width:''+porc_vender+'%'
-                }, 2000, function() {
-                   for(var i in data){
-                    var  tipo_falla = data[i].tipo_falla;
-                    var ubic_falla = data[i].ubic_falla;
-                    var ubic_real = parseFloat(data[i].ubic_real);
-                    var calc_pos_falla = parseInt((ubic_real * 100) / vender);
-                    setTimeout( "showFalla("+calc_pos_falla+",'"+tipo_falla+"')",500);
-                    //console.log("Falla: "+tipo_falla+"   Vender: "+vender+"  Ubic Falla "+ubic_real+"  Calc Pos "+calc_pos_falla);
-                   } 
-                });
-                
-                chequearMtsFalla();
-                
-            }else{
-               $(".grafico_fallas").slideUp();
-            }
-        },
-        error: function (e) {                 
-            $("#msg").html("Error al obtener fallas:  " + e);   
-            errorMsg("Error al obtener fallas:  " + e, 10000);
-        }
-    }); 
-    */
+   
 }
 function chequearMtsFalla(){
     var cm_falla = float("cm_falla");
@@ -663,7 +726,7 @@ function addCode(){
     var categoria = $("#categoria").val(); 
     var cod_falla = $("#cod_falla").text();
     var cm_falla = $("#cm_falla").val();
-    var fp = $("#fp").is(":checked");
+    var fp = false; //$("#fp").is(":checked");
     var um_prod = $("#um").attr("data-um_prod");
     var tipo_doc = $("#tipo_doc").val();
     var estado_venta = $("#lote").data("estado_venta");
@@ -678,7 +741,7 @@ function addCode(){
         },
         success: function(data) {   
             var mensaje = data.Mensaje;
-            if(mensaje=="Ok"){
+            if(mensaje == "Ok" || mensaje == "Codigo Duplicado" ){
                $(".grafico_fallas").fadeOut();
                $("#msg_codigo").html("<img src='img/ok.png'>");                
                $("#lote").val("");
@@ -697,7 +760,11 @@ function addCode(){
                if(mnj_x_lotes === "No"){
                    lote = "";
                }
-               appendDetail(codigo,lote,descrip,cantf,um,preciof,subtotalf,total,descuento,cod_falla,cm_falla,fp,estado_venta,desc_sedeco);
+               if(mensaje == "Ok"){
+                  appendDetail(codigo,lote,descrip,cantf,um,preciof,subtotalf,total,descuento,cod_falla,cm_falla,fp,estado_venta,desc_sedeco);
+               }else{
+                  detailUpdate(codigo,lote,cantidad,um,precio,total,descuento,cod_falla,cm_falla,fp,estado_venta,desc_sedeco);
+               }
                var desc = parseFloat(data.DescuentoNormal) ;  
                
                console.log("subtotalf "+subtotalf+"  precio_venta "+precio_venta);
@@ -741,9 +808,36 @@ function appendDetail(codigo,lote,descrip,cant,um,precio,subtotal,total,descuent
     var hash = codigo+"_"+h;
   
     $(".tr_total_factura").remove();
-    $("#detalle_factura").append('<tr id="tr_'+codigo+'-'+lote+'" class="hash" data-hash="'+hash+'" ><td class="item codigo_art">'+codigo+'</td> <td class="item codigo_lote" data-codigo="'+codigo+'" title="'+codigo+'" >'+lote+'</td><td class="item '+estado_venta+'">'+descrip+'</td><td class="num cantidad">'+cant+'</td><td  class="itemc">'+um+'</td><td  class="itemc">'+falla+'</td><td class="num precio_venta">'+precio+'</td><td class="num descuento">0</td><td class="num subtotal_det">'+subtotal+'</td><td class="itemc"><img class="del_det trash" title="Borrar Esta Pieza" style="cursor:pointer" src="img/trash_mini.png" onclick=delDet("'+codigo+'","'+lote+'");></td></tr>');
-    $("#detalle_factura").append('<tr class="tr_total_factura" style="font-weight: bolder"><td >&nbsp;Totales</td><td></td><td id="msg_det" style="text-align: center;font-size: 11" class="info"></td><td id="total_cantidades" style="text-align: right;" class="num"></td><td colspan="3" style="text-align: center"><label class="sedeco"><b>Redondeo SEDECO:</b></label>&nbsp;<label class="sedeco" id="desc_sedeco">'+desc_sedeco+'</label><b class="sedeco">&nbsp;G$.</b></td><td id="descuento_factura" style="text-align: right;" class="num descuento">'+descuento+'</td><td style="text-align: right;" id="total_factura" class="num">'+total+'&nbsp;'+moneda+'.</td><td style="text-align:center"><img src="img/medios_pago.png" height="18" width="18" style="cursor:pointer" onclick="verMonedasExtranjeras()"></td> </tr>');
+    $("#detalle_factura").append('<tr id="tr_'+codigo+'-'+lote+'" class="hash" data-hash="'+hash+'" ><td class="item codigo_art">'+codigo+'</td> <td class="item codigo_lote mnj_lote" data-codigo="'+codigo+'" title="'+codigo+'" >'+lote+'</td><td class="item '+estado_venta+'">'+descrip+'</td><td class="num cantidad">'+cant+'</td><td  class="itemc">'+um+'</td><td  class="itemc fx">'+falla+'</td><td class="num precio_venta">'+precio+'</td><td class="num descuento">0</td><td class="num subtotal_det">'+subtotal+'</td><td class="itemc"><img class="del_det trash" title="Borrar Esta Pieza" style="cursor:pointer" src="img/trash_mini.png" onclick=delDet("'+codigo+'","'+lote+'");></td></tr>');
+    $("#detalle_factura").append('<tr class="tr_total_factura" style="font-weight: bolder"><td >&nbsp;Totales</td> <td id="msg_det" style="text-align: center;font-size: 11" class="info"></td><td id="total_cantidades" style="text-align: right;" class="num"></td><td colspan="2" style="text-align: center"><label class="sedeco"><b>Redondeo SEDECO:</b></label>&nbsp;<label class="sedeco" id="desc_sedeco">'+desc_sedeco+'</label><b class="sedeco">&nbsp;G$.</b></td><td id="descuento_factura" style="text-align: right;" class="num descuento">'+descuento+'</td><td style="text-align: right;" id="total_factura" class="num">'+total+'&nbsp;'+moneda+'.</td><td style="text-align:center"><img src="img/medios_pago.png" height="18" width="18" style="cursor:pointer" onclick="verMonedasExtranjeras()"></td> </tr>');
 }
+
+function detailUpdate(codigo,lote,cantidad,um,precio,total,descuento,cod_falla,cm_falla,fp,estado_venta,desc_sedeco){       
+    var falla = cm_falla!="0" &&  cm_falla!="" ? (cm_falla / 100)+"/F": "";
+    if(fp){
+      falla = cm_falla!="0" ? (cm_falla / 100)+"/F+FP": "0/FP";
+    }    
+    var h =   precio.toString().replace(".","").replace(",","");
+    var hash = codigo+"_"+h;
+    
+    var cant_linea = parseFloat( $("#tr_"+codigo+"-"+lote).find(".cantidad").text().replace(/\./g, '').replace(/\,/g, '.') ); 
+    var new_cant = parseFloat(cant_linea + cantidad);
+    var new_subtotal = new_cant * precio;
+    
+    var cantf = new_cant.format(2, 3, '.', ',') ;  
+    var preciof = precio.format(decimales, 3, '.', ',') ;  
+    var subtotalf = new_subtotal.format(decimales, 3, '.', ',') ;
+    
+    $("#tr_"+codigo+"-"+lote).find(".cantidad").html(cantf);
+    $("#tr_"+codigo+"-"+lote).find(".precio_venta").html(preciof);
+    $("#tr_"+codigo+"-"+lote).find(".subtotal_det").html(subtotalf);
+    
+  
+    $(".tr_total_factura").remove();
+    
+    $("#detalle_factura").append('<tr class="tr_total_factura" style="font-weight: bolder"><td >&nbsp;Totales</td> <td id="msg_det" style="text-align: center;font-size: 11" class="info"></td><td id="total_cantidades" style="text-align: right;" class="num"></td><td colspan="2" style="text-align: center"><label class="sedeco"><b>Redondeo SEDECO:</b></label>&nbsp;<label class="sedeco" id="desc_sedeco">'+desc_sedeco+'</label><b class="sedeco">&nbsp;G$.</b></td><td id="descuento_factura" style="text-align: right;" class="num descuento">'+descuento+'</td><td style="text-align: right;" id="total_factura" class="num">'+total+'&nbsp;'+moneda+'.</td><td style="text-align:center"><img src="img/medios_pago.png" height="18" width="18" style="cursor:pointer" onclick="verMonedasExtranjeras()"></td> </tr>');
+}
+
 function corregirSubtotales(detalle_descuentos){ 
    //console.log(detalle_descuentos.length);   
    detalle_descuentos.forEach(function(e){
@@ -881,7 +975,12 @@ function cambiarUM(){
    } 
    $("#um").val(um_lista_precios[um_cursor].um);
    var precio = um_lista_precios[um_cursor].precio;
-   var descuento = um_lista_precios[um_cursor].descuento
+   var descuento = um_lista_precios[um_cursor].descuento;
+   var mult = um_lista_precios[um_cursor].um_mult;
+   var stock = parseFloat($("#stock").attr("data-stock"));
+   
+   $("#stock").val(  parseFloat( stock / mult  ).format(2, 3, '.', ',')   );
+   
    var preciox = redondear50(parseInt(precio - descuento));  
    if(moneda != "G$"){  // No se redondea si es USS
         preciox =  parseFloat(precio - descuento);
@@ -906,11 +1005,11 @@ function noUm(bool){
        cantidad_original = 0;
        factorPrecio = 1;
        precioOriginal = 0;
-       falla(false,"F");
+       //falla(false,"F");
        $("#precio_cat").attr("data-precio",parseFloat( 0 ).format(2, 3, '.', ',')); 
        $("#msg_codigo").removeClass("infoblue").html("");
        
-       $("#fp").removeAttr("checked");
+       //$("#fp").removeAttr("checked");
     } 
 }
 function falla(bool,cod_falla){
@@ -953,11 +1052,14 @@ function buscarCodigo(){
             $("#msg_codigo").attr("class","info");
             if( existe === "true" ){
                 var Status = data.estado_venta; // Bloqueado,Normal,Oferta,Arribos,FP
-                var stock = data.stock; 
+                var stock = data.stock == null?0:data.stock; 
+                    console.log(isNaN(data.stock));
+                console.log( data.stock == null);
                 $("#codigo").val(data.codigo); 
                 $("#descrip").val(data.descrip);
-                $("#stock").val(  parseFloat( data.stock  ).format(2, 3, '.', ',')   );
-                $("#stock").attr("data-stock",parseFloat( stock  ).format(2, 3, '.', ','));
+                
+                $("#stock").val(  parseFloat( stock  ).format(2, 3, '.', ',')   );
+                $("#stock").attr("data-stock",parseFloat( stock  ));
                 $("#lote").prop("title","Codigo Art: "+stock)
                 $("#lote").data("estado_venta",Status);
                 $("#descrip").prop("title","Codigo Art: "+data.codigo);                
@@ -1024,8 +1126,15 @@ function buscarCodigo(){
                 
                  
                 $("#estado_fp").html(FP);  
-                $("#cantidad").focus();
-                $("#cantidad").select();                 
+                
+                if(precio > 0){                
+                   $("#cantidad").focus();
+                   $("#cantidad").select();    
+                }else{
+                   $("#precio_venta").focus();
+                   $("#precio_venta").select();  
+                }
+                
                 data_next_time_flag = false;
                 if(Status !='Bloqueado' && Status !='FP'){
                    $("#msg_codigo").html("<img src='img/ok.png'>"); 
@@ -1038,9 +1147,15 @@ function buscarCodigo(){
                 var imagen = data.img; 
                 $("#imagen_lote").fadeIn("fast");
                 if(imagen != ""){
-                    var images_url = $("#images_url").val();
-                    $("#imagen_lote").attr("src",images_url+"/"+imagen+".thum.jpg"); 
-                    $("#imagen_lote").click(function(){ cargarImagenLote(imagen);});
+                    
+                    if(mnj_x_lotes == "Si"){
+                       var images_url = $("#images_url").val();
+                       $("#imagen_lote").attr("src",images_url+"/"+imagen+".thum.jpg"); 
+                       $("#imagen_lote").click(function(){ cargarImagenLote(imagen);});
+                    }else{
+                        $("#imagen_lote").attr("src",""+imagen+""); 
+                    }
+                    
                 }else{
                    $("#imagen_lote").attr("src","img/no-image.png"); 
                    $("#imagen_lote").off("click");
@@ -1050,6 +1165,10 @@ function buscarCodigo(){
                     $("#msg_codigo").addClass("error");
                     $("#msg_codigo").html("No se ha definido precios para esta unidad de Medida: "+um);  
                     errorMsg("No se ha definido precios para esta unidad de Medida: "+um,12000);  
+                }
+                
+                if(precio <= 0){                    
+                   errorMsg("Precio no definido para esta unidad de medida...");  
                 }
                 
                 setTimeout("setDefaultDataNextFlag()",500);
@@ -1322,37 +1441,9 @@ function finalizar(){
                 var result =  $.trim(objeto.responseText).replace(/\|/g,"\n");
                 
                 if(result == "Ok"){
-                    t.appendTo("#work_area");
-                    $("#msg_codigo").html("La Factura ha sido enviada a caja..."); 
-                    $("#alert_msg").html("Impresion de Ticket en Progreso...<br>&iquest;Qual es su siguiente paso&quest;");
-                    $("#dialog-confirm").attr("title","Que desea hacer?");
-                    $( "#dialog-confirm" ).dialog({
-                       resizable: false,
-                       height:140,
-                       width:380,
-                       modal: true,
-                       dialogClass:"ui-state-highlight",
-                       buttons: {
-                         "Volver al Menu": function() {                      
-                            $( this ).dialog( "close" );   
-                         },
-                         "Reimprimir Ticket": function() {                      
-                             $("#work_area").remove("#ticket");
-                             t.appendTo("#work_area");
-                         },
-                         "Crear nueva Factura": function() {                                
-                             show_menu = false;
-                             $( this ).dialog( "close" );  
-                             genericLoad("ventas/NuevaVenta.class.php");    
-                         } 
-                      },        
-                     close: function() {
-                                        
-                        $(this).dialog("destroy");
-                        if(show_menu){  showMenu(); }
-                     }
-                    });  
-                     setTimeout("volverAlMenu()",20000);
+                    t.appendTo("#work_area");                     
+                    alert("La Factura ha sido enviada a caja..."); 
+                    genericLoad("caja/VentasEnCaja.class.php");    
                 }else{
                     alert("Hubieron algunos errores en el Procesamiento: Favor verifique la informacion de abajo: \n"+result);
                 }   
@@ -1725,7 +1816,7 @@ function getLimiteCredito(){
             $("#limite_credito").val( ( Diff).format(0, 3, '.', ','));
             $("#limite_credito").data("limite", Diff);
             $("#limite_credito").data("limiteReal", Limite);
-            $(".limite_credito").fadeIn();
+            //$(".limite_credito").fadeIn();
             if(Diff <= 0){
                 $("#limite_credito").css("color","red"); 
                 $("input#limite_credito").addClass("alerta");
@@ -1802,6 +1893,7 @@ function facturaProforma(){
        window.open(url,title,params);                       
     }
 }
+ 
 function imprimirDetalle(){
     var factura = $("#factura").val();    
     var user = getNick();
@@ -1815,7 +1907,7 @@ function imprimirDetalle(){
        window.open(url,title,params);                       
     }
 }
-
+ 
 var turnoData = {};
 function verifTurno(){
     turnoData = {
@@ -1921,8 +2013,10 @@ function buscarArticulo(){
                     k++;
                     var codigo =  (data[i].codigo).toString().toUpperCase();                    
                     var descrip = (data[i].descrip).toString().toUpperCase();        
+                    var um = data[i].um;
+                    var img = data[i].img;
                     //console.log(codigo+"   "+descrip);                                                     
-                    $("#lista_articulos").append("<tr class='tr_art_data fila_art_"+i+"'><td class='item clicable_art'><span class='codigo' >"+codigo+"</span></td>\n\
+                    $("#lista_articulos").append("<tr class='tr_art_data fila_art_"+i+"' data-um='"+um+"' data-img='"+img+"'><td class='item clicable_art'><span class='codigo' >"+codigo+"</span></td>\n\
                     </td><td class='item clicable_art'><span class='descrip_art'>"+descrip+"</span></td>  </tr>");
                     cant_articulos = k;
                 }  
@@ -1955,7 +2049,9 @@ function limpiarListaArticulos(){
 } 
 function showHideSearchBar(bool){
     if(bool){
-        $("#ui_articulos").fadeIn();
+        $("#ui_articulos").fadeIn(function(){
+            $("#buscador_articulos").focus().select();
+        });
     }else{
         $("#ui_articulos").fadeOut();
     }
@@ -1993,28 +2089,38 @@ function setHotKeyArticulo(){
 }
 function selectRowArt(row) {
     $(".art_selected").removeClass("art_selected");
-    $(".fila_art_" + row).addClass("art_selected");
-    $(".cursor").remove();
-    $($(".fila_art_" + row + " td").get(2)).append("<img class='cursor' src='img/l_arrow.png' width='18px' height='10px'>");
+    if(row !== "%"){
+        $(".fila_art_" + row).addClass("art_selected");
+        $(".cursor").remove();
+        $($(".fila_art_" + row + " td").get(2)).append("<img class='cursor' src='img/l_arrow.png' width='18px' height='10px'>");
+        var img = $(".fila_art_" + row ).attr("data-img");
+        $("#imagen_lote").fadeIn();
+        $("#imagen_lote").attr("src",img);
+    }
     escribiendo = false;   
 } 
 
 
 function seleccionarArticulo(obj){   
     var codigo = $(obj).find(".codigo").html(); 
+    var um = $(obj).attr("data-um");
+   
     $("#ui_articulos").fadeOut();
     $("#lote").val(codigo); 
+    $("#um").val(um); 
     buscarCodigo();
 }
 
 function imprimirFactura(){
-     var factura = $("#factura").val();
+     
      var factura_contable = $("#factura_contable").val();
      var tipo_factura = $("#tipo_factura").val();
      var pdv = $("#factura_contable option:selected").attr("data-pdv"); 
      var moneda = $("#moneda").val();
-     
+      
      if(factura_contable != ""){
+         factura = $("#factura").val();   
+         //var factura = $("#factura").val();    
          var ruc = $("#ruc_cliente").val();
          var cliente = encodeURI($("#nombre_cliente").val());
          var suc = getSuc();
@@ -2040,4 +2146,1442 @@ function updateListaClientes(nombre,ruc){
    $("#nombre_cliente").val(nombre);
    buscarCliente($("#ruc_cliente"));
    $("#boton_generar").focus();
+}
+
+/*********************Caja*********************/
+
+function irACaja(){
+    var factura = $("#factura").val();
+    cobrarFactura(factura);    
+}
+
+function showMult(id){
+      
+      var val = parseFloat($("#"+id).val() .replace(/\./g, '').replace(/\,/g, '.')); 
+      var ter = id.substring(8,12);
+      if(ter == "rs"){
+          var mult_rs = (rs*val).format(2, 3, '.', ',');
+          $("#mult_"+ter).text(" * "+rs+" = "+ mult_rs);
+          guardarEfectivo(id,"R$",rs);
+      }else if(ter == "ps"){
+          var mult_ps = (ps*val).format(2, 3, '.', ',');
+          $("#mult_"+ter).text(" * "+ps+" = "+ mult_ps);
+          guardarEfectivo(id,"P$",ps);
+      }else if(ter == "us"){
+          var mult_us = (us*val).format(2, 3, '.', ',');
+          $("#mult_"+ter).text(" * "+us+" = "+ mult_us);
+          guardarEfectivo(id,"U$",us);
+      }else{ //Guaranies
+         guardarEfectivo(id,"G$",1);            
+      }
+  }
+   
+  function guardarEfectivo(id,moneda,cotiz){
+    var monto = float(id);  
+    var monto_ref = float(id) * cotiz; 
+    var suc = getSuc();
+    var monedas_vuelto = $("#monedas_vuelto").val();
+    var vuelto =   parseFloat(($("#vuelto_faltante").val()).replace(/\./g, '').replace(/\,/g, '.'));
+    if($("#label_vuelto_faltante").text() === "Faltante:"){
+        vuelto = 0;
+        monedas_vuelto = "";
+    }
+     
+        $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "agregarEfectivo", "nro_referencia": factura, "moneda": moneda,"monto":monto,"cotiz":cotiz,"monto_ref":monto_ref,"id_concepto":1,"campo":"f_nro",suc:suc,usuario:getNick(),moneda_vuelto:monedas_vuelto,vuelto:vuelto,cotiz_vuelto:cotiz_vuelto},
+            async: true,
+            dataType: "html",
+            beforeSend: function() {
+                $("#msg_efectivo").html("Guardando... <img src='img/loadingt.gif' >");                      
+            },
+            complete: function(objeto, exito) {
+                if (exito == "success") {                          
+                    var result = $.trim(objeto.responseText);
+                    $("#msg_efectivo").html(objeto.responseText+"<img src='img/ok.png' width='16px' height='16px' >"); 
+                    setTimeout("$('#msg_efectivo').html('');",5000);
+                }
+            },
+            error: function() {
+                $("#msg_efectivo").html("Ocurrio un error en la comunicacion con el Servidor...");
+            }
+        }); 
+    
+  }
+  function actualizarVuelto(){
+    if($("#label_vuelto_faltante").text() === "Vuelto:"){
+        var monedas_vuelto = $("#monedas_vuelto").val();
+        var vuelto =   parseFloat(($("#vuelto_faltante").val()).replace(/\./g, '').replace(/\,/g, '.'));
+        $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "actualizarVuelto", "factura": factura, "moneda": monedas_vuelto,"vuelto":vuelto,cotiz_vuelto:cotiz_vuelto},
+            async: true,
+            dataType: "html",
+            beforeSend: function() {
+                $("#msg_efectivo").html("Guardando... <img src='img/loadingt.gif' >");                      
+            },
+            complete: function(objeto, exito) {
+                if (exito == "success") {                          
+                    var result = $.trim(objeto.responseText);
+                    $("#msg_efectivo").html(objeto.responseText+"<img src='img/ok.png' width='16px' height='16px' >"); 
+                    setTimeout("$('#msg_efectivo').html('');",5000);
+                }
+            },
+            error: function() {
+                $("#msg_efectivo").html("Ocurrio un error en la comunicacion con el Servidor...");
+            }
+        }); 
+    }
+  }
+  function setDateCheque(){
+      var tipo = $("#tipo").val();
+      if(tipo == "Al_Dia"){
+          $("#fecha_emision").val($(".fecha_hoy").val());
+          $("#fecha_pago").val($(".fecha_hoy").val());  
+          $("#fecha_emision").attr("readonly",true);
+          $("#fecha_pago").attr("readonly",true);
+      }else{
+          $("#fecha_emision").val($(".fecha_hoy").val());
+          $("#fecha_pago").val("");  
+          $("#fecha_emision").removeAttr("readonly");
+          $("#fecha_pago").removeAttr("readonly");
+      }     
+  }
+  /**
+   * Metodo que levanta la UI para cobrar una Factura Formas de cobro posibles Monedas Locales Tarjetas Credito y 
+   * Debito,Cheques y Credito (Cuotas)
+   * @param {type} factura
+   * @returns {cobrarFactura}
+   */
+  function cobrarFactura(factura){
+     
+      $("#tabs").tabs( "enable");
+      $("#tabs").tabs( "option", "active", 0 );
+      this.factura = factura;
+      var fecha = $("#fecha").val(); 
+      var cod_cli = $("#codigo_cliente").val(); 
+      var cod_desc = 0;        
+      var ruc = $("#ruc_cliente").val(); 
+      var cliente = $("#nombre_cliente").val(); 
+      var cat = $("#categoria").val(); 
+      //var moneda = $("#moneda_"+factura).html(); 
+      
+      var total_descuento = 0;
+      var total_pagar =  $.trim($("#total_factura").text().replace("G$.",""));
+      
+      
+      if(impresion_factura_cerrada){
+         fecha = $("#bfecha").val(); 
+         cod_cli = $("#bcod_cli").val(); 
+         cod_desc = $("#bcod_desc").val();        
+         ruc = $("#bruc").val(); 
+         cliente = $("#bcliente").val(); 
+         cat = $("#bcat").val(); 
+         moneda = $("#bmoneda").val();        
+         total_descuento =  $("#bdescuento" ).val();
+         total_pagar =  $("#btotal").val(); // En la moneda que sea    
+      }
+      
+      var mon = moneda.replace("$","s").toLowerCase(); //console.log(mon);
+      var total_pagar_moneda = total_pagar.replace(/\./g, '').replace(/\,/g, '.');
+      
+      // $CardCode
+      /*
+      if(cat < 3){ //Clientes con Categoria 1 y 2 No pueden insertar cheques diferidos
+          //$("#tab_credito").fadeOut();
+          $(".diferido").prop("disabled",true);                  
+          
+      }else{
+          var limite = parseFloat($("#limite_credito").val());
+          if(limite > 0){
+            // $("#tab_credito").fadeIn();
+             $(".diferido").removeAttr("disabled");
+          }else{
+             //$("#tab_credito").fadeOut()
+             $(".diferido").prop("disabled",true); 
+             errorMsg("Sin limite de credito asignado No se permiten cheques diferidos ni cuotas",50000);
+          }          
+      }*/
+      
+           
+      $(".monedas").removeClass("moneda_factura");
+      $(".loading_cotiz").fadeIn();       
+      rs = float("cotiz_rs");
+      ps = float("cotiz_ps");
+      us = float("cotiz_us");
+      
+      cotiz_vuelto = 1;
+      
+      if(moneda == "G$"){
+          global_cotiz = 1; 
+      }else if(moneda == "U$"){
+          global_cotiz = us;                 
+      }else if(moneda == "R$"){
+          global_cotiz = rs;                 
+      }else if(moneda == "P$"){
+          global_cotiz = ps;         
+      } 
+      $("#total_gs").val(parseFloat( total_pagar_moneda * global_cotiz ).format(0, 3, '.', ',')); 
+      $("#total_rs").val(parseFloat((total_pagar_moneda * global_cotiz) / rs).format(2, 3, '.', ','));
+      $("#total_ps").val(parseFloat((total_pagar_moneda * global_cotiz) / ps).format(2, 3, '.', ','));
+      $("#total_us").val(parseFloat((total_pagar_moneda * global_cotiz) / us).format(2, 3, '.', ',')); 
+      
+      $("#total_"+mon).addClass("moneda_factura"); // Resaltarl la Moneda de la Factura
+      
+      $("#factura_popup_caja").val(factura);
+      $("#fecha").val(fecha);
+      
+       
+      $("#ruc_cliente_popup_caja").val(ruc);
+      //$("#codigo_cliente_popup_caja").val(cod_cli);  
+      $("#nombre_cliente_popup_caja").val(cliente);
+      $("#benef").val(cliente); 
+      $("#categoria_popup_caja").val(cat); 
+      $("#moneda_popup_caja").val(moneda);   
+      $("#monedas_cuotas").val(moneda);      
+   
+      
+      
+      $("#popup_caja").slideDown("fast").css('top', "10px"); 
+      
+      
+      $("#entrega_gs").focus();
+       /*
+      $("#total_rs").val("");
+      $("#total_ps").val("");
+      $("#total_us").val("");*/
+      
+        $("#total_rs").attr("title"," Cotiz: "+rs+" ");
+        $("#total_ps").attr("title"," Cotiz: "+ps+" ");
+        $("#total_us").attr("title"," Cotiz: "+us+" ");
+        $("#total_rs").attr("data-info"," Cotiz: "+rs+" ");
+        $("#total_ps").attr("data-info"," Cotiz: "+ps+" ");
+        $("#total_us").attr("data-info"," Cotiz: "+us+" ");
+ 
+        setTimeout('$(".loading_cotiz").fadeOut("fast")',1000);  
+           
+        getEfectivoFactura(factura); 
+        getConveniosDeFactura(factura);
+        getChequesDeFactura(factura);
+        getTransferenciasBancariasDeFactura();
+        getCuotasDeFactura();
+        getDatosConvenioFactura();
+        getPuntos();
+        
+        getFacturasContables(); 
+        acomodarPopup();
+           
+      $(window).resize(function(){acomodarPopup();});  
+      getLimiteCredito();
+      statusInfo(); 
+  }
+  
+  function imprimirFacturaCerrada(){
+      impresion_factura_cerrada = true;
+      $("#ventas").remove();     
+      $("#tabs input").prop("disabled",true);
+      $("#cerrar_venta").remove();      
+      $("#popup_print").fadeIn();
+      $("#popup_print").draggable();
+  }
+  function cargarFactura(){
+      //var ticket = $("#bticket").val();
+      var usuario = getNick(); 
+        var session = getCookie(usuario).sesion;
+        var estado = $("#estado").val();
+        load("ventas/FacturaVenta.class.php",{usuario:usuario,session:session,factura:factura,suc:getSuc(),estado:estado}, function(){    
+            if(estado != "Cerrada"){
+              $("#area_carga").fadeIn("fast",function(){             
+                 setTimeout( "verificarMoneda()",500);          
+              });   
+            }else{
+                setTimeout( "verificarMoneda()",500);  
+            }
+      });    
+  } 
+  function buscarTicket(){
+      var ticket = $("#bticket").val();
+      $.ajax({
+        type: "POST",
+        url: "caja/VentasEnCaja.class.php",
+        data: {"action": "buscarTicket", ticket: ticket,suc:getSuc()},
+        async: true,
+        dataType: "json",
+        beforeSend: function () {
+            $("#msg_b").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+            $("#popup_print input:not('.mantain')").val("");
+            $("#cargar_venta").prop("disabled",true);
+        },
+        success: function (data) {   
+             
+            if(data.cod_cli !== undefined){
+                var bcod_cli = data.cod_cli;
+                var ruc_cli = data.ruc_cli;
+                var cliente = data.cliente;  
+                var fecha = data.fecha;  
+                var moneda = data.moneda;  
+                var total = data.total;  
+                var total_desc = data.total_desc;  
+                var cod_desc = data.cod_desc;
+                var fact_nro = data.fact_nro;
+                var bcat = data.cat;
+                $("#bcliente").val(cliente);
+                $("#bruc").val(ruc_cli);
+                $("#bcat").val(bcat);
+                $("#bfactura").val(fact_nro);
+                $("#btotal").val(  (parseFloat(total)).format(2, 3, '.', ',') );
+                $("#bdescuento").val( (parseFloat(total_desc)).format(2, 3, '.', ','));
+                $("#bfecha").val(fecha);
+                $("#bmoneda").val(moneda);
+                $("#bcod_desc").val(cod_desc);
+                $("#bcod_cli").val(bcod_cli);
+                
+                $("#cargar_venta").prop("disabled",false);
+                $("#msg_b").html(""); 
+            }else{
+               $("#msg_b").html("Ticket no encontrado o no le pertenece a su sucursal.");  
+            }
+              
+            
+        }
+    });
+  }
+  
+  // Acomodar el ancho del popup
+  function acomodarPopup(){
+        var width_hijos=126;  // 126 = width de espacios
+        $('#bottom_bar > *').width(function(i,w){width_hijos+=w;});
+        var popup_width = $("#popup_caja").width(); 
+        
+        var wa = $("#work_area").width();
+        if( popup_width < width_hijos ){ 
+             $("#popup_caja").width(width_hijos+2);          
+        }  
+        var margin_left =  0;
+        if(wa > ($("#popup_caja").width())){
+             margin_left =  (wa - ($("#popup_caja").width()) ) / 2;
+        } 
+        $("#popup_caja").css("margin-left", margin_left );        
+  }
+  function getFacturasContables(){
+   var suc = getSuc();   
+   var tipo_fact = $("#tipo_fact").val();
+   var moneda = $("#moneda").val();
+   tipo_doc = "Factura";
+   if(tipo_fact === "Conf"){
+       tipo_doc = "Factura Conformada";
+   }
+   $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "getFacturasContables", "suc": suc,tipo_fact:tipo_fact,tipo_doc:tipo_doc,moneda:moneda},
+            async: true,
+            dataType: "json",
+            beforeSend: function() {
+                $("#loading_facts").fadeIn();
+            },
+            success: function(data) {  
+                $("#factura_contable").empty();
+                var cont = 0;
+                for(var i in data){ 
+                     var fact_cont = data[i].fact_nro; 
+                     var pdv_cod = data[i].pdv_cod; 
+                     $("#factura_contable").append("<option value='"+fact_cont+"' data-pdv="+pdv_cod+">"+fact_cont+"</option>");  cont++;
+                } 
+                $("#loading_facts").fadeOut();
+                if(cont == 0){
+                    $("#imprimir_factura").fadeOut();
+                    alert("Debe cargar Facturas Contables Pre Impresas en el sistema para poder Imprimir.");
+                }else{
+                    $("#imprimir_factura").fadeIn();
+                    $("#imprimir_factura").removeAttr("disabled");
+                }
+            }
+        });
+  }
+  
+  function getDatosConvenioFactura(){
+     $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {"action": "getDatosConvenioFactura", factura: factura},
+        async: true,
+        dataType: "json",
+        beforeSend: function () {
+            $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+        },
+        success: function (data) {   
+             
+           $("#nro_orden").val(data.nro_orden);
+           $("#orden_benef").val(data.orden_cli);            
+           $("#monto_orden").val(data.orden_valor);             
+             
+           $("#msg").html(""); 
+        }
+    }); 
+  }
+  function getConveniosDeFactura(nro_factura){
+   $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "getConvenios", "nro_referencia": nro_factura,"campo":"f_nro","id_concepto":1},
+            async: true,
+            dataType: "json",
+            beforeSend: function() {
+                $("#msg_convenio").html("Recuperando datos... <img src='img/loadingt.gif'>"); 
+            },
+            success: function(data) { 
+                $(".conv_foot").remove();
+                $("[class^='tr_convenios']").remove();
+                var total = 0;
+                for(var i in data){ 
+                     var conv_cod = data[i].cod_conv;
+                     var vouch = data[i].voucher;
+                     var nombre = data[i].nombre;
+                     var monto = data[i].monto;  
+                     var monto_conv_formated = parseFloat( monto ).format(2, 3, '.', ',');  
+                     total += parseFloat( monto ) ;
+                     $("#lista_convenios") .append("<tr class='tr_convenios_"+vouch+"'><td class='itemc'>"+conv_cod+"</td>  <td class='item'>"+nombre+"</td> <td class='item'>"+vouch+"</td> <td class='num'>"+monto_conv_formated+"</td><td class='itemc'><img class='del_conv' title='Borrar Tarjeta' style='cursor:pointer' src='img/trash_mini.png' onclick=delConv('"+conv_cod+"','"+vouch+"');></td></tr>");                                       
+                } 
+                total = parseFloat(total).format(2, 3, '.', ',');  
+                $("#lista_convenios") .append("<tr class='conv_foot'><td colspan='3' > </td><td style='text-align: center;font-weight: bolder;font-size: 13px' class='total_convenios'>"+total+"</td><td></td> </tr>");
+                $("#msg_convenios").html("");    
+                setRef();                  
+            }
+        });         
+  }
+  function getEfectivoFactura(nro_factura){
+    $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "getEfectivoFactura", "factura": nro_factura},
+            async: true,
+            dataType: "json",
+            beforeSend: function() {
+                $("#msg_efectivo").html("Recuperando datos... <img src='img/loadingt.gif'>"); 
+            },
+            success: function(data) {   
+                for(var i in data){ 
+                     var codigo = (data[i].codigo).toLowerCase().replace("$","s");
+                     var monto = data[i].entrada;
+                     $("#entrega_"+codigo).val( parseFloat( monto ).format(2, 3, '.', ',') );   
+                     var vuelto = data[i].salida;
+                     if(vuelto > 0){
+                         mon_vuelto =   data[i].codigo ;                            
+                     }
+                }   
+                setRef();
+                $("#msg_efectivo").html(""); 
+            }
+    });       
+  }
+  function getChequesDeFactura(nro_factura){
+        $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "getChequesDeFactura", "factura": nro_factura},
+            async: true,
+            dataType: "json",
+            beforeSend: function() {
+                $("#msg_cheques").html("Recuperando datos... <img src='img/loadingt.gif'>"); 
+            },
+            success: function(data) { 
+                $(".cheques_foot").remove();
+                $(".tr_cheques").remove(); 
+                
+                var total = 0;
+                for(var i in data){ 
+                     var nro_cheque = data[i].nro_cheque;
+                     var banco = data[i].banco;
+                     var cuenta = data[i].cuenta;
+                     var valor = data[i].valor;  
+                     var cotiz = data[i].cotiz;                        
+                     var valor_ref = data[i].valor_ref;  
+                     var fecha_emis = data[i].fecha_emis;
+                     var fecha_pago = data[i].fecha_pago;
+                     var benef = data[i].benef;  
+                     var moneda = data[i].moneda;                       
+                     var valor_formated = parseFloat( valor ).format(0, 3, '.', ',');  
+                     var valor_gs_formated = parseFloat( valor_ref ).format(0, 3, '.', ',');  
+                     total += parseFloat( valor_ref ) ;
+                     $("#lista_cheques") .append("<tr class='tr_"+nro_cheque+"  tr_cheques'><td>"+nro_cheque+"</td><td>"+banco+"</td><td>"+cuenta+"</td><td>"+benef+"</td><td  class='num' >"+valor_formated+"</td><td class='itemc'>"+moneda+"</td><td class='num'>"+cotiz+"</td><td class='num'>"+valor_gs_formated+"</td><td  class='itemc'>"+fecha_emis+"</td><td  class='itemc'>"+fecha_pago+"</td><td  class='itemc'><img class='del_chq' title='Borrar Cheque' style='cursor:pointer' src='img/trash_mini.png' onclick=delCheque('"+nro_cheque+"','"+factura+"');></td></tr>");                                       
+                } 
+                total = parseFloat(total).format(2, 3, '.', ',');  
+                $("#lista_cheques") .append("<tr class='cheques_foot'><td colspan='7' > </td><td style='text-align: center;font-weight: bolder;font-size: 13px' class='total_cheques'>"+total+"</td><td></td> </tr>");
+                $("#msg_cheques").html("");    
+                setRef();                  
+            }
+        });       
+  }
+  function cancelar(){      
+     $("[class^=tr_convenios]").remove();
+     $("[class^=tr_cuotas]").remove();
+     $("[class^=tr_cheques]").remove();
+     $("#popup_caja").slideUp("slow"); 
+  }
+  
+  function addConv(){
+     $("#add_conv").attr("disabled",true); 
+     var conv_cod = $("#convenios").val();
+     var conv_nombre = $("#convenios option:selected").text();
+     var voucher = $.trim($("#voucher").val());
+     var monto_conv = float("monto_conv");
+     var monto_conv_formated = $("#monto_conv").val();
+     var suc = getSuc();
+     
+     var timbrado = $("#timbrado_ret").val();
+     var fecha_ret = validDate($("#fecha_ret").val()).fecha;
+     
+     $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {"action": "agregarConvenio", "nro_referencia": factura, "conv_cod": conv_cod,"conv_nombre":conv_nombre,"voucher":voucher,"monto_conv":monto_conv,"campo":"f_nro","id_concepto":1,suc:suc,timbrado:timbrado,fecha_ret:fecha_ret},
+        async: true,
+        dataType: "html",
+        beforeSend: function() {
+            $("#msg_convenios").html("Guardando... <img src='img/loadingt.gif' width='22px' height='22px' >");                      
+        },
+        complete: function(objeto, exito) {
+            if (exito == "success") {                          
+                var result = parseFloat( objeto.responseText ).format(2, 3, '.', ',');  
+                
+                $(".conv_foot").remove();
+                $("#lista_convenios") .append("<tr class='tr_convenios_"+voucher+"'><td class='itemc'>"+conv_cod+"</td>  <td class='item'>"+conv_nombre+"</td> <td class='item'>"+voucher+"</td> <td class='num'>"+monto_conv_formated+"</td><td class='itemc'><img class='del_conv' title='Borrar Tarjeta' style='cursor:pointer' src='img/trash_mini.png' onclick=delConv('"+conv_cod+"','"+voucher+"');></td></tr>");
+                $("#lista_convenios") .append("<tr class='conv_foot'><td colspan='3' > </td><td style='text-align: center;font-weight: bolder;font-size: 13px' class='total_convenios'>"+result+"</td><td></td> </tr>");
+                $("#msg_convenios").html("");   
+                $("#voucher").val("");
+                $("#monto_conv").val("");
+                setRef();
+            }
+        },
+        error: function() {
+            $("#msg_convenios").html("Ocurrio un error en la comunicacion con el Servidor...");
+        }
+    });    
+     
+  }
+  
+ function delConv(conv_cod,voucher){  
+     
+    $("#add_conv").attr("disabled",true); 
+    $( "#dialog-confirm" ).dialog({
+      resizable: false,
+      height:140,
+      modal: true,
+      buttons: {
+        "Cancelar": function() {
+          $( this ).dialog( "close" );
+        },  
+        "Borrar este Cobro": function() {
+                $( this ).dialog( "close" );
+                $.ajax({
+                      type: "POST",
+                      url: "Ajax.class.php",
+                      data: {"action": "borrarConvenio", "nro_referencia": factura, "conv_cod": conv_cod,"voucher":voucher,"campo":"f_nro","id_concepto":1},
+                      async: true,
+                      dataType: "html",
+                      beforeSend: function() {
+                          $("#msg_convenios").html("Borrando... <img src='img/loadingt.gif' width='22px' height='22px' >");                      
+                      },
+                      complete: function(objeto, exito) {
+                          if (exito == "success") {                          
+                              var result = parseFloat( objeto.responseText ).format(2, 3, '.', ',');  
+                              $("#add_conv").removeAttr("disabled");
+                              $(".conv_foot").remove();               
+                              $("#lista_convenios") .append("<tr class='conv_foot'><td colspan='3' > </td><td style='text-align: center;font-weight: bolder;font-size: 13px' class='total_convenios'>"+result+"</td><td></td> </tr>");
+                              $("#msg_convenios").html("");  
+                              $(".tr_convenios_"+voucher).remove();
+                              setRef();
+                          }
+                      },
+                      error: function() {
+                          $("#msg_convenios").html("Ocurrio un error en la comunicacion con el Servidor...");
+                      }
+                  });       
+                } 
+        },        
+        close: function() {            
+          $( this ).dialog( "destroy" );
+        }
+      });
+     
+ }
+ 
+ function calcRefCheque(){
+     var valor = float("valor_cheque");
+     var moneda_chq = $("#monedas_cheque").val();
+     if(   moneda_chq === "G$"){
+         $("#cotiz_cheque").val("1,00");  
+     }else{ // U$
+         $("#cotiz_cheque").val(us);  
+     }     
+     var cotiz = float("cotiz_cheque");
+     var valor_ref = valor * cotiz;
+     var valor_ref_fortted = valor_ref.format(2, 3, '.', ','); 
+     $("#valor_cheque_gs").val(valor_ref_fortted);
+     checkCheque();     
+ }
+ function checkCheque(){
+    var chq_num = $("#nro_cheque").val();
+    var nro_cuenta = $("#nro_cuenta").val();
+    var benef = $("#benef").val();
+    var valor_gs = float("valor_cheque_gs");
+    
+    var emis =  $("#fecha_emision").val() ;  
+    var pago =  $("#fecha_pago").val();  
+    
+    if(chq_num.length >= 3 && nro_cuenta.length > 3 &&  benef.length >= 3 && valor_gs > 0 && ( emis != "" && pago != "" && (chq_num < 2147483647 ) ) ){
+        $("#add_cheque").removeAttr("disabled");        
+    }else{
+        $("#add_cheque").attr("disabled",true);
+    }
+    if((chq_num > 2147483647 )){
+        alert("Valor del cheque demasiado grande");
+        errorMsg("Valor del cheque demasiado grande",8000);
+    }
+ }
+ 
+ function addCheque(){
+    $("#add_cheque").attr("disabled",true); 
+    var nro_cheque = $("#nro_cheque").val().toUpperCase() ;
+    var cuenta = $("#nro_cuenta").val();
+    var banco = $("#bancos").val();
+    var nombre_banco = $("#bancos option:selected").text();
+    var benef = $("#benef").val().toUpperCase();
+    var valor = float("valor_cheque");  
+    var moneda = $("#monedas_cheque").val();
+    var cotiz = float("cotiz_cheque");  
+    var valor_gs = float("valor_cheque_gs");  
+    var emis = validDate($("#fecha_emision").val()).fecha;  
+    var pago = validDate($("#fecha_pago").val()).fecha;  
+    var tipo = $("#tipo").val();
+    var suc = getSuc();
+    $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {action: "agregarCheque", nro_cheque: nro_cheque, suc: suc,cuenta:cuenta,banco:banco,valor:valor,moneda:moneda,cotiz:cotiz,valor_ref:valor_gs,benef:benef,emision:emis,pago:pago,factura:factura,concepto:1,trans_num:factura,campo:"f_nro",tipo:tipo},
+        async: true,
+        dataType: "html",
+        beforeSend: function() {
+            $("#msg_cheques").html("<img src='img/loading.gif' width='22px' height='22px' >");                      
+        },
+        complete: function(objeto, exito) {
+            if (exito == "success") {                          
+                var total_cheques = parseFloat($.trim(objeto.responseText)).format(0, 3, '.', ',');
+                var valor_f = parseFloat(valor).format(0, 3, '.', ',');
+                var valor_gs_f = parseFloat(valor_gs).format(0, 3, '.', ',');
+                
+                $("#msg_cheques").html(""); 
+                $(".cheques_foot").remove();
+                $("#lista_cheques").append("<tr class='tr_"+nro_cheque+" tr_cheques'><td>"+nro_cheque+"</td><td>"+nombre_banco+"</td><td>"+cuenta+"</td><td>"+benef+"</td><td  class='num' >"+valor_f+"</td><td class='itemc'>"+moneda+"</td><td class='num'>"+cotiz+"</td><td class='num'>"+valor_gs_f+"</td><td class='itemc'>"+emis+"</td><td class='itemc'>"+pago+"</td><td class='itemc'><img class='del_chq' title='Borrar Cheque' style='cursor:pointer' src='img/trash_mini.png' onclick=delCheque('"+nro_cheque+"','"+factura+"');></td></tr>");
+                $("#lista_cheques").append("<tr class='cheques_foot'><td colspan='7' > </td><td style=';font-weight: bolder;font-size: 13px' class='total_cheques num'>"+total_cheques+"</td><td></td> </tr>")
+                setRef();
+                $("#nro_cheque").val("").focus();
+                $("#nro_cuenta").val();
+                $("#bancos").val(1);
+                $("#bancos option:selected").text();
+                $("#benef").val("");
+                $("#valor_cheque").val("");  ; 
+                $("#cotiz_cheque").val("");  ;  
+                $("#valor_cheque_gs").val("");  ;  
+                $("#fecha_emision").val("");  
+                $("#fecha_pago").val(""); 
+                $("#add_cheque").removeAttr("disabled");
+            }
+        },
+        error: function() {
+            $("#msg_cheques").html("Ocurrio un error en la comunicacion con el Servidor, intente de nuevo en algunos instantes o contacte con el Administrador.");
+        }
+    });  
+ }
+ 
+ function delCheque(nro_cheque,factura){
+     $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {"action": "borrarChequeDeFactura", "nro_cheque": nro_cheque, "factura": factura},
+        async: true,
+        dataType: "html",
+        beforeSend: function() {
+            $("#msg_cheques").html("<img src='img/loading.gif' width='16px' height='16px' >");                      
+        },
+        complete: function(objeto, exito) {
+            if (exito == "success") {                          
+                var total = $.trim(objeto.responseText);
+                var valor_total = parseFloat(total).format(0, 3, '.', ',');
+                $(".total_cheques").html(valor_total); 
+                $(".tr_"+nro_cheque).remove();
+                $("#msg_cheques").html("");
+                setRef();
+            }
+        },
+        error: function() {
+            $("#msg_cheques").html("Ocurrio un error en la comunicacion con el Servidor...");
+        }
+    }); 
+ }
+ function setCuenta(){
+   $("#nro_cuenta_dep").val($("#bancos_dep option:selected").attr("data-cuenta")); 
+ }
+ function addDep(){
+     
+    var fecha_tranf = $("#fecha_trasnf").val();
+    var nro_dep = $("#nro_dep").val();
+    var banco = $("#bancos_dep").val();
+    var cuenta_dep = $("#nro_cuenta_dep").val();
+    var total_dep = parseFloat($(".total_dep").val().replace(/\./g, '').replace(/\,/g, '.')); 
+    var suc = getSuc();
+    if(fecha_tranf != "" && nro_dep != "" && cuenta_dep != "" && total_dep >= 0  ){
+       
+        $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "agregarDepositoPorFacturaVenta", factura:factura,suc:suc,fecha_tranf:fecha_tranf,nro_dep:nro_dep,banco:banco,cuenta:cuenta_dep,total:total_dep,usuario:getNick()},
+            async: true,
+            dataType: "html",
+            beforeSend: function() {
+                $("#msg_transf").html("<img src='img/loading.gif' width='22px' height='22px' >");                      
+            },
+            complete: function(objeto, exito) {
+                if (exito == "success") {                          
+                    var result = $.trim(objeto.responseText);  
+                    if(result=="Ok" ){
+                        $("#del_dep").fadeIn();
+                        $("#msg_transf").html("Ok");   
+                        setRef();
+                    }else{
+                         $("#msg_transf").html("Ocurrio un error en la comunicacion con el Servidor...");         
+                    }
+                }
+            },
+            error: function() {
+                $("#msg_transf").html("Ocurrio un error en la comunicacion con el Servidor...");
+            }
+        });   
+    }else{
+        $("#msg_transf").addClass("error");
+        $("#msg_transf").html("Todos los campos deben estar completos...");
+    }
+}
+function getTransferenciasBancariasDeFactura(){
+    $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "getTransferenciaBancariaDeFactura", "factura": factura},
+            async: true,
+            dataType: "json",
+            beforeSend: function() {
+                $("#msg_transf").html("Recuperando datos... <img src='img/loadingt.gif'>"); 
+            },
+            success: function(data) {   
+                if(data.length > 0){
+                   var id_banco = data[0].id_banco ;
+                   var fecha_trasnf = data[0].fecha_lat ;
+                   var cuenta = data[0].cuenta;
+                   var nro_deposito = data[0].nro_deposito;
+                   var entrada = parseFloat(data[0].entrada).format(2, 3, '.', ',');  ;
+                   $("#fecha_trasnf").val(fecha_trasnf);                   
+                   $("#nro_dep").val(nro_deposito);
+                   $("#bancos_dep").val(id_banco);
+                   $("#nro_cuenta_dep").val(cuenta);
+                   
+                   $("#total_dep").val(entrada); 
+                   setRef();
+                }else{
+                    //$("#fecha_trasnf").val("");
+                    $("#nro_dep").val("");
+                    //$("#bancos_dep").val("");
+                    //$("#nro_cuenta_dep").val("");
+                    $("#total_dep").val(0); 
+                }
+                $("#msg_transf").html(""); 
+            }
+    });     
+}
+ function getCuotasDeFactura(){
+     // Este metodo toma NaN como Monto inicial por lo tanto solo devuelve las ya generadas
+     $(".cuotas").remove();
+     $.ajax({
+            type: "POST",
+            url: "Ajax.class.php",
+            data: {"action": "getCuotasDeFactura",factura:factura},
+            async: true,
+            dataType: "json",
+            beforeSend: function() {
+                $("#msg_cuotas").html("<img src='img/loading.gif' height='20px' width='20px' >"); 
+            },
+            success: function(data) {  
+               $(".cuotas_foot").remove(); 
+                    var total_moneda = 0;  
+                    var total = 0;
+                    for(var i in data){ 
+                         var nro = data[i].id_cuota;
+                         var moneda = data[i].moneda;
+                         var monto = data[i].monto;
+                         var tasa_interes = data[i].tasa_interes;  
+                         var cotiz = data[i].cotiz;                        
+                         var ret_iva = data[i].ret_iva;  
+                         var monto_ref = data[i].monto_ref;
+                         var valor_total = data[i].valor_total;
+                         var vencimiento = data[i].vencimiento;  
+                         var estado = data[i].estado;                       
+                         var monto_ref_formated = parseFloat( monto_ref ).format(0, 3, '.', ',');  
+                         //var valor_gs_formated = parseFloat( valor_ref ).format(0, 3, '.', ',');  
+                         total += parseFloat( monto_ref ); 
+                         total_moneda+= parseFloat( valor_total )
+                         var paper_size = '<label>A4&nbsp;</label><input type="radio" value="9" name="paper_size_'+nro+'" checked="checked" >&nbsp;<label>Oficio</label><input type="radio" value="14" name="paper_size_'+nro+'" >'; 
+                         $("#lista_cuotas") .append("<tr class='tr_"+nro+" cuotas tr_cuotas'><td class='itemc'>"+nro+"</td><td class='num' >"+monto+"</td><td class='itemc' >"+moneda+"</td><td class='num' >"+cotiz+"</td><td  class='itemc'>"+tasa_interes+"%</td><td  class='num' >"+ret_iva+"</td>\n\
+                         <td class='num'>"+valor_total+"</td><td class='num'>"+monto_ref+"</td><td  class='itemc'>"+vencimiento+"</td><td  class='itemc'>"+paper_size+"<img id='img_"+nro+"' src='img/printer-01_32x32.png' width='22' height='20' style='cursor:pointer' onclick='imprimirPagare("+nro+")' > </td></tr>");                                       
+                         $(".cuotas_bar").fadeIn();
+                    } 
+                    if(total > 0){
+                        $("#tipo_factura").val("Credito");
+                    }else{
+                        $("#tipo_factura").val("Contado");
+                    }
+                    total = parseFloat(total).format(2, 3, '.', ',');  
+                    total_moneda = parseFloat(total_moneda).format(2, 3, '.', ',');
+                    $("#lista_cuotas").append("<tr class='cuotas_foot'><td colspan='6' > </td> <td style='text-align: right;font-weight: bolder;font-size: 13px' class='total_cuotas_moneda' >"+total_moneda+"</td> <td style='text-align: right;font-weight: bolder;font-size: 13px' class='total_cuotas'>"+total+"</td><td></td> </tr>");
+                    $("#msg_cuotas").html("");    
+                    setRef();            
+                    $("#msg_cuotas").html(""); 
+            }
+        }); 
+  
+ }
+  function setPlanPago( plan ){
+      if(plan != 4){
+         $("#n_cuotas").attr("disabled",true); 
+      }else{
+         $("#n_cuotas").removeAttr("disabled");
+      }
+      if(plan > 1){$("#generar_cuotas").val("Generar Cuotas");}else{$("#generar_cuotas").val("Generar Cuota");}
+      calcRefCuota();
+      $("#generar_cuotas").removeAttr("disabled");
+  }
+  function calcRefCuota(){
+        var moneda_cuota = $("#monedas_cuotas").val();
+        if(   moneda_cuota === "G$"){
+            $("#cotiz_cuota").val("1,00");  
+        }else{ // U$
+            $("#cotiz_cuota").val(parseFloat(us).format(2, 3, '.', ','));  
+        }     
+        var cotiz = float("cotiz_cuota");
+        var  faltante = float("vuelto_faltante");
+        var plan = $('input[name=plan]:checked').val();
+        var cuotas = plan;
+        if(plan == 4){
+             cuotas = $("#n_cuotas").val();
+        }
+        var valor_cuota = parseFloat((faltante / cotiz) / cuotas).format(2, 3, '.', ',');
+        var moneda = $("#monedas_cuotas option:selected").text();
+        $("#msg_valcuota").html(cuotas+" de "+valor_cuota+"  "+moneda);
+  }
+  function generarCuotas(){
+    var cant_cuotas = $(".tr_cuotas").length;
+    if(cant_cuotas < 1){
+    $("#generar_cuotas").attr("disabled",true);  
+    var moneda_cuota = $("#monedas_cuotas").val();
+    var suc = getSuc();
+    if(   moneda_cuota === "G$"){
+        $("#cotiz_cuota").val("1,00");  
+    }else{ // U$
+        $("#cotiz_cuota").val(parseFloat(us).format(2, 3, '.', ','));  
+    }     
+    var cotiz = float("cotiz_cuota");
+    var  faltante = float("vuelto_faltante");
+    var plan = $('input[name=plan]:checked').val();
+    var cuotas = plan;
+    if(plan == 4){
+         cuotas = $("#n_cuotas").val();
+    }
+    if(isNaN(cuotas)){
+        cuotas = 0;
+    }
+    var valor_cuota = parseFloat((faltante / cotiz) / cuotas);// Este no se puede tomar por el redondeo
+    var tax = 2.3; // 2%
+    var interes = 0;  // Se Calcula 
+    var fecha_inicio =  $("#fecha_inicio").val() ;
+    
+    var total_factura = float("total_gs");
+    
+    $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {"action": "generarCuotas",factura:factura,monto:valor_cuota, moneda: moneda_cuota, cuotas:cuotas,cotiz:cotiz,tax:tax,interes:interes,suc:suc,fecha_inicio:fecha_inicio,total_factura:total_factura},
+        async: true,
+        dataType: "json",
+        beforeSend: function() {
+            $("#msg_cuotas").html("<img src='img/loading.gif' height='20px' width='20px' >"); 
+        },
+        success: function(data) {  
+           $(".cuotas_foot").remove(); 
+                var total_moneda = 0;  
+                var total = 0;
+                for(var i in data){ 
+                     var nro = data[i].id_cuota;
+                     var moneda = data[i].moneda;
+                     var monto = data[i].monto;
+                     var tasa_interes = data[i].tasa_interes;  
+                     var cotiz = data[i].cotiz;                        
+                     var ret_iva = data[i].ret_iva;  
+                     var monto_ref = data[i].monto_ref;
+                     var valor_total = data[i].valor_total;
+                     var vencimiento = data[i].vencimiento;  
+                     var estado = data[i].estado;                       
+                     var monto_ref_formated = parseFloat( monto_ref ).format(0, 3, '.', ',');  
+                     //var valor_gs_formated = parseFloat( valor_ref ).format(0, 3, '.', ',');  
+                     total += parseFloat( monto_ref ); 
+                     total_moneda+= parseFloat( valor_total )
+                     var paper_size = '<label>A4&nbsp;</label><input type="radio" value="9" name="paper_size_'+nro+'" checked="checked" >&nbsp;<label>Oficio</label><input type="radio" value="14" name="paper_size_'+nro+'" >'; 
+                     $("#lista_cuotas") .append("<tr class='tr_"+nro+" cuotas tr_cuotas'><td class='itemc'>"+nro+"</td><td class='num' >"+monto+"</td><td class='itemc' >"+moneda+"</td><td class='num' >"+cotiz+"</td><td  class='itemc'>"+tasa_interes+"%</td><td  class='num' >"+ret_iva+"</td>\n\
+                     <td class='num'>"+valor_total+"</td><td class='num'>"+monto_ref+"</td><td  class='itemc'>"+vencimiento+"</td><td  class='itemc'>"+paper_size+"<img id='img_"+nro+"' src='img/printer-01_32x32.png' width='22' height='20' style='cursor:pointer' onclick='imprimirPagare("+nro+")' > </td></tr>");                                       
+                     $(".cuotas_bar").fadeIn();
+                } 
+                if(total > 0){
+                    $("#tipo_factura").val("Credito");
+                }else{
+                    $("#tipo_factura").val("Contado");
+                }
+                total = parseFloat(total).format(2, 3, '.', ',');  
+                total_moneda = parseFloat(total_moneda).format(2, 3, '.', ',');
+                $("#lista_cuotas").append("<tr class='cuotas_foot'><td colspan='6' > </td> <td style='text-align: right;font-weight: bolder;font-size: 13px' class='total_cuotas_moneda' >"+total_moneda+"</td> <td style='text-align: right;font-weight: bolder;font-size: 13px' class='total_cuotas'>"+total+"</td><td></td> </tr>");
+                $("#msg_cuotas").html("");    
+                setRef();            
+                $("#msg_cuotas").html(""); 
+        }
+    }); 
+    }else{
+      errorMsg("Elimine primero las cuotas existentes antes de generar nuevas",8000);
+    }
+  }
+  
+  function getReserva(){
+    var ticket = $("#ticket_reserva").val();   
+    var cod_cli = $("#codigo_cliente").val();  
+    
+    $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {"action": "getValorReserva", "reserva": ticket,"cod_cli":cod_cli},
+        async: true,
+        dataType: "json",
+        beforeSend: function() {
+            $("#msg_reservas").html("Buscando datos de Reserva <img src='img/loading.gif' width='22px' height='22px' >"); 
+        },
+        success: function(data) {   
+            var estado = data.estado;
+            var expira = data.expira;
+            if(estado != 'Error'){
+                if(estado == 'Expirado'){
+                   $("#msg_reservas").html("Este ticket ha vencido en la fecha : "+expira+" ");
+                   $("#entrega_reserva").val(0);
+                }else if(estado == 'Liberada'){
+                    var valor =  parseFloat($.trim(data.valor)).format(2, 3, '.', ',');    
+                    $("#entrega_reserva").val(valor);
+                    $("#entrega_reserva").addClass("info");
+                    $("#msg_reservas").html(""); 
+                }else{ // Cualquier otro estado
+                   $("#msg_reservas").addClass("error"); 
+                   $("#msg_reservas").html("Esta reserva esta en estado : "+estado+" para que tenga efecto la reserva debe estar en Liberada");
+                   $("#entrega_reserva").val(valor);  
+                }
+            }else{
+              $("#msg_reservas").addClass("error");
+              $("#msg_reservas").html(data.mensaje);  
+              $("#entrega_reserva").val(0);
+              $("#ticket_reserva").val(""); 
+            }
+             setRef(); 
+        }
+    });
+  }  
+  function imprimirPagare(nro){
+      $("#img_"+nro).attr("src","img/printer-02_32x32.png");
+      var ruc = $("#ruc_cliente").val();
+      var suc = getSuc();
+      var usuario = getNick();
+      var papar_size = $('input[name=paper_size_'+nro+']:checked').val();
+      var url = "caja/Pagare.class.php?factura="+factura+"&ruc="+ruc+"&suc="+suc+"&nro_pg="+nro+"&usuario="+usuario+"&papar_size="+papar_size;
+      var title = "Impresion de Pagares";
+      var params = "width=800,height=760,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no";
+      
+      if(typeof(showModalDialog) === "function"){ // Firefox         
+         window.showModalDialog(url,title,params);             
+      }else{
+         window.open(url,title,params);        
+      }
+  }
+   
+  
+  function imprimirFactura(){
+     var factura_contable = $("#factura_contable").val();
+     var tipo_factura = $("#tipo_factura").val();
+     var pdv = $("#factura_contable option:selected").attr("data-pdv"); 
+     var moneda = $("#moneda").val();
+     
+     if(factura_contable != ""){
+         if($(".codigo_art").length > 0){
+            var ruc = $("#ruc_cliente").val();
+            var cliente = encodeURI($("#nombre_cliente").val());
+            var suc = getSuc();
+            var usuario = getNick();
+            var papar_size = 9; // Dedocratico A4
+            var tipo_fact = $("#tipo_fact").val();
+
+            var url = "caja/ImpresorFactura.class.php?factura="+factura+"&ruc="+ruc+"&cliente="+cliente+"&suc="+suc+"&factura_legal="+factura_contable+"&usuario="+usuario+"&papar_size="+papar_size+"&tipo_factura="+tipo_factura+"&pdv="+pdv+"&man_pre="+tipo_fact+"&moneda="+moneda;
+            var title ="Impresion de Facturas Contables";
+            var params ="width=800,height=840,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no";
+            if(typeof(showModalDialog) === "function"){ // Firefox
+                window.showModalDialog(url,title,params);                      
+            }else{
+                window.open(url,title,params);                       
+            }
+         }else{
+             Swal.fire("Nada que imprimir","","warning");
+         }
+     }else{
+         Swal.fire("Debe Pre cargar las Facturas Contables para poder Imprimir","","warning");
+     }
+  }
+  function eliminarCuotas(){
+      $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {"action": "eliminarCuotas", "factura": factura},
+        async: true,
+        dataType: "html",
+        beforeSend: function() {
+            $("#msg_cuotas").html("<img src='img/loadingt.gif' >");                      
+        },
+        complete: function(objeto, exito) {
+            if (exito == "success") {                          
+                $(".cuotas").remove();   $(".total_cuotas").html("0"); $(".total_cuotas_moneda").html("0");  
+                setRef();    
+                $(".cuotas_bar").fadeOut();
+                $("#msg_cuotas").html("Cuotas eliminadas puede generar de nuevo...");  
+                $("#tipo_factura").val("Contado");
+            }
+        },
+        error: function() {
+            $("#msg_cuotas").html("Ocurrio un error en la comunicacion con el Servidor...");
+        }
+    }); 
+  }
+  
+   
+  /**
+   * float dado un id le saca el valor y devuelve un Numero valido
+   * en caso de no ser un numero devuelve 0
+   * @param {String} id
+   * @returns {Number}
+   */
+  
+  function float(id){
+        //console.log("float id: "+id);
+        if($("#"+id).length > 0){
+            var n =  parseFloat($("#"+id).val().replace(/\./g, '').replace(/\,/g, '.'));
+            if(isNaN(n)){
+                return 0;
+            }else{
+                return n;
+            }
+        }else{
+            return 0;
+        }
+  } 
+  
+  function setRef(){
+      vuelto_gs = 0;
+      var entrega_gs = float("entrega_gs");
+      
+      var entrega_rs = float("entrega_rs") * rs;
+      var entrega_ps = float("entrega_ps") * ps;
+      var entrega_us = float("entrega_us") * us; 
+                
+      var total_entrega_efectivo =  entrega_gs + entrega_rs +  entrega_ps + entrega_us  ;
+      
+      var total_convenios = parseFloat($(".total_convenios").text().replace(/\./g, '').replace(/\,/g, '.'));
+      
+      var total_cheques =  parseFloat($(".total_cheques").text().replace(/\./g, '').replace(/\,/g, '.'));
+      
+      var total_cuotas = parseFloat($(".total_cuotas").text().replace(/\./g, '').replace(/\,/g, '.'));
+      
+      var total_transferencias_bancarias = parseFloat($(".total_dep").val().replace(/\./g, '').replace(/\,/g, '.'));
+      
+      var reserva = float("entrega_reserva");
+      
+      var total_pagar_gs  = float("total_gs");
+      var vuelvo_faltante = total_pagar_gs - (total_entrega_efectivo + total_convenios + total_cheques + total_cuotas + reserva + total_transferencias_bancarias +total_valor_puntos);
+      vuelto_gs = vuelvo_faltante; 
+      if(vuelvo_faltante <= 0){
+         $("#label_vuelto_faltante").text("Vuelto:"); $("#vuelto_faltante").css("color","green");  $("#label_vuelto_faltante").css("color","green");  
+         vuelvo_faltante*= -1; vuelto_gs*= -1;
+         var total_gs = float("total_gs");
+         
+         if(vuelvo_faltante >  total_gs ){
+            errorMsg("Vuelto no puede ser mayor al total",7000);
+            $(".cerrar_venta").attr("disabled",true);
+         }else{
+            $(".cerrar_venta").removeAttr("disabled");
+         }
+              
+      }else{
+         $("#label_vuelto_faltante").text("Faltante:"); $("#vuelto_faltante").css("color","red"); $("#label_vuelto_faltante").css("color","red");  
+         $(".cerrar_venta").attr("disabled",true);
+      }        
+      
+      var total_entregado = total_entrega_efectivo + total_convenios + total_cheques + total_cuotas + reserva + total_transferencias_bancarias + total_valor_puntos;
+
+      /**
+       * Habilitar cobro en cuotas
+       * si la diferencia entre limite de credito y entrega en efectivo es igual o mayor a cero
+       */
+      
+      var cat = parseFloat($("#categoria").val());
+      var ruc = $("#ruc_cliente").val();
+      var limite = parseFloat($("#limite_credito").val().replace(/\./g,''));
+      /*
+      if(!(cat < 3)  && (0 <= (total_entregado + limite))){
+        $("#tab_credito").fadeIn();
+      }else{
+        $("#tab_credito").fadeOut();
+      } */
+      $("#monedas_vuelto").val(mon_vuelto); // Mostrar vuelto en lamoneda que que ya se pre cargo
+      $("#total_entrega").val(total_entregado.format(2, 3, '.', ','));
+      calcVuelto(0);
+      //$("#vuelto_faltante").val(vuelvo_faltante.format(2, 3, '.', ','));   
+            
+  }
+  function calcVuelto(update){
+     var mv = $("#monedas_vuelto").val();
+     var vuelto = vuelto_gs;
+     cotiz_vuelto = 1;
+     if(mv == 'R$'){
+        vuelto = vuelto_gs / rs;  cotiz_vuelto = rs;
+     }else if(mv == 'P$'){
+        vuelto = vuelto_gs / ps;  cotiz_vuelto = ps;
+     }else if(mv == 'U$'){
+        vuelto = vuelto_gs / us;  cotiz_vuelto = us;
+     } 
+     $("#vuelto_faltante").val(vuelto.format(2, 3, '.', ',')); 
+     console.log(update+" "+mv+"  "+vuelto+"   "+cotiz_vuelto);
+     if(update){
+        actualizarVuelto();
+     }
+  }
+  
+  function borrarDescuento(factura){
+   var tipo_doc = $("#fact_"+factura).attr("data-tipo_doc");
+   
+   $("#alert_msg").html("Esta a punto de eliminar el Descuento, confirme este procedimiento.<br>Los Descuentos para Cat. 1 y 2 solo estan permitidos para pagos en Efectivo");
+   $("#dialog-confirm").attr("title","Que desea hacer?");   
+   $( "#dialog-confirm" ).dialog({
+      resizable: false,
+      height:180,
+      width:360,
+      modal: true,
+      dialogClass:"ui-state-highlight",
+      buttons: {
+        "Cancelar": function() {
+          $( this ).dialog( "close" );
+        },  
+        "Borrar Descuento": function() {                
+                $.ajax({
+                      type: "POST",
+                      url: "Ajax.class.php",
+                      data: {"action": "borrarDescuentoDeFactura", "factura": factura,tipo_doc:tipo_doc},
+                      async: true,
+                      dataType: "html",
+                      beforeSend: function() {
+                          $("#trash_desc_"+factura).html("<img src='img/loadingt.gif' width='22px' height='22px' >"); 
+                          $("#alert_msg").html("El Descuento se esta eliminando espere...<img src='img/loadingt.gif' width='22px' height='22px' >");
+                      },
+                      complete: function(objeto, exito) {
+                          if (exito == "success") {                          
+                             $("#trash_desc_"+factura).html(""); 
+                             var total_bruto =  $("#total_bruto_"+factura).html();
+                             $("#total_"+factura).html(total_bruto);
+                             $("#total_desc_"+factura).html("0");
+                             $("#trash_desc_"+factura).fadeOut("slow");
+                             $( "#dialog-confirm" ).dialog( "close" );
+                          }
+                      },
+                      error: function() {
+                          alert("Ocurrio un error en la comunicacion con el Servidor...");
+                      }
+                  });       
+                } 
+        },        
+        close: function() {            
+          $( this ).dialog( "destroy" );
+        }
+      });  
+  }
+  function  guardarDatosConvenio(){
+      var orden_beneficiario = $("#orden_benef").val();
+      var valor_orden = $("#monto_orden").val();
+      var nro_orden = $("#nro_orden").val();
+      if(isNaN(valor_orden)){
+          valor_orden = 0;          
+      }
+      $("#msg_conv").html("Guardando datos...");  
+      $.post("Ajax.class.php", {action: "guardarDatosConvenio", "factura": factura, orden_beneficiario: orden_beneficiario, valor_orden: valor_orden,nro_orden:nro_orden},function(data){
+           $("#msg_conv").html(data);  
+      });
+  }
+  function imprimirTicket(){
+      var factura = $("#factura").val();
+      var cliente = $("#nombre_cliente").val();
+      var ruc = $("#ruc_cliente").val(); 
+      var suc = getSuc();
+      
+      var moneda =  $("#moneda").val();
+      
+      $("#ticket_caja").remove(); // Si existe lo elimino
+      var t = $('<iframe id="ticket_caja" name="ticket_caja" style="width:0px; height:0px; border: 0px" src="caja/TicketCaja.class.php?factura='+factura+'&cliente='+cliente+'&ruc='+ruc+'&suc='+suc+'&moneda='+moneda+'">');
+      t.appendTo(".popup_caja");    
+  }
+  function cerrarVenta(){
+    $("#cerrar_venta").attr("disabled",true);
+    var usuario = getNick(); 
+    var moneda_vuelto = $("#monedas_vuelto").val();
+    var vuelto = float("vuelto_faltante");
+    var tipo_factura = $("#tipo_factura").val();
+    
+    var orden_beneficiario = $("#orden_benef").val();
+    var valor_orden = $("#monto_orden").val();
+    if((orden_beneficiario != "" && valor_orden <= 0) || valor_orden > 0 && orden_beneficiario == ""){
+        errorMsg("Si la venta es de un Convenio revise los datos del Nro de Orden",20000);    
+        return;
+    }  
+    
+    if(vuelto > 0){
+        var total_factura = parseFloat($("#total_gs").val().replace(/\./g, '').replace(/\,/g, '.'));   
+        var total_convenios = parseFloat($(".total_convenios").text().replace(/\./g, '').replace(/\,/g, '.'));      
+        var total_cheques =  parseFloat($(".total_cheques").text().replace(/\./g, '').replace(/\,/g, '.'));      
+        var total_cuotas = parseFloat($(".total_cuotas").text().replace(/\./g, '').replace(/\,/g, '.'));
+        var reserva = float("entrega_reserva");
+        if((total_convenios + total_cheques + total_cuotas + reserva) >  (total_factura + ((total_factura * TOPE_ENTREGA) / 100)) ){
+            errorMsg("La suma de Cheques, Tarjetas y cuotas no puede exeder el total de la factura + !",20000);
+            return;
+        } 
+    }
+    
+    var ticket = $("#ticket_reserva").val();  
+    var suc = getSuc();  parseFloat($("#total_gs").val().replace(/\./g, '').replace(/\,/g, '.'));   
+    $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {"action": "cerrarVenta", "usuario": usuario, "factura": factura,"moneda_vuelto":moneda_vuelto,"vuelto":vuelto,"cotiz":cotiz_vuelto,"vuelto_gs":vuelto_gs,ticket_reserva:ticket,suc:suc,tipo_factura:tipo_factura},
+        async: true,
+        dataType: "html",
+        beforeSend: function() {
+            $(".info").html("Cerrando Venta Favor Espere... <img src='img/loading.gif' width='22px' height='22px' >");                      
+        },
+        complete: function(objeto, exito) {
+            if (exito == "success") {                          
+                var result = $.trim(objeto.responseText); 
+                if(result == "Ok"){
+                   $("#fact_"+factura).remove();
+                   $("#popup_caja").slideUp("fast"); 
+                   $(".entrega").val(""); 
+                   $(".info").html("Venta Cerrada con exito!!!");
+                   Swal.fire({
+                    title: 'Venta Cerrada, Desea crear otra Factura?', 
+                    showCancelButton: true,
+                    confirmButtonText: 'Si crear otra Factura',
+                    cancelButtonText : 'No, Salir al Menu',
+                  }).then((result) => {                    
+                    if (result.isConfirmed) {
+                       genericLoad("ventas/NuevaVenta.class.php");
+                    } else {
+                       showMenu();
+                    }
+                  });
+                  
+                }else{
+                    $(".info").html("Ocurrio un Error durante la transaccion, recargue la lista y vuelva a intentarlo, en caso de que siga el error contacte con el Adminitrador...");    
+                    alert("Informe Tecnico: Factura: "+factura+" ["+result+"]");
+                }
+            }
+        },
+        error: function() {
+            $("#.info").addClass("error");
+            $("#.info").html("Ocurrio un error en la comunicacion con el Servidor, favor intente mas tarde...");
+            $("#cerrar_venta").removeAttr("disabled");
+        }
+    }); 
+  }
+  
+function getLimiteCredito(){
+    var CardCode = $("#codigo_cliente").val();
+    $.post( "Ajax.class.php",{ action: "getLimiteCreditoCliente",CardCode:CardCode}, function( data ) {
+       var es_funcionario = $("#nombre_cliente").val().indexOf("FUNCIONARI")>=0?true:false; 
+       var Limite = parseFloat(data.Limite);
+       var Cuotas = parseFloat(data.Cuotas);
+       var Cheques = parseFloat(data.Cheques);
+       var ChequesAlDiaNoProcesados = parseFloat(data.ChequesAlDiaNoProcesados);
+       var EfectivoNoProc = parseFloat(data.EfectivoNoProc);
+       var VentasNoProcesadas = parseFloat(data.VentasNoProcesadas);
+       var CuotasAtrasadas = parseInt(data.CuotasAtrasadas);
+       var CuotasAtrasadasPermitidas = parseInt(data.LIMITE_CUOTAS_ATRASADAS);
+       
+       var CantidadDeCuotas = parseInt(data.CANTIDAD_CUOTAS);
+       var PlazoMaximo = parseInt(data.PLAZO_MAXIMO);
+       
+       if(CantidadDeCuotas == 1 ){
+           $("#p2").prop("disabled",true);
+           $("#p3").prop("disabled",true);           
+           $("#pn").prop("disabled",true);           
+       }else if(CantidadDeCuotas == 2 ){           
+           $("#p3").prop("disabled",true);           
+           $("#pn").prop("disabled",true);           
+       }else if(CantidadDeCuotas == 3 ){                      
+           $("#pn").prop("disabled",true);           
+       }else if(CantidadDeCuotas > 3 ){    
+           $(".cuota_x").prop("disabled",false);
+           $(".cuota_x").fadeIn();  console.log( "  for ");
+           for(var i = (CantidadDeCuotas + 1 );i <= 60;i++  ){                
+               $(".n_cuota_"+i ).prop("disabled",true);
+               $(".n_cuota_"+i ).fadeOut();
+           }
+       }
+       
+       if(PlazoMaximo == 30 ){
+           $("#p2").prop("disabled",true);
+           $("#p3").prop("disabled",true);           
+           $("#pn").prop("disabled",true);           
+       }else if(PlazoMaximo == 60 ){           
+           $("#p3").prop("disabled",true);           
+           $("#pn").prop("disabled",true);           
+       }else if(PlazoMaximo == 90 ){                      
+           $("#pn").prop("disabled",true);           
+       } 
+       
+       console.log("Limite "+Limite);       
+       console.log("CantidadDeCuotas "+CantidadDeCuotas);
+       console.log("PlazoMaximo "+PlazoMaximo);
+       //console.log("Limite "+Limite);
+       
+       var Diff = parseFloat(Limite - (Cuotas + Cheques + VentasNoProcesadas) + (EfectivoNoProc + ChequesAlDiaNoProcesados)); 
+       var deuda_actual = (Cuotas + Cheques + VentasNoProcesadas) + (EfectivoNoProc + ChequesAlDiaNoProcesados);
+       
+       $("#limite_credito").val( ( Diff).format(0, 3, '.', ','));
+       
+       var limite_vs_cant_cuotas_y_diff = ( Limite > 0 && CantidadDeCuotas > 0 && Diff >= 0 );
+       var cuotas_atrasadas_vs_permitidas = (CuotasAtrasadas < CuotasAtrasadasPermitidas) || (CuotasAtrasadas == 0); 
+        console.log("CuotasAtrasadas "+CuotasAtrasadas+"  CuotasAtrasadasPermitidas  "+CuotasAtrasadasPermitidas);
+         
+        console.log("limite_vs_cant_cuotas_y_diff:  "  +limite_vs_cant_cuotas_y_diff + " cuotas_atrasadas_vs_permitidas  "+ cuotas_atrasadas_vs_permitidas +"  Diff  "+Diff+"  Deuda actual = "+deuda_actual+"  ");
+        
+        /*
+        if((( Limite > 0 && CantidadDeCuotas > 0 && Diff >= 0 ) && (cuotas_atrasadas_vs_permitidas))   || (es_funcionario)  ){
+                      
+        }else{
+            $("#tab_credito").fadeOut();
+        } */
+        
+        //$("#tab_credito").fadeIn();  
+         
+         
+        //$(".limite_credito").fadeIn();
+        if(Diff <= 0){
+           $("#limite_credito").css("color","red"); 
+        }else{
+           $("#limite_credito").css("color","green");  
+        } 
+        if(CantidadDeCuotas != null){
+            if(PlazoMaximo != ""){
+               $("#msg_cuotas").html("Cantidad de cuotas: "+CantidadDeCuotas+" Plazo maximo: "+PlazoMaximo+" dias");
+               $("#msg_cuotas").css("background","red").css("color","white");
+            }
+        }
+                
+        var CardCode = $("#codigo_cliente").val();
+        
+        if(CuotasAtrasadas > CuotasAtrasadasPermitidas && getSuc() != "00" &&  !es_funcionario   ){
+           //$("#tab_credito").fadeOut();
+           errorMsg("Cliente tiene "+CuotasAtrasadas+" cuotas atrasadas...",25000); 
+        }
+    },'json'); 
+}  
+
+function completar(id){
+   var total =   parseFloat(($("#total_"+id).val()).replace(/\./g, '').replace(/\,/g, '.'));
+   var entrega_actual =   parseFloat(($("#entrega_"+id).val()).replace(/\./g, '').replace(/\,/g, '.'));
+   if(entrega_actual > 0){
+       $("#entrega_"+id).val(0);
+       //$("#comp_"+id).val("&#x25C0;");
+   }else{ 
+       $("#entrega_"+id).val(total);
+       //$("#comp_"+id).val("&#x25BC;");
+   } 
+   $("#entrega_"+id).trigger("change");
+}
+
+function completarTarjeta(){
+    var total =   parseFloat(($("#total_gs").val()).replace(/\./g, '').replace(/\,/g, '.'));
+    var entrega_actual =   parseFloat(($("#total_entrega").val()).replace(/\./g, '').replace(/\,/g, '.'));    
+    var diff = parseFloat(total - entrega_actual);
+    $("#monto_conv").val(diff);
+    $("#entrega_gs").trigger("change");
+    $(".entrega_conv").trigger("change");
+}
+
+function getPuntos(){
+    var cod_cli = $("#codigo_cliente").val();
+    $.ajax({
+        type: "POST",
+        url: "ventas/FacturaVenta.class.php",
+        data: {action: "getPuntos", cod_cli: cod_cli},
+        async: true,
+        dataType: "json",
+        beforeSend: function () {
+            $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+            $(".puntos_row").remove();
+        },
+        success: function (data) {   
+            for(var i in data){
+                var id = data[i].id;  
+                var puntos = data[i].puntos;  
+                var valor = data[i].valor;  
+                var motivo = data[i].motivo;
+                var fecha = data[i].fecha;  
+                var fecha_canje = data[i].fecha_canje===null?"":data[i].fecha_canje;
+                var estado = data[i].estado;     
+                var valor_puntos = puntos * valor;
+                var valor_puntos_formatted = (valor_puntos).format(0, 3, '.', ',');
+                        
+                $("#lista_puntos").append("<tr class='puntos_row fila_puntos_"+id+"'  > <td class='itemc'>"+fecha+"</td> <td class='itemc'>"+puntos+"</td><td class='item'>"+motivo+"</td><td class='num'>"+valor_puntos+"</td><td class='itemc'>"+estado+"</td><td class='itemc'><input onclick='sumarPuntos()' type='checkbox' class='check_puntos' data-valor='"+valor_puntos+"' id='check_"+id+"' data-id='"+id+"'></td></tr>");
+            } 
+            
+            $("#lista_puntos").append("<tr class='puntos_row'><td>Total:</td><td class='cant_puntos num' style='font-weight:bolder'></td><td ></td><td class='total_puntos num' style='font-weight:bolder'></td><tr>");
+           
+            
+            $("#msg").html(""); 
+             
+            
+        },
+        error: function (e) {                 
+            $("#msg").html("Error obtener moviles:  " + e);   
+            errorMsg("Error obtener moviles:  " + e, 10000);
+        }
+    });         
+}
+
+function sumarPuntos(){
+    var total = 0;
+    $(".check_puntos").each(function(){
+        if($(this).is(":checked")){
+         var valor = parseFloat($(this).attr("data-valor"));
+         total+=0+valor;
+        }
+    }); 
+    total_valor_puntos = total;
+    
+    $(".total_puntos").html((total).format(0, 3, '.', ','));
+    setRef();
 }

@@ -6,12 +6,12 @@
 <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1">
 
 <link rel="stylesheet" type="text/css" href="../../css/reportes.css" /> 
-<link rel="stylesheet" type="text/css" href="arqueoVentasDet.css?_=1499200127463" /> 
+<link rel="stylesheet" type="text/css" href="arqueoVentasDet.css?_=dddddd" /> 
 <link rel="stylesheet" type="text/css" href="../../js/jquery-ui/jquery-ui.css" /> 
 <script type="text/javascript" src="../../js/jquery-1.11.2.min.js" ></script>
 <script type="text/javascript" src="../../js/jquery-ui/jquery-ui.min.js" ></script>
 <script type="text/javascript" src="../../js/reportes.js" ></script>
-<script type="text/javascript" src="arqueoVentasDet.js?_=1530553100585" ></script>
+<script type="text/javascript" src="arqueoVentasDet.js?_=asdfasdfasdfasdfasdf" ></script>
 
 <style>
     .pagos{
@@ -39,7 +39,7 @@
     .cancelar_pagos{
         display:none;
     }
-</style>
+</style>    
 
 <!-- end:   header -->
 
@@ -56,27 +56,34 @@
 <tr>
 <th colspan="{colspan}"> Datos de Facturaci&oacute;n </th>
 <th colspan="3"> Totales </th>
-<th colspan="5"> Detalle de Pago </th>
-<th><input disabled="disabled" type="button" id="verif" value="Verificado" onclick="verif_ventas()" /></th>
-<th><input  type="button" id="verif" value="Cons. Pagos" onclick="getPagos()" title="Consultar Pagos" /> <label class="cancelar_pagos" >  Cancelar Pagos:</label> <input type="checkbox" class="cancelar_pagos"  onclick="cancelarPagos()">    <input type="button" class="cancelar_todos" style="display:none" value="Cancelar Todos"  onclick="cancelarTodos()">  </th>
+<th colspan="7"> Detalle de Pago </th>
+<th>
+    <input disabled="disabled" type="button" id="verif" value="Verificado" onclick="verif_ventas()" />
+    <label class="cancelar_pagos" >  Cancelar Pagos:</label> <input type="checkbox" class="cancelar_pagos"  onclick="cancelarPagos()">   
+    <input type="button" class="cancelar_todos" style="display:none" value="Cancelar Todos"  onclick="cancelarTodos()"> 
+    
+</th>
+ 
 </tr>
 <tr>
 <th class="factura">Fact</th>
 <th class="factura" {show_fecha}>Fecha</th>
+<th class="factura">Emp.</th>
 <th class="factura">Pref.Pago</th>
 <th class="factura">Moneda</th>
 <th class="factura">TotalB</th>
 <th class="factura">Descuento</th>
-<th class="factura">Factura</th>
+<th class="factura">T.Neto</th>
+<th class="factura">T.Gs</th>
 <th class="verif">Verif</th>
 <th class="detPago"> Pagos </th>
 <th class="detPago">Efectivo</th>
-<th class="detPago">Cheque</th>
-<th class="detPago">Convenio</th>
+<th class="detPago">Cheques</th>
+<th class="detPago">Tarjetas</th>
 <th class="detPago">Cuota</th>
-<th class="detPago">Res</th>
+<th class="detPago">Rsv.</th> 
 <th><label for="todos">Todo </label><input id="todos" onchange="verif()" type="checkbox" /></th>
-<th id="cab_pagos_aplic" style="margin:0;padding:0;width:380px">Pagos Aplic.</th>
+ 
 </tr>
 </thead>
 <tbody>
@@ -86,11 +93,13 @@
 <tr class="table_data factura_{f_nro}" data-fact="{f_nro}"  >
 <td class="item">{f_nro}</td>
 <td class="item" {show_fecha}>{fecha_cierre}</td>
+<td class="itemc" style="text-transform:capitalize">{control_empaque}</td>
 <td class="itemc">{tipo}</td>
 <td class="itemc">{moneda}</td>
 <td class="num">{n_total_bruto}</td>
 <td class="num">{n_total_desc}</td>
-<td class="num">{n_total}</td>
+<td class="num">{n_total}</td> 
+<td class="num">{n_total_ref}</td> 
 <td class="{c_tot_verif}">{tot_verif}</td>
 <td class="num pagos_mysql_{f_nro}">{suma}</td>
 <td class="num {verif_efectivo}"><div class="edit" onclick="edit($(this))" data-target="efectivo">{efectivo}</div></td>
@@ -99,7 +108,7 @@
 <td class="num {verif_cuotas}"><div class="edit cuota_{f_nro}" onclick="edit($(this))"  data-target="cuotas">{cuotas}</div></td>
 <td class="num {verif_reserva}"><div id="resContainer"><span {resClass} id="resMonto">{reserva}</span><span id="resData">{resData}</span></div></td>
 <td class="{control}">{control}<input id="{f_nro}" class="unitario" type="checkbox" onchange="checkVerif()" {disabled} /></td>
-<td class="pagos_{f_nro}" style="margin:0;padding:0;border:solid white 0px"></td>
+ 
 </tr>
 <!-- end:   facturas_body -->
 

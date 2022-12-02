@@ -1,0 +1,79 @@
+#menu{
+  display: block;
+  margin: 17px auto;  
+  width: 50%;
+  text-align: center
+}
+.menu{
+  font-family: berna;
+  font-size: 1.0rem;   
+  letter-spacing: 2px;
+  margin: 6px;
+  height: 84px;
+  width: 142px;
+  min-width: 142px;
+  background-color: whitesmoke; 
+  border: 1px solid gray;
+  color: black;
+  -webkit-transition: background-color 2s, letter-spacing 0.3s; /* For Safari 3.1 to 6.0 */
+  transition: background-color 0.3s, letter-spacing 0.3s;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 6px 6px 20px 6px;
+  float: left;
+}
+.menu_icon {
+    height: 82px;
+}
+.icon_label{
+    margin-top: 4px;
+}
+.menu:hover{
+  background-color: #95afc0; 
+  
+}
+.menu:focus{
+  background-color: #95afc0; 
+  
+}
+.information_icon{
+    width:32px;margin:10px;
+    float:right;
+    position:absolute;
+    cursor:pointer;    
+}
+
+@media only screen and (max-width: 720px) {
+   /*
+  #menu{
+    display: block;
+    margin: 17px auto;  
+    width: 85%;
+  }
+  #menu button{
+    font-family: berna;
+    font-size: 1.2rem;   
+    letter-spacing: 2px;
+    margin-bottom: 3px;
+    height: 41px;
+    width: 95%;
+    min-width: 20%;
+    background-color: cornflowerblue; 
+    border: 2px solid #3079ed;
+    color: #fff;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.5);
+    -webkit-transition: background-color 2s, letter-spacing 0.3s; 
+    transition: background-color 0.3s, letter-spacing 0.3s;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 5px 5px 5px black
+  }
+  #menu button:hover{
+    background-color: #95afc0; 
+    letter-spacing: 4px;
+  }
+  #menu button:focus{
+    background-color: #95afc0; 
+    letter-spacing: 4px;
+  }*/
+}

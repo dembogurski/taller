@@ -1,0 +1,211 @@
+<!-- begin: headers -->   
+    <head>  
+        <link rel="stylesheet" type="text/css" href="clientes/Moviles.css?_=ttttttttttttttttttttttttttttt" />      
+        <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>  
+        <link rel="stylesheet" type="text/css" href="recepcion/Recepcion.css?_=ttttttttttttttttttttttttttttt" /> 
+    </head>  
+<!-- end:   headers -->
+
+<!-- begin: insert_edit_form -->     
+<div class="form" id="form_moviles"></div>
+<!-- end:   insert_edit_form -->
+
+<!-- begin: data_header -->
+<div class="list_container">      
+    <table id="moviles"  border="1" class="display responsive nowrap db_tablename"  >
+        <thead>
+            <tr>
+                <th>Chapa</th><th>Marca</th><th>Modelo</th><th>Color</th>
+            </tr>
+        </thead>
+
+<!-- end:   data_header -->
+
+
+<!-- begin: data_line -->     
+    <tr class="movil_{id_movil}" data-cliente="{cliente}"> <td onclick=editMovilUI("{id_movil}")>{chapa}</td> <td onclick=editMovilUI("{id_movil}")>{marca}</td> <td onclick=editMovilUI("{id_movil}")>{modelo}</td> <td onclick=editMovilUI("{id_movil}")>{color}</td>    </tr>
+<!-- end:   data_line -->
+
+
+<!-- begin: data_foot -->     
+
+        <tfoot>
+             
+        </tfoot>
+    </table> 
+</div>
+ 
+<!-- end:   data_foot -->
+
+<!-- begin: script -->      
+    <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+    <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js" ></script>
+    <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
+    <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="js/functions.js" ></script>    
+    <script type="text/javascript" src="clientes/Moviles.js" ></script>
+    <script type="text/javascript" src="recepcion/Recepcion.js" ></script>
+    
+<!-- end:   script -->
+
+
+<!-- begin: edit_form_cab -->  
+<table border="0" class="form_table" id="edit_moviles" style="width: auto">
+    <tr> <th colspan="3" class="form_title" > Datos del Vehiculo  </th> </tr> 
+<!-- end:   edit_form_cab -->
+
+
+<!-- begin: edit_form_data -->  
+<input type="hidden" id="id_movil" value="{id_movil}">
+<input type="hidden" class="PRI" id="form_chapa" value="{value_of_chapa}">
+<tr>
+    <td><img src="img/car_logos/{value_of_marca}.png"  style="width: 44px" ></td>
+    <td><input type="text" class="modelo" id="form_modelo" value="{value_of_modelo}"  > </td> 
+    <td style="text-align: center">
+        <div class="chapa">
+            <div class="top_chapa">--&nbsp;&nbsp;&nbsp;&nbsp;MERCOSUR&nbsp;&nbsp;&nbsp;&nbsp;--</div>
+            <div class="nro_chapa">{value_of_chapa}</div>
+        </div> 
+    </td> 
+   
+</tr>
+
+<tr style="display:none"> <td class="form_label">Cod. Ent:</td> <td><input class="form_text" type="text" id="form_codigo_entidad"  readonly="readonly"  size="10"  value="{value_of_codigo_entidad}" ></td>  </tr>
+<tr> <td class="form_label">Propietario:</td> 
+    <td colspan="2">
+        <input class="form_text" type="text" id="form_cliente"  readonly="readonly"  size="40"  value="{value_of_cliente}" >
+        <input type="button" id="cambiar_propietario" value="Cambiar" style="font-size: 9px" onclick="cambiarPropietario()" >
+        <div id="suggesstion-box"></div>
+    </td>
+    
+</tr>
+
+<tr> <td class="form_label">VIN:</td> <td colspan="2"><input class="form_text" type="text" id="form_vim"    size="40"  value="{value_of_vim}" ></td>  </tr>
+<tr> 
+    <td class="form_label">A&ntilde;o Fab:</td> <td colspan="2"><input class="form_number" type="number" id="form_anio_fab" style="max-width: 44px"     size="4" onkeypress="return onlyNumbers(event)" value="{value_of_anio_fab}" >
+        <select class="form_select" id="form_tipo" onchange="cambiarTipo()"   >{value_of_tipo}</select> <img id="img_tipo" src="img/cartypes/{img_value_of_tipo}.jpg" style="height: 40px;margin-bottom:-6px">
+    </td>  
+</tr>
+<tr> <td class="form_label">Color:</td> <td colspan="2"><input class="form_text" type="text" id="form_color"    size="40"  value="{value_of_color}" ></td>  </tr>
+<tr> <td class="form_label">Combustible:</td> <td>
+<select class="form_select" id="form_combustible"   >{value_of_combustible}</select>
+<label class="form_label">Motor:</label>  <input class="form_text" type="text" id="form_motor"   size="14"  value="{value_of_motor}" >   
+</td>  </tr>
+<tr> <td class="form_label">Otros:</td> <td colspan="2"><textarea class="form_textarea" id="form_otros" cols="40" rows="3"   >{value_of_otros}</textarea></td>  </tr>
+<tr>
+    <td colspan="3">
+        <div id="tabs_vehiculos" style="height: auto">
+            <ul>
+              <li><a href="#galeria"  >Imagenes</a></li>
+              <li><a href="#recepciones" onclick="getRecepcionesVehiculo()" >Recepciones</a></li>               
+            </ul>
+            <div id="galeria" style="text-align: left;min-height: 190px">
+                
+                <div id="all_photos">
+                    
+                </div>
+                <table>
+                    <tr>
+                        <td>                            
+                            <label for="explorer" class="modo">Explorador</label><input type="radio" name="modo" class="explorer" id="explorer" value="explorer" checked="checked">
+                            <label for="camera"  class="modo">Camara</label><input type="radio" name="modo" class="explorer" id="camera" value="camera"  >
+                        </td>
+                     
+                        <td>
+                           <img src="img/no_img.png" id="preview_0" width="65" class="img_preview"> 
+                           <input type="file" id="file_0" accept=".png, .jpg, .jpeg"  class="inputfile" ><label class="capturar"   for="file_0"></label>                
+                           <textarea class="form_textarea diag_img" id="form_url_img_0" cols="40" rows="3"  style="display: none"  ></textarea>
+                        </td>
+                    </tr> 
+                </table>
+                
+            </div> 
+            <div id="recepciones"  >
+                
+            </div>
+             
+        </div>  
+    </td>
+</tr>
+<!-- end:   edit_form_data -->
+
+
+<!-- begin: edit_form_foot -->     
+<tr><td colspan="3" style="text-align: center" id="msg_moviles" ></td></tr>
+    <tr>
+        <td colspan="3" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeMovilForm()">
+            <input type="button" value="Modificar Datos" onclick=updateMovilData("edit_moviles") id="moviles_update_button">
+            <input type="button" value=" Cerrar " onclick="closeMovilForm()" id="moviles_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   edit_form_foot -->
+
+
+
+
+
+
+<!-- begin: add_form_cab -->  
+<table border="0" class="form_table" id="add_moviles">
+    <tr> <th colspan="2" class="form_title" > (Nuevo Registro) Vehiculo  </th> </tr> 
+<!-- end:   add_form_cab -->
+
+
+<!-- begin: add_form_data -->     
+<tr style="display:none"> <td class="form_label" >Cod. Prop:</td> <td><input class="form_text PRI" type="text" id="form_codigo_entidad"   readonly="readonly"   size="10"  value="{value_of_cod_ent}" ></td>  </tr>
+<tr> 
+    <td class="form_label" >Propietario:</td> 
+    <td>
+        <input id="form_cliente" class="form_text" type="text" {prop_readonly}    size="40"  value="{value_of_propietario}" >
+        <div id="suggesstion-box"></div>
+    </td>
+</tr>
+<tr> <td class="form_label">Chapa:</td> <td><input class="form_text uppercase PRI" type="text" id="form_chapa"  required="required"    size="30"  value="" >*</td>  </tr>
+<tr> <td class="form_label">Marca:</td> <td>
+<select class="form_db_select" id="form_marca"  >{value_of_marca}</select>
+</td>  </tr>
+<tr> <td class="form_label">Modelo:</td> <td><input class="form_text" type="text" id="form_modelo"      size="40"  value="" ></td>  </tr>
+<tr> <td class="form_label">VIN:</td> <td><input class="form_text uppercase" type="text" id="form_vim"      size="40"  value="" ></td>  </tr>
+<tr> <td class="form_label">A&ntilde;o Fab:</td> 
+    <td><input class="form_number" type="number" id="form_anio_fab"  style="max-width: 44px"     size="4" onkeypress="return onlyNumbers(event)" value="" >
+    <select class="form_select" id="form_tipo" onchange="cambiarTipo()"   >{value_of_tipo}</select> <img id="img_tipo" src="img/cartypes/{img_value_of_tipo}.jpg" style="height: 40px;margin-bottom:-6px">
+    </td>  
+</tr>
+<tr> <td class="form_label">Color:</td> <td><input class="form_text uppercase" type="text" id="form_color"      size="40"  value="" ></td>  </tr>
+<tr> <td class="form_label">Combustible:</td> <td>
+<select class="form_select" id="form_combustible"  >
+<option value="Nafta">Nafta</option>
+<option value="Diesel">Disel</option>
+<option value="Flex">Flex</option>
+<option value="GLP">GLP</option>
+<option value="Otro">Otro</option>
+</select>
+ <label class="form_label">Motor:</label>  <input class="form_text" type="text" id="form_motor"   size="14"  value="" >       
+</td>  
+
+</tr>
+<tr> <td class="form_label">Otros:</td> <td><textarea class="form_textarea" id="form_otros" cols="40" rows="3"   ></textarea></td>  </tr>
+
+<!-- end:   add_form_data -->
+
+
+<!-- begin: add_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_moviles" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeMovilForm()">
+            <input type="button" value=" Grabar " onclick=addMovilData("add_moviles") id="moviles_save_button">
+            <input type="button" value=" Cerrar " onclick="closeMovilForm()" id="moviles_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   add_form_foot -->
+
+
+<!-- begin: no_result -->     
+<div style="text-align: center;margin: 2cm auto"> Ningun registro para Moviles <button type="button" id="add_button_proveedores" onclick="addMovilUI()">Agregar un nuevo registro para (Moviles)</button></div> 
+<!-- end:   no_result -->

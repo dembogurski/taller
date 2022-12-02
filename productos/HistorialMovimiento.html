@@ -1,23 +1,27 @@
 <!-- begin: header -->
-    <link rel="stylesheet" type="text/css" href="HistorialLote.css?_=0" />
-    <link rel="stylesheet" type="text/css" href="../css/reportes.css" />
-    <script type="text/javascript" src="../js/jquery-2.1.3.min.js" ></script>  
+    <link rel="stylesheet" type="text/css" href="{fullpath}/productos/HistorialLote.css?_=777777777777777777" />
+    <link rel="stylesheet" type="text/css" href="{fullpath}/css/reportes.css" />
+    <script type="text/javascript" src="{fullpath}/js/jquery-2.1.3.min.js" ></script>  
 <!-- end:   header -->
 
 
 <!-- begin: head -->
 <input id="codigo" type="hidden" value="{codigo}" >
 <input id="lote" type="hidden" value="{lote}" >
-<table id="resumen_pedidos" border="1"  cellspacing="0" cellpadding="0"    style="margin: 10px;min-width: 94%;border-collapse: collapse"  >           
-    <tr><th colspan="14" style="background-color: #ecf0f1">Historial de Movimiento, Suc: <select id="suc" onchange="updateList()"><option value="linea">*</option></select> </th></tr> 
+<input id="document_root" type="hidden" value="{fullpath}/productos/" >
+
+<table id="historial_movimiento_{lote}" border="1" class="historial_movimiento"  cellspacing="0" cellpadding="0"    style="margin: 10px;min-width: 94%;border-collapse: collapse"  >                  
+    <tr><th colspan="15" style="background-color: #ecf0f1">Historial de Movimiento, Suc: <select id="suc" onchange="updateList()"><option value="linea">*</option></select> </th></tr> 
     <tr>
-        <th colspan="14" style="background-color: lightskyblue">
+        <th colspan="15" style="background-color: lightskyblue">
             
             <span class="label">Articulo: </span>[{codigo}] {descrip}
-            <span class="label {no_mnj_x_lotes}">Lote: </span>{lote}             
+            <span class="label {no_mnj_x_lotes}">Lote: </span>{lote}       
+            <img style="margin-left: 100px;cursor:pointer" class="{no_mnj_x_lotes}" src="../img/more_detail_.png" onclick="verDetalles()"> 
         </th>
     </tr> 
-    <tr><th>ID</th><th>Suc</th><th>Usuario</th><th>Fecha</th><th>Tipo Doc</th><th>N&deg; Doc.</th><th>Cantidad</th> <th class="{no_mnj_x_lotes}" >Kg Desc.</th> <th class="{no_mnj_x_lotes}">Gramaje</th><th class="{no_mnj_x_lotes}">Ancho</th><th class="{no_mnj_x_lotes}">Tara</th><th>Saldo ({um})</th><th class="{no_mnj_x_lotes}">Kg Calc.</th> <th>Direccion</th></tr>
+ 
+    <tr style="font-size:11px;font-family:cambria" ><th>ID</th><th>Suc</th><th>Usuario</th><th>Fecha</th><th>Tipo Doc</th><th>N&deg; Doc.</th><th>Cantidad</th> <th>Info Extra</th> <th class="{no_mnj_x_lotes} dato_lote" >Kg Desc.</th> <th class="{no_mnj_x_lotes} dato_lote">Gramaje</th><th class="{no_mnj_x_lotes} dato_lote">Ancho</th><th class="{no_mnj_x_lotes} dato_lote">Tara</th><th>Saldo ({um})</th><th class="{no_mnj_x_lotes} dato_lote">Kg Calc.<br>Bruto</th> <th>Direccion</th></tr>
 <!-- end:   head -->
 
 
@@ -27,27 +31,32 @@
     <td class="itemc">{suc}</td>
     <td class="itemc">{usuario}</td>
     <td class="itemc fecha">{fecha}</td>     
-    <td class="item" title="{DocType}">{tipo_doc}</td>
-    <td class="itemc">{nro_doc}</td>     
+    <td class="item {tipo_doc} tipo_documento" title="{DocType}">{tipo_doc}</td>
+    <td class="itemc {tipo_doc} nro_documento">{nro_doc}</td>     
     <td class="num Quantity">{cantidad}</td>    
-    
-    <td class="num {no_mnj_x_lotes}">{kg_desc}</td>
-    <td class="num {no_mnj_x_lotes}">{gramaje}</td>
-    <td class="num {no_mnj_x_lotes}">{ancho}</td>
-    <td class="num {no_mnj_x_lotes}">{tara}</td>
+    <td class="item info_id_{id_hist}"></td>    
+    <td class="num {no_mnj_x_lotes} dato_lote">{kg_desc}</td>
+    <td class="num {no_mnj_x_lotes} dato_lote">{gramaje}</td>
+    <td class="num {no_mnj_x_lotes} dato_lote">{ancho}</td>
+    <td class="num {no_mnj_x_lotes} dato_lote">{tara}</td>
     <td class="num">{saldo}</td>
-    <td class="num {no_mnj_x_lotes}">{kg_calc}</td>
-    <td class="itemc" style="background-color: {fondo}">{direccion}</td> 
+    <td class="num {no_mnj_x_lotes} dato_lote">{kg_calc}</td>
+    <td class="itemc" style="background-color: {fondo};color:{color}">{direccion}</td> 
 </tr>
 <!-- end:   data -->
 
-<!-- begin: fdp -->
-<tr><td class="item" colspan="7" ><b>FDP:</b> <span class="{FDPclass}">{FDPclass}</span> {DatosFDP}</td>  </tr>
-<!-- end:   fdp -->
+
 
 <!-- begin: total -->
 <tr> <td colspan="6">  </td>  <td class="num total" style="font-weight: bolder">{QuantityTotal}</td>  </tr>
+
+<tr class="titulo"><th>Suc</th> <th>Estado Venta</th></tr>
 <!-- end:   total -->
+
+
+<!-- begin: estado_venta -->
+<tr class="ev_{suc_ev} sucs_ev"> <td style="text-align: center">{suc_ev}</td> <td class="{estado_venta}" style="text-align: center">{estado_venta}</td> </tr>
+<!-- end:   estado_venta -->
 
 <!-- begin: footer -->
 </table>
@@ -58,15 +67,14 @@
 
 
 <!-- begin: script noeval -->
-<style>
-    span.Si{
-        color: red;
-    }
-    span.No{
-        color: green;
-    }
-</style>
+ 
 <script>
+    
+    $(function(){
+       inicializarCursores("RM"); // Por ahora solo Remisiones 
+       loopLinesForInfo();
+    });
+    
     if(sucs.length>0){
         sucs.forEach(function(value,key){
             $("<option/>",{
@@ -76,18 +84,64 @@
             }).appendTo("select#suc")
         });
     }
+    
+    function loopLinesForInfo(){
+        var codigo = $("#codigo").val();
+        var lote = $("#lote").val();
+        
+        $(".linea").each(function(){
+           var id_linea = $(this).attr("id");
+           var tipo_doc = $(this).find(".tipo_documento").text(); 
+           var nro_doc = $(this).find(".nro_documento").text(); 
+           var fullpath = $("#document_root").val();
+           
+            $.ajax({
+                    type: "POST",
+                    url: ""+fullpath+"/HistorialMovimiento.class.php",
+                    data: {action: "getExtraInfo",id_linea:id_linea,tipo_doc:tipo_doc,nro_doc:nro_doc,codigo:codigo,lote:lote, suc: opener.getSuc(),usuario:opener.getNick()},
+                    async: true,
+                    dataType: "json",
+                    beforeSend: function () {
+                       $(".info_"+id_linea).html("<img src='../img/loading_fast.gif' width='16px' height='16px' >"); 
+                    },
+                    success: function (data) { 
+                       var id = data.id; 
+                       $(".info_"+id).html(data.info);  
+                       console.log(id+"  "+data.info);
+                    },
+                    error: function(e) {                 
+                        $(".info_"+id_linea).html("");                      
+                    }
+            });       
+            });    
+    }
+    
+    /*
+    function getExtraInfo(id_linea,tipo_doc,nro_doc){
+           
+    }
+    */
+    
     function updateList(){
         $("tr.linea").hide();
-        var suc = $("select#suc option:selected").val();
+        var suc = $("select#suc option:selected").val();  
         var total = 0;
+        if(suc ==  "linea"){
+            $(".sucs_ev").fadeIn();
+        }else{
+            $(".sucs_ev").fadeOut();
+        }
         $("."+suc).each(function(){
           $(this).show();  
-          var mts = ($(this).find("td.Quantity").text()).replace(/,/g, ".")
+          var mts = ($(this).find("td.Quantity").text()).replace(/\./g, '').replace(/\,/g, '.');
           total += parseFloat(mts);
-          //console.log(total);
+          $(".ev_"+suc).fadeIn();
+          console.log(total);
         });
+       
         $("td.total").text(total.toFixed(2));
         getModificacionesLote();
+        
     }
     $("option#suc_"+opener.getSuc()).prop("selected","selected");
     updateList();
@@ -107,21 +161,22 @@
                 hasta = '2040-01-01 00:00:00';
             }
             //console.log("ID: "+id+"   "+desde);
-            
+            var fullpath = $("#document_root").val();
             $.ajax({
                 type: "POST",
-                url: "HistorialMovimiento.class.php",
+                url: ""+fullpath+"/HistorialMovimiento.class.php",
                 data: {action: "getModificacionesLote",codigo:codigo,lote:lote, id :id,desde:desde,hasta:hasta},
                 async: true,
                 dataType: "json",
                 beforeSend: function () {
                    $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+                   $(".modif_hist").remove();
                 },
                 success: function (data) {   
                     ediciones = data;   
                     if(data.length > 0){
-                        var modif_table = "<table border='1' style='width:100%;border-collapse:collapse;font-size:12px;font-family:ariel' id='modif_"+id+"'> <tr style='background:#dddacd' ><th>Suc</th><th>Usuario</th><th>Fecha</th><th>Ancho</th><th>Tara</th><th>Gramaje</th><th>Kg</th><th>Estado Venta</th><th>Obs</th></tr></table>";
-                        var cab = '<tr id="cab_'+id+'" style="display:none" class="ediciones"><th colspan="6"> Modificaciones de datos </th> <th colspan="8">'+modif_table+'</th></tr>';
+                        var modif_table = "<table class='modif_hist' border='1' style='width:100%;border-collapse:collapse;font-size:12px;font-family:ariel' id='modif_"+id+"'> <tr style='background:#dddacd' ><th>Suc</th><th>Usuario</th><th>Fecha</th><th>Ancho</th><th>Tara</th><th>Gramaje</th><th>Kg Bruto</th><th>Estado Venta</th><th>Obs</th></tr></table>";
+                        var cab = '<tr id="cab_'+id+'" style="display:none" class="ediciones"><th colspan="6"> Modificaciones de datos </th> <th colspan="9">'+modif_table+'</th></tr>';
         
                         $("#"+id).after(cab);
                         for(var i in data){
@@ -136,7 +191,7 @@
                             var obs = getNoNull(data[i].obs);
                             $("#modif_"+id).append('<tr> <td  class="itemc">'+suc+'</td><td class="itemc">'+usuario+'</td><td class="itemc">'+fecha+'</td><td class="num">'+ancho+'</td><td class="num">'+tara+'</td><td class="num">'+gramaje+'</td><td class="num">'+kg+'</td><td class="itemc">'+estado_venta+'</td><td class="item" style="width:30%">'+obs+'</td> </tr>');
                         }
-                        $("#"+id).after("<tr><td colspan='14' style='text-align:right'><img onclick=slideModificaciones('"+id+"') title='Datos Modificados' src='../img/indicator.png' style='position:absolute;width:34px;margin-top:-17px;margin-left:-4px;cursor:pointer'></td></tr>");
+                        $("#"+id).after("<tr><td colspan='15'   style='text-align:right'><img onclick=slideModificaciones('"+id+"') title='Datos Modificados' src='../img/indicator.png' style='position:absolute;width:34px;margin-top:-17px;margin-left:-4px;cursor:pointer'></td></tr>");
                     }
                     $("#msg").html("Ok"); 
                                      
@@ -158,6 +213,32 @@
         }else{
             return "";
         }
+    }
+    
+    function verDetalles(){
+        $(".dato_lote").fadeToggle();
+    }
+    function inicializarCursores(clase){
+        $("."+clase).mouseover(function(){
+            $(".cursor").remove(); // Se saco a todos los que tienen
+            $(this).append("<img class='cursor' src='../img/l_arrow.png' width='18px' height='10px' onclick='openBaseDocument(this)'>");
+        }).mouseleave(function(){
+            $(this).children('.cursor').remove();
+        });   
+    }
+    function openBaseDocument(obj){
+        var nro_doc = $(obj).parent().parent().find(".nro_documento").text();
+        var tipo_doc = $(obj).parent().parent().find(".tipo_documento").text();
+        var params = "width=800,height=760,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no";
+         
+ 
+        if(tipo_doc == "RM"){
+            var title = "Nota de Remision";     
+            var lote = $("#lote").val();
+            var url = "../reportes/Remisiones.class.php?rn_nro="+nro_doc+"&resaltar="+lote ; 
+            window.open(url,title,params);    
+        } 
+        
     }
 </script>
 <!-- end: script -->

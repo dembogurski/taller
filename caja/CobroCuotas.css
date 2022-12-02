@@ -21,24 +21,46 @@
     background-color: #F0F0F0; //Casi blanco
     border-color: #999999;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 1px;
     margin-left: 2px;
-    margin-right: 4px;
+    margin-right: 10px;
     margin-bottom: 10px; 
-    width: 90%
+    width: 100%
+}
+.tasa_interes{
+    width: 20%;
+    background-color: fffccc;
+    border:solid gray 1px;
+    text-align: center;
+    float: right;
+    margin-right: 0px;
 }
 #pie  {
     font-family: sans-serif;
     font-size: 12px;
     font-weight: normal;
     background-color: #F0F0F0; //Casi blanco
-    border-color: #999999;
-    border-collapse: collapse;
-    margin-top: 10px;
-    margin-left: 2px;
-    margin-right: 4px;
-    margin-bottom: 10px; 
-    width: 90%
+    border-color: #999999; 
+}
+#msg_intereses{
+    border: solid gray 1px;
+    border-radius: 0 6px 6px 0;
+    background-color: orange;
+    color: black;
+    font-size: 12px;
+    font-family: georgia monospace;
+    font-weight: bold;
+    height: 36px;
+    padding: 10px;
+    display: none;
+}
+#detalle_intereses{
+    display: none;
+    background-color: white;
+    border: solid gray 1px;
+    position: absolute;
+    z-index: 100;
+    width: auto;
 }
 .popup_caja{
     position: absolute;
@@ -141,4 +163,12 @@ div#tipoCobro li{
 
 .xFactura{
     background-color: green;
+}
+#resumen_linea_credito{
+    position: absolute;
+    background-color: #dbc59e;
+    margin: 0 auto;
+    display: none;
+    border-collapse: collapse;
+    width: 280px;
 }

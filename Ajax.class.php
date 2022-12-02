@@ -413,6 +413,18 @@ function recuperarNroCobro() {
         }
     }
 }
+function recuperarDatosDeCobro() {
+    $nro_cobro = $_POST['nro_cobro'];
+    $sql = "SELECT 8 AS id_concepto, id_pago AS nro_cobro, '' AS nro_cheque, 0 as valor, cod_cli,ruc_cli,cliente,0 AS TotalFactura  FROM pagos_recibidos where id_pago = '$nro_cobro'";
+    $arr0 = getResultArray($sql);
+    $tam = sizeof($arr0);
+    if ($tam > 0) {
+        echo json_encode($arr0);
+    } else {
+        echo json_encode(array()); 
+    }
+}
+
 
 function guardarDatosConvenio() {
     $db = new My();
@@ -969,11 +981,11 @@ function controlarEntradaMercaderias() {
         $db->NextRecord();
         $cant = $db->Record['cant'];
         if ($cant < 1) {
-            require_once 'Y_DB_MSSQL.class.php';
-            $ms = new MS();
-            $sql = "SELECT COUNT(*) AS prov FROM OCRD WHERE CardCode = '$cod_prov' and CardType = 'S'";
-            $ms->Query($sql);
-            if ($ms->NumRows() > 0) {
+             
+            $my = new MY();
+            $sql = " SELECT COUNT(*) AS prov FROM proveedores WHERE cod_prov = '$cod_prov'; ";
+            $my->Query($sql);
+            if ($my->NumRows() > 0) {
                 echo "Ok";
             } else {
                 echo "Error: Codigo '$cod_prov' de proveedor no existe.";
@@ -1135,50 +1147,7 @@ function getPoliticaDistribucion() {
     echo json_encode(getResultArray("SELECT id_orden,cod_cli,codigo,lote,color,cantidad,presentacion,suc  FROM orden_procesamiento WHERE lote = '$lote'"));
 }
 
-function addPedidoMinoristaProduccion() {
-    $codigo = $_POST['codigo'];
-    $nros_pedido = json_decode($_POST['nros_pedido']);
-    $usuario = $_POST['usuario'];
-    $suc = $_POST['suc'];
-    $db = new My();
-    $nros_in = "";
-    foreach ($nros_pedido as $nro) {
-        $nros_in.=$nro . ",";
-    }
-    $nros_in.=-1;
-
-    $db->Query("select count(*) as cant from nota_ped_comp_det where codigo = '$codigo' and suc = '$suc' and cod_cli = '0' and n_nro in($nros_in);");
-    $db->NextRecord();
-    $cant = $db->Record['cant'];
-    if ($cant < 1) {
-        require_once("Y_DB_MSSQL.class.php");
-        $ms = new MS();
-        $ms->Query("select ItemName,InvntryUom from oitm where ItemCode = '$codigo'");
-        $ms->NextRecord();
-        $um_prod = $ms->Record['InvntryUom'];
-        $descrip = $ms->Record['ItemName'];
-
-        foreach ($nros_pedido as $nro_pedido) {
-            try {
-                $check = "SELECT COUNT(*) AS cant FROM nota_ped_comp_det WHERE n_nro = $nro_pedido AND codigo = '$codigo'";
-                $db->Query($check);
-                $db->NextRecord();
-                $cant = $db->Record['cant'];
-                if ($cant < 1) {
-                    $ins = "INSERT INTO nota_ped_comp_det( n_nro, usuario, suc, cod_cli, cliente, ponderacion, codigo, lote, um_prod, obs, cantidad, cantidad_pond, precio_venta, color, estado, mayorista, descrip, urge, presentacion, c_prov_cod, c_prov, c_precio_compra, c_fecha_compra, c_fecha_prev, c_lote, c_obs)
-                  VALUES ( $nro_pedido, '$usuario', '00', '0', 'MINORISTA',1, '$codigo', '', '$um_prod', 'Agregado en Asignacion por Falta de Pedido', 0, 0,0,'*', 'Pendiente', 'No', '$descrip', 'No', 'Pieza', NULL, NULL, NULL, NULL, NULL, NULL, NULL);";
-                    $db->Query($ins);
-                    break;
-                }
-            } catch (Exception $e) {
-                // Intentar nuevamente.
-            }
-        }
-        echo "Ok";
-    } else {
-        echo "Error";
-    }
-}
+ 
 
 function getLotesEntradaMercaderias() {
     $codigo = $_POST['codigo'];
@@ -1346,6 +1315,28 @@ function unificarPedidos() {
     echo "Ok";
 }
 
+
+function guardarGastoEntradaMerc() {
+     
+    $id_ent = $_POST['id_ent'];
+    $cod_gasto = $_POST['cod_gasto'];
+    $valor = $_POST['valor'];
+    $cotiz = $_POST['cotiz'];
+    $moneda = $_POST['moneda'];
+
+    $valor_ref = $valor * $cotiz;
+
+    $db = new My();
+    $dbd = new My();
+    $db_g = new My();
+
+    $db->Query("INSERT INTO ent_gastos(id_ent, cod_gasto, valor, moneda, cotiz, valor_ref) VALUES ($id_ent, $cod_gasto, $valor, '$moneda', $cotiz, $valor_ref) ON DUPLICATE KEY UPDATE valor = $valor,moneda = '$moneda', cotiz = $cotiz,valor_ref = $valor_ref ;");
+    
+    //actualizarPorcentajeParticipacion($id_ent);
+    
+    echo "Ok";
+}
+
 function getGastosEntradaMerc() {
     
     $db = new My();
@@ -1362,48 +1353,10 @@ function getGastosEntradaMerc() {
 }
 
 function getPreciosArticulo() {
-    require_once("Y_DB_MSSQL.class.php");
-    $codigo = $_POST['codigo'];
-    echo json_encode(getResultArrayMSSQL("select PriceList,Price from ITM1 where ItemCode = '$codigo' AND PriceList < 8"));
+  
 }
 
-function guardarGastoEntradaMerc() { echo "Modificar para tomar el % de participacion de cada Articulo";
-    $id_ent = $_POST['id_ent'];
-    $cod_gasto = $_POST['cod_gasto'];
-    $valor = $_POST['valor'];
-    $cotiz = $_POST['cotiz'];
-    $moneda = $_POST['moneda'];
-    
-    $valor_ref = $valor * $cotiz;
-    
-    $db = new My();
-    $dbd = new My();
-    
-    $db->Query("INSERT INTO ent_gastos(id_ent, cod_gasto, valor, moneda, cotiz, valor_ref) VALUES ($id_ent, $cod_gasto, $valor, '$moneda', $cotiz, $valor_ref) ON DUPLICATE KEY UPDATE valor = $valor,moneda = '$moneda', cotiz = $cotiz,valor_ref = $valor_ref ;");
-    
-    $db->Query("SELECT SUM(subtotal) * cotiz AS total_factura,cotiz as cotiz_factua FROM entrada_merc e, entrada_det d WHERE e.id_ent = d.id_ent and d.id_ent = $id_ent;");
-    if($db->NumRows()>0){
-        $db->NextRecord();
-        $total_factura = $db->Get("total_factura");
-        $cotiz_factura = $db->Get("cotiz_factua");
-        
-        $total_gastos = 0;
-        $db->Query("SELECT SUM(valor_ref) AS total_gastos FROM ent_gastos WHERE id_ent =  $id_ent;");
-        if($db->NumRows()>0){
-            $db->NextRecord();
-            $total_gastos = $db->Get("total_gastos");
-        }
-         
-        $porc_recargo = round(($total_gastos * 100) / $total_factura,4);
-         
-        $dbd->Query("update entrada_merc set porc_recargo = $porc_recargo where id_ent = $id_ent;");
-        // Se quita el Porcentaje de Participacion de cada linea:   Subtotal en GS  / El $total_factura  = x %
-        // x % multiplicar por el Gasto Total
-        $dbd->Query("update entrada_det set precio_ms = (precio * $cotiz_factura), sobre_costo = (((subtotal * $cotiz_factura) / $total_factura ) * ($total_gastos)) / cant_calc, precio_real = (precio * $cotiz_factura) + sobre_costo  where id_ent = $id_ent;");
-         
-    } 
-    echo "Ok";
-}
+ 
 
 function updateEntradaNotes() {
     $id_ent = $_POST['ref'];
@@ -1412,295 +1365,9 @@ function updateEntradaNotes() {
     $db->Query("update entrada_merc set coment = '$notes' where id_ent = $id_ent;");
     echo "Ok";
 }
-
-/** @deprecated movido a EntradaMercaderias.class.php
-function generarLoteEntradaMercaderia() {
-    $id_ent = $_POST['id_ent'];
-    $ids = json_decode($_POST['ids']);
-    $lotes = array();
-    $db = new My();
-    foreach ($ids as $id_det) {
-        $lote = generarLote();
-        $db->Query("UPDATE entrada_det SET lote = '$lote',initial_id = $id_det WHERE id_ent = $id_ent AND id_det = $id_det;");
-        $lotes[$id_det] = $lote;
-        // Insertar en Lotes
-        
-    }
-    echo json_encode($lotes);
-}
-
-function generarLote() {
-     
-    $ms = new My();
-    $year = date("Y");
-    $ms->Query("SELECT CONCAT(serie,cod_serie) AS Lote FROM series_lotes WHERE anio = '$year';");
-    $ms->NextRecord();
-    $lote = $ms->Record['Lote'];
-    $ms->Query("UPDATE series_lotes SET serie = serie  + 1 WHERE anio = '$year';");
-    $ms->Close();
-    return $lote;
-}
-*/
-
-function filtroManejoLotes() {
-    $desde = $_POST['desde'];
-    $hasta = ($_POST['hasta'] == '') ? date("d/m/Y") : $_POST['hasta'];
-    $codigo = $_POST['codigo'];
-    $cod_prov = $_POST['cod_prov'];
-    $estado_venta = $_POST['estado_venta'];
-    $fallas = $_POST['fallas'];
-    $suc = $_POST['suc'];
-    $buscarPor = isset($_POST['buscarPor']) ? trim($_POST['buscarPor']) : 'BatchNum';
-    $filtroColor = (isset($_POST['ColorCod']) && trim($_POST['ColorCod']) !== 'todos') ? " and i.U_color_comercial='" . trim($_POST['ColorCod']) . "' " : '';
-    //$fp = $_POST['fp'];
-    $fp = (strlen(trim($_POST['fp'])) == 0) ? '%' : trim($_POST['fp']);
-
-
-    $limite = 100000;
-    if (isset($_POST['limite'])) {
-        $limite = $_POST['limite'];
-    }
-    $filtro_terminacion = "";
-    if (isset($_POST['terminacion'])) {
-        $term = $_POST['terminacion'];
-        $filtro_terminacion = " and BatchNum like '%$term'";
-    }
-
-
-    $filtro_terminacion_padre = "";
-    if (isset($_POST['terminacion_padre']) && $_POST['terminacion_padre'] != "") {
-        $term_padre = $_POST['terminacion_padre'];
-        $filtro_terminacion_padre = " and U_padre like '%$term_padre' ";
-    }
-
-
-    $lotes_especificos = trim($_POST['lotes']);
-    $lotes_especificos = preg_replace('/\s+/', '', $lotes_especificos);
-
-    $F1 = "= 0.000000";
-    $F2 = "= 0.000000";
-    $F3 = "= 0.000000";
-
-    if ($fallas == "Con Falla") {
-        $F1 = "> 0.000000";
-        $F2 = "> 0.000000";
-        $F3 = "> 0.000000";
-    } else if ($fallas == "Todas") {
-        $F1 = ">= 0.000000";
-        $F2 = ">= 0.000000";
-        $F3 = ">= 0.000000";
-    } // Sin Fallas
-
-    $codigo_lotes_especificos = "";
-
-    $filtro_estado_ventas = " and i.U_estado_venta like '$estado_venta' ";
-
-    if (strlen($lotes_especificos) > 0) {
-        $desde = "01/01/2010";
-        $hasta = date("d/m/Y");
-        $F1 = "like '%' ";
-        $F2 = "like '%' ";
-        $F3 = "like '%' ";
-        $cod_prov = "%";
-        $codigo = "%";
-        $suc = "%";
-        $nlote = explode(",", $lotes_especificos);
-        $specific_lotes = "";
-        foreach ($nlote as $value) {
-            $specific_lotes .= "'$value',";
-        }
-
-        $specific_lotes = substr($specific_lotes, 0, -1);
-        $codigo_lotes_especificos = " and i.$buscarPor in($specific_lotes) ";
-        $filtro_estado_ventas = "";
-    }
-
-
-    $OPDN = "SELECT top $limite * from
-    ( SELECT o.DocNum as NroDoc,o.CardName ,CONVERT(VARCHAR(10), o.DocDueDate, 105) AS Fecha,i.ItemCode as Codigo,it.ItemName as Articulo,i.BatchNum as Lote,i.WhsCode as Suc, i.U_ancho as Ancho, 
-     cast(round(Quantity - ISNULL(i.IsCommited,0),2) as numeric(20,2)) as Stock, AvgPrice as PrecioCosto,Price,PriceList,
-     CONVERT(DECIMAL(10,2),U_desc1) as U_desc1,U_desc2,U_desc3,U_desc4,U_desc5,U_desc6,U_desc7,i.U_estado_venta AS EstadoVenta,i.U_color_comercial,c.Name as ColorComercial, i.U_img,i.U_gramaje,convert(nvarchar(max),i.U_factor_precio) as U_factor_precio FROM OPDN o,OIBT i, OITM it, ITM1 p, [@EXX_COLOR_COMERCIAL] c
-     WHERE i.U_color_comercial = c.Code AND o.DocEntry = i.BaseNum and Quantity > 0 and i.ItemCode = it.ItemCode and i.ItemCode = p.ItemCode and o.U_Estado != 'Abierta' and it.FrozenFor = 'N' and o.DocDueDate between convert(datetime, '$desde', 103) and convert(datetime, '$hasta', 103) $filtroColor
-     and U_fin_pieza like '$fp' 
-     AND o.ObjType = i.BaseType    
-     and i.U_F1 $F1 and i.U_F2 $F2 and i.U_F3 $F3 and (o.CardCode like '$cod_prov' or o.CardCode is null) and i.ItemCode like '$codigo' $filtro_estado_ventas and i.WhsCode like '$suc' $codigo_lotes_especificos $filtro_terminacion $filtro_terminacion_padre ) as src
-     PIVOT ( AVG(Price) FOR PriceList in ([1],[2],[3],[4],[5],[6],[7])) as Pvt";
-
-    //echo "$OPDN<br><br>Union<br><br>";
-
-    $OPCH = "SELECT top $limite * from
-    ( SELECT o.DocNum as NroDoc,o.CardName ,CONVERT(VARCHAR(10), o.DocDueDate, 105) AS Fecha,i.ItemCode as Codigo,it.ItemName as Articulo,i.BatchNum as Lote,i.WhsCode as Suc, i.U_ancho as Ancho, 
-     cast(round(Quantity - ISNULL(i.IsCommited,0),2) as numeric(20,2)) as Stock, AvgPrice as PrecioCosto,Price,PriceList,
-     CONVERT(DECIMAL(10,2),U_desc1) as U_desc1,U_desc2,U_desc3,U_desc4,U_desc5,U_desc6,U_desc7,i.U_estado_venta AS EstadoVenta,i.U_color_comercial,c.Name as ColorComercial, i.U_img,i.U_gramaje,convert(nvarchar(max),i.U_factor_precio) as U_factor_precio FROM OPCH o,OIBT i, OITM it, ITM1 p, [@EXX_COLOR_COMERCIAL] c
-     WHERE i.U_color_comercial = c.Code AND o.DocEntry = i.BaseNum and Quantity > 0 and i.ItemCode = it.ItemCode and i.ItemCode = p.ItemCode and o.U_Estado != 'Abierta' and it.FrozenFor = 'N' and o.DocDueDate between convert(datetime, '$desde', 103) and convert(datetime, '$hasta', 103) $filtroColor
-     and U_fin_pieza like '$fp' 
-     AND o.ObjType = i.BaseType 
-     and i.U_F1 $F1 and i.U_F2 $F2 and i.U_F3 $F3 and (o.CardCode like '$cod_prov' or o.CardCode is null) and i.ItemCode like '$codigo' $filtro_estado_ventas and i.WhsCode like '$suc'  $codigo_lotes_especificos $filtro_terminacion $filtro_terminacion_padre ) as src
-     PIVOT ( AVG(Price) FOR PriceList in ([1],[2],[3],[4],[5],[6],[7])) as Pvt";
  
-    //echo "$OPCH<br><br>Union<br><br>";
+
  
-    $OIGN = "SELECT top $limite * from
-    ( SELECT o.DocNum as NroDoc,o.CardName ,CONVERT(VARCHAR(10), o.DocDueDate, 105) AS Fecha,i.ItemCode as Codigo,it.ItemName as Articulo,i.BatchNum as Lote,i.WhsCode as Suc, i.U_ancho as Ancho, 
-     cast(round(Quantity - ISNULL(i.IsCommited,0),2) as numeric(20,2)) as Stock, AvgPrice as PrecioCosto,Price,PriceList,
-     CONVERT(DECIMAL(10,2),U_desc1) as U_desc1,U_desc2,U_desc3,U_desc4,U_desc5,U_desc6,U_desc7,i.U_estado_venta AS EstadoVenta,i.U_color_comercial,c.Name as ColorComercial, i.U_img,i.U_gramaje,convert(nvarchar(max),i.U_factor_precio) as U_factor_precio FROM OIGN o,OIBT i, OITM it, ITM1 p, [@EXX_COLOR_COMERCIAL] c
-     WHERE i.U_color_comercial = c.Code AND o.DocEntry = i.BaseNum and Quantity > 0 and i.ItemCode = it.ItemCode and i.ItemCode = p.ItemCode  and it.FrozenFor = 'N' and o.DocDueDate between convert(datetime, '$desde', 103) and convert(datetime, '$hasta', 103) $filtroColor
-     and U_fin_pieza like '$fp' 
-     AND o.ObjType = i.BaseType     
-     and i.U_F1 $F1 and i.U_F2 $F2 and i.U_F3 $F3 and   i.ItemCode like '$codigo' $filtro_estado_ventas and i.WhsCode like '$suc' $codigo_lotes_especificos  $filtro_terminacion  $filtro_terminacion_padre) as src
-     PIVOT ( AVG(Price) FOR PriceList in ([1],[2],[3],[4],[5],[6],[7])) as Pvt ";
-    
-//echo "$OIGN<br><br>Union<br><br>";
-
-    //echo  $OIGN;
-    //echo "<br>Estoy Probado no llamar";
-    //die();
-    /*
-      $OIQI = "SELECT top $limite * from
-      ( SELECT o.DocNum as NroDoc,'' AS CardName ,CONVERT(VARCHAR(10), o.DocDueDate, 105) AS Fecha,i.ItemCode as Codigo,it.ItemName as Articulo,i.BatchNum as Lote,i.WhsCode as Suc, i.U_ancho as Ancho,
-      cast(round(Quantity - ISNULL(i.IsCommited,0),2) as numeric(20,2)) as Stock, AvgPrice as PrecioCosto,Price,PriceList,
-      CONVERT(DECIMAL(10,2),U_desc1) as U_desc1,U_desc2,U_desc3,U_desc4,U_desc5,U_desc6,U_desc7,i.U_estado_venta AS EstadoVenta FROM OIQI o,OIBT i, OITM it, ITM1 p
-      WHERE o.DocEntry = i.BaseNum and Quantity > 0 and i.ItemCode = it.ItemCode and i.ItemCode = p.ItemCode  and it.FrozenFor = 'N' and o.DocDueDate between convert(datetime, '$desde', 103) and convert(datetime, '$hasta', 103)
-      and i.U_F1 = 0 and i.U_F2   = 0 and i.U_F3  = 0 and   i.ItemCode like '$codigo' $filtro_estado_ventas and i.WhsCode like '$suc' $codigo_lotes_especificos ) as src
-      PIVOT ( AVG(Price) FOR PriceList in ([1],[2],[3],[4],[5],[6],[7])) as Pvt ";
-
-
-     * @todo: Incluir OPCH o consultar en caso de que no sea necesario
-     */
-    //$combinado = getResultArrayMSSQL($OPDN) + getResultArrayMSSQL($OPCH) + getResultArrayMSSQL($OIGN);
-	$queries = ["OPDN"=>$OPDN, "OPCH"=>$OPCH,"OIGN"=>$OIGN];
-    require_once("Y_DB_MSSQL.class.php");
-    $msl = new MS();
-    $lotes = array();
-    $lista = array();
-    foreach($queries as $query){
-        $msl->Query($query);
-        while($msl->NextRecord()){
-            $lote = $msl->Record['Lote'];
-            if(!in_array($lote,$lotes)){
-                array_push($lista, array_map('utf8_encode',$msl->Record));
-                array_push($lotes, $lote);
-            }
-        }
-    }
-    
-
-    $combinado = $lista;
-    
-    //echo count($combinado);
-    
-    for ($i = 0; $i < count($combinado); $i++) { 
-        if ($combinado[$i]['CardName'] === '' || $combinado[$i]['CardName'] == 'Fraccionamiento de Productos') {
-            $pr = proveedorXLote($combinado[$i]['Lote']);             
-            $combinado[$i]['CardName'] = proveedorXLote($combinado[$i]['Lote']);
-        }
-    }
-    
-    //echo $combinado[0]['CardName'];
-    // var_dump(  $combinado );
-    
-    echo json_encode($combinado );
-      
-    //echo "$OPDN; <br> $OPCH; <br> $OIGN;";
-}
-
-function proveedorXLote($lote) {
-    $ms = new MS();
-    $proveedor = '';
-    $ms->Query("SELECT ix.CardName,ox.U_padre FROM OBTN ox INNER JOIN OITL ix ON ox.ItemCode = ix.ItemCode INNER JOIN (SELECT ix.ItemCode,ix1.SysNumber,MIN(ix.LogEntry) AS LogEntry FROM OITL ix INNER JOIN ITL1 ix1 ON ix.LogEntry=ix1.LogEntry and ix.DocType in (20,59,18) GROUP BY ix.ItemCode,ix1.SysNumber) AS sl ON ox.ItemCode = sl.ItemCode AND ox.SysNumber = sl.SysNumber AND ix.LogEntry = sl.LogEntry where ox.DistNumber = $lote");
-    $ms->NextRecord();
-    $line =  $ms->Record ;
-    $ms->Close();
-    $proveedor = htmlentities( $line['CardName']);
-
-    if ($proveedor === 'Fraccionamiento de Productos') {
-        $lote = $line['U_padre'];
-        if (trim($lote) !== '') {
-            $proveedor = proveedorXLote($lote);
-        } else {
-            return '';
-        }
-    } else {
-        return $proveedor;
-    }
-    return $proveedor;
-}
-
-function actualizarDescuentosPorLote() {
-    require_once("Y_DB_MSSQL.class.php");
-    $usuario = $_POST['usuario'];
-    $estado_venta = $_POST['estado_venta'];
-    $data = json_decode($_POST['data']);
-    $ms = new MS();
-    $db = new My();
-    $i = 0;
-    foreach ($data as $a) {
-        $codigo = $a[0];
-        $lote = $a[1];
-        $descrip = $a[2];
-        $suc = $a[3];
-        $p1 = $a[4];
-        $p2 = $a[5];
-        $p3 = $a[6];
-        $p4 = $a[7];
-        $p5 = $a[8];
-        $p6 = $a[9];
-        $p7 = $a[10];
-        $desc1 = $a[11];
-        $desc2 = $a[12];
-        $desc3 = $a[13];
-        $desc4 = $a[14];
-        $desc5 = $a[15];
-        $desc6 = $a[16];
-        $desc7 = $a[17];
-        $pf1 = $p1 - (($p1 * $desc1) / 100);
-        $pf2 = $p2 - (($p2 * $desc2) / 100);
-        $pf3 = $p3 - (($p3 * $desc3) / 100);
-        $pf4 = $p4 - (($p4 * $desc4) / 100);
-        $pf5 = $p5 - (($p5 * $desc5) / 100);
-        $pf6 = $p6 - (($p6 * $desc6) / 100);
-        $pf7 = $p7 - (($p7 * $desc7) / 100);
-        $i++;
-        $update = "UPDATE OIBT SET U_desc1 = $desc1,U_desc2 = $desc2,U_desc3 = $desc3,U_desc4 = $desc4,U_desc5 = $desc5,U_desc6 = $desc6,U_desc7 = $desc7,"
-                . "U_estado_venta = '$estado_venta'  WHERE ItemCode = '$codigo' AND BatchNum = '$lote'";
-        //echo $update."<br>";
-        $ms->Query($update);
-
-        // Guardo un registro historial de precios
-        $reg = "insert into hist_precios(usuario, estado_venta, fecha, hora, codigo, lote, suc, p1, p2, p3, p4, p5, p6, p7, desc1, desc2, desc3, desc4, desc5, desc6, desc7, pf1, pf2, pf3, pf4, pf5, pf6, pf7,cant_impresiones)
-               values ('$usuario', '$estado_venta',current_date, CURRENT_TIME, '$codigo', '$lote', '$suc', '$p1', '$p2', '$p3', '$p4', '$p5', '$p6', '$p7', '$desc1', '$desc2', '$desc3', '$desc4', '$desc5', '$desc6', '$desc7', '$pf1', '$pf2', '$pf3', '$pf4', '$pf5', '$pf6', '$pf7',0)";
-
-        //echo $reg;
-        $db->Query($reg);
-    }
-    echo json_encode(array('estado' => 'Ok', 'mensaje' => "Se han actualizado $i lotes..."));
-}
-
-function controlarCotizacionEntradaMercaderias() {
-    require_once("Y_DB_MSSQL.class.php");
-    $moneda = $_POST['moneda'];
-    $fecha = $_POST['fecha'];
-
-    $date = date_create($fecha);
-    $datef = date_format($date, 'm-d-Y');
-
-    $hoy = date("m-d-Y");
-
-    //echo "select Rate from ORTT WHERE RateDate = '$datef' and Currency = '$moneda';";
-
-    $ms = new MS();
-    $ms->Query("select Rate from ORTT WHERE RateDate = '$datef' and Currency = '$moneda';");
-    if ($ms->NumRows() > 0) {
-        $ms->Query("select Rate from ORTT WHERE RateDate = '$hoy' and Currency = '$moneda';");
-        if ($ms->NumRows() > 0) {
-            echo json_encode(array('estado' => 'Ok', 'mensaje' => ""));
-        } else {
-            echo json_encode(array('estado' => 'Error', 'mensaje' => "Debe establecer cotizacion de la moneda '$moneda' para la fecha: '$hoy' en SAP, Menu Gestion --> Tipos de Cambio e Indices"));
-        }
-    } else {
-        echo json_encode(array('estado' => 'Error', 'mensaje' => "Debe establecer cotizacion de la moneda '$moneda' para la fecha: '$fecha' en SAP, Menu Gestion --> Tipos de Cambio e Indices"));
-    }
-}
 
 /**
  * @param type $color: name or code
@@ -1762,7 +1429,7 @@ function verificarDatosEntradaMercaderia() {
     }
     echo json_encode($array);
 
-    //echo json_encode( getResultArrayMSSQL($sql));  
+     
 }
 
 function getDesignsImages() {
@@ -1880,44 +1547,7 @@ function copiarPackingListEnEntrada() {
     echo "Ok";
 }
 
-function copiarAEntrada($sql, $ref) {
-    $db = new My();
-    $db->Query("SELECT IF(MAX(id_det) IS NULL,1,MAX(id_det)) FROM entrada_det INTO @row_number;");
-    $db->Query($sql);
-    // Buscar las unidades de medida
-    $sql0 = stripslashes('SELECT  GROUP_CONCAT(DISTINCT CONCAT("\'",codigo,"\'")) as codigos  FROM entrada_det WHERE id_ent = ' . $ref . ';');
-    $db->Query($sql0);
-    $db->NextRecord();
-    $codigos = $db->Record['codigos'];
-
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-
-    $ms->Query("select ItemCode,InvntryUom,U_GRAMAJE_PROM,U_ANCHO from OITM where ItemCode in($codigos);");
-    while ($ms->NextRecord()) {
-        $ItemCode = $ms->Record['ItemCode'];
-        $InvntryUom = $ms->Record['InvntryUom'];
-        $GramajeProm = $ms->Record['U_GRAMAJE_PROM'];
-        $AnchoProm = $ms->Record['U_ANCHO'];
-        $db->Query("UPDATE entrada_det SET um_prod = '$InvntryUom' WHERE id_ent = $ref AND codigo = '$ItemCode'");
-        $db->Query("UPDATE entrada_det SET ancho = '$AnchoProm' WHERE id_ent = $ref AND codigo = '$ItemCode' and ancho = 0");
-        $db->Query("UPDATE entrada_det SET gramaje = '$GramajeProm' WHERE id_ent = $ref AND codigo = '$ItemCode' and gramaje = 0");
-    }
-    $db->Query("SET @row_number:=0;");
-
-    $db->Query("insert into ent_gastos(id_gasto,id_ent, cod_gasto, nombre_gasto, valor) select @row_number:=@row_number+1, $ref,cod_gasto, nombre_gasto, valor from inv_gastos where invoice = '$invoice';");
-
-
-    $ms->Query("select ExpnsCode, ExpnsName from OEXD where ExpnsCode not in(8,10,12) order by ExpnsCode asc");
-    while ($ms->NextRecord()) {
-        $cod_gasto = $ms->Record['ExpnsCode'];
-        $nombre_gasto = $ms->Record['ExpnsName'];
-        $db->Query("insert into ent_gastos(id_gasto,id_ent, cod_gasto, nombre_gasto, valor) values(@row_number:=@row_number+1,$ref, $cod_gasto , '$nombre_gasto', 0)");
-    }
-
-    corregirCantidadCalculadaEntradaMerc($ref);
-    return true;
-}
+ 
 
 function corregirCantidadCalculadaEntradaMerc($ref) {
     $db = new My();
@@ -2075,17 +1705,7 @@ function modificarDetalleEntradaMercaderia() {
     echo json_encode(getResultArray($sql));
 }
 
-function getCodigoPantone($color) {
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-    $ms->Query("select  Code  from  [@EXX_COLOR_COMERCIAL] where Name = '$color'");
-    if ($ms->NumRows() > 0) {
-        $ms->NextRecord();
-        return $ms->Record['Code'];
-    } else {
-        return '';
-    }
-}
+ 
 
 function borrarDetalleEntradaMercaderia() {
     $ref = $_POST['id_ent'];
@@ -2402,14 +2022,7 @@ function getTotalPedidoIntXColor() {
     $pedido = $db->Record['pedido'];
     echo $pedido;
 }
-
-function buscarStockXColorArticulo() {
-    $codigo = $_POST['codigo'];
-    $color = $_POST['color'];
-    $sql = "SELECT SUM(cast(round(Quantity ,2) as numeric(20,2))) as Stock FROM OIBT o inner JOIN [@EXX_COLOR_COMERCIAL] c ON o.U_color_comercial = c.Code where  o.ItemCode = '$codigo' and   c.Name = '$color'";
-    $stock = getResultArrayMSSQL($sql);
-    echo json_encode($stock);
-}
+ 
 
 function guardarPonderacionCliente() {
     $id = $_POST['id'];
@@ -2509,64 +2122,7 @@ function crearReserva() {
     $nro = $db->Record['NRO'];
     echo $nro;
 }
-
-function liberarReserva() {
-    $usuario = $_POST['usuario'];
-    $nro_reserva = $_POST['nro_reserva'];
-
-    require_once("Y_DB_MSSQL.class.php");
-
-    $db = new My();
-    $ms = new MS();
-
-    $DocEntry = 0;
-
-    
-
-    $ms->Query("SELECT DocEntry FROM ORDR WHERE U_Nro_Interno = $nro_reserva");
-    if ($ms->NumRows() > 0) {
-        $ms->NextRecord();
-        $DocEntry = $ms->Record['DocEntry'];
-        $get = json_decode(file_get_contents("http://192.168.2.220:8081/?action=liberarReserva&DocEntry=$DocEntry"),true);
-        if($get['status']=="ok"){
-            $db->Query("UPDATE reservas SET estado = 'Liberada' WHERE nro_reserva = $nro_reserva");
-            echo "true"; 
-        }else{
-            echo $get['msj'];
-        } 
-    } else {
-        echo "Error: Ocurrio un error durante la Identificacion del Numero Interno de la Reserva en SAP";
-        return;
-    }
-    /*
-     Aqui Anular la Orden de Venta
-    require_once("ConfigSAP.class.php");
-    $c = new ConfigSAP();
-    $conn = $c->connectToSAP();
-    $ordr = $conn->GetBusinessObject(17);  // ORDR
-    $RetVal = $ordr->GetByKey($DocEntry);
-
-
-    if ($RetVal != null) {
-        $RetVal = $ordr->cancel();
-        if ($RetVal != 0) {
-            $lErrCode = 0;
-            $sErrMsg = "";
-            $conn->GetLastError($lErrCode, $sErrMsg);
-
-            require_once("Log.class.php");
-            $l = new Log();
-            $l->error("Error al Cancelar Orden de Venta por Reservas ErrCode: $lErrCode   ErrMsg: $sErrMsg");
-
-            echo "Error al Cancelar Orden de Venta por Reservas ErrCode: $lErrCode   ErrMsg: $sErrMsg";
-        } else {
-            $db->Query("UPDATE reservas SET estado = 'Liberada' WHERE nro_reserva = $nro_reserva");
-            echo "true";
-        }
-    } else {
-        echo "Error: Ocurrio un error durante la Identificaicon de la Reserva en SAP";
-    }*/
-}
+ 
 
 function buscarDatosDeCodigo(){
     require_once("Functions.class.php");
@@ -2578,7 +2134,7 @@ function buscarDatosDeCodigo(){
     
     $cat = 1;
     $moneda = "G$";
-    $um = "Mts";
+    $um = "Unid";
     
     if(isset( $_POST['categoria'])){
        $cat = $_POST['categoria'];
@@ -2586,13 +2142,29 @@ function buscarDatosDeCodigo(){
     if(isset( $_POST['moneda'])){
        $moneda = $_POST['moneda'];
     }
-    
      
-    $sql_lote = "SELECT l.codigo, b.barcode, l.lote,clase,descrip,um as um_prod,costo_prom, composicion,mnj_x_lotes,a.art_inv,gramaje,gramaje_m,l.ancho, tara,l.kg_desc, pantone, s.cantidad AS stock, s.cant_ent as cant_ini, l.img,s.suc,padre,s.ubicacion,color_cod_fabric,s.estado_venta   FROM articulos a INNER JOIN lotes l INNER JOIN stock s   
-    ON a.codigo = l.codigo AND l.codigo = s.codigo AND l.lote = s.lote  LEFT  JOIN codigos_barras b ON a.codigo = b.codigo WHERE (a.codigo ='$code' OR b.barcode = '$code' OR  l.lote = '$code') AND suc = '$suc' LIMIT 1";
-    $datos  = $fn->getResultArray($sql_lote)[0];  // print_r($datos);
     $art_inv = 'true';
-    if(sizeof( $datos) > 0){ 
+    
+    $sql_art = "SELECT a.codigo,clase,descrip,um,mnj_x_lotes, s.cantidad AS stock,a.art_inv, a.img,s.estado_venta,a.um AS um_prod,a.ancho,a.gramaje_prom AS gramaje,s.suc   FROM articulos a left JOIN stock s ON a.codigo = s.codigo  LEFT JOIN codigos_barras b ON a.codigo = b.codigo   WHERE (a.codigo ='$code' OR b.barcode = '$code') AND estado = 'Activo' LIMIT 1";
+    $datos = $fn->getResultArray($sql_art)[0];
+        //echo $sql_art;
+        //print_r($datos);
+    if (!empty($datos)) {
+       $datos['existe'] = "true";
+       $art_inv = $datos['art_inv'];
+       $codigo = $datos['codigo'];
+       if($art_inv == 'false'){
+           $datos['stock'] = 1000;
+           $datos['estado_venta'] = "Normal";
+       }               
+
+    }else{
+       $datos['existe'] = "false";            
+    } 
+
+    
+    
+    if (!empty($datos)) {
         $pantone = $datos['pantone'];
         $sql_color = $fn->getResultArray("SELECT nombre_color AS color FROM pantone WHERE pantone = '$pantone' AND estado ='Activo'")[0];
         $color = $sql_color['color'];
@@ -2601,28 +2173,15 @@ function buscarDatosDeCodigo(){
         $art_inv = $datos['art_inv'];
         $codigo = $datos['codigo'];
           
-    }else{ // No es manejado por lotes o no existe este lote buscar por Articulo y codigo de barras
-        $sql_art = "SELECT a.codigo,clase,descrip,um,mnj_x_lotes, s.cantidad AS stock,a.art_inv, img,s.estado_venta,a.um AS um_prod,a.ancho,a.gramaje_prom AS gramaje,s.suc   FROM articulos a left JOIN stock s ON a.codigo = s.codigo  LEFT JOIN codigos_barras b ON a.codigo = b.codigo   WHERE (a.codigo ='$code' OR b.barcode = '$code') AND estado = 'Activo' LIMIT 1";
-        $datos = $fn->getResultArray($sql_art)[0];
-        //echo $sql_art;
-        //print_r($datos);
-        if(sizeof( $datos) > 0){
-           $datos['existe'] = "true";
-           $art_inv = $datos['art_inv'];
-           $codigo = $datos['codigo'];
-           if($art_inv == 'false'){
-               $datos['stock'] = 1000;
-               $datos['estado_venta'] = "Normal";
-           }               
-          
-        }else{
-           $datos['existe'] = "false";            
-        } 
+    }else{ // Manejado por Lotes
+        $sql_lote = "SELECT l.codigo, b.barcode, l.lote,clase,descrip,um as um_prod,costo_prom, composicion,mnj_x_lotes,a.art_inv,gramaje,gramaje_m,l.ancho, tara,l.kg_desc, pantone, s.cantidad AS stock, s.cant_ent as cant_ini, a.img,s.suc,padre,s.ubicacion,color_cod_fabric,s.estado_venta   FROM articulos a INNER JOIN lotes l INNER JOIN stock s   
+        ON a.codigo = l.codigo AND l.codigo = s.codigo AND l.lote = s.lote  LEFT  JOIN codigos_barras b ON a.codigo = b.codigo WHERE (a.codigo ='$code' OR b.barcode = '$code' OR  l.lote = '$code') AND suc = '$suc' LIMIT 1";
+        $datos  = $fn->getResultArray($sql_lote)[0];  // print_r($datos);
     } 
 
     if($datos['existe'] == "true"){
     
-        $um_lista_precios = $fn->getResultArray("SELECT  DISTINCT um,precio FROM lista_prec_x_art WHERE codigo = '$codigo' AND moneda = '$moneda' and num = $cat") ; 
+        $um_lista_precios = $fn->getResultArray("SELECT  DISTINCT um,u.um_mult, precio, 0 AS descuento FROM lista_prec_x_art lp, unidades_medida u WHERE lp.um = u.um_cod AND lp.codigo = '$codigo' AND lp.moneda = '$moneda' and lp.num = $cat") ; 
  
         $um_prod = $datos['um_prod'];
         if(isset( $_POST['um'])){
@@ -2655,12 +2214,15 @@ function buscarDatosDeCodigo(){
         if($art_inv === "false"){
             $sql_precios = "SELECT precio,0 as descuento FROM lista_prec_x_art WHERE codigo = '$codigo' AND moneda = '$moneda' AND um = '$um' AND num = $cat;";
         } 
-        // echo $sql_precios;
+        
+        $precios = $fn->getResultArray($sql_precios) ;  
+        //echo count( $precios);
 
-        $precios = $fn->getResultArray($sql_precios)[0];  //print_r($precios);
-        if(sizeof( $precios )>0){
-            $datos['precio'] = $precios['precio'];
-            $datos['descuento'] = $precios['descuento'];
+        
+        if(count( $precios )>0){
+             
+            $datos['precio'] = $precios[0]['precio'];
+            $datos['descuento'] = $precios[0]['descuento'];
         }else{
             $datos['precio'] = 0;
             $datos['descuento'] = 0;
@@ -2708,7 +2270,7 @@ function buscarArticulos() {
         $limit = 20;
     }
      
-    //require_once("Y_DB_MSSQL.class.php");
+   
     $articulos = getResultArray("SELECT a.codigo  , a.descrip , s.descrip AS sector, a.um , costo_prom AS PrecioCosto, composicion, temporada, ligamento, combinacion, especificaciones, acabado, tipo, estetica, ancho , espesor, gramaje_prom , rendimiento, produc_ancho, produc_largo, produc_alto, produc_costo, mnj_x_lotes, estado,
     l.precio FROM articulos a INNER JOIN sectores s ON a.cod_sector = s.cod_sector LEFT JOIN lista_prec_x_art l ON a.codigo = l.codigo AND l.num = $cat AND l.moneda = 'G$' AND l.um = a.um
     WHERE art_venta = 'true' AND a.estado ='Activo' AND (a.codigo LIKE '$articulo%' OR a.descrip LIKE '$articulo%' ) LIMIT $limit");  // Agregar Estado
@@ -2721,109 +2283,7 @@ function getPrecioPromedioCodigo() {
     echo json_encode($AvgPrice);
 }
 
-function buscarLotes() {
-    $articulo = trim($_POST['articulo']);
-    $color = $_POST['color'];
-    $campo = $_POST['tipo_busqueda'];
-    $mi_suc = $_POST['mi_suc'];
-    $suc = $_POST['suc'];
-    $orderby = 'ORDER BY RIGHT(o.DistNumber,2) ASC, i.U_NOMBRE_COM ASC,c.Name ASC,Stock DESC';
-    $ex_filter = '';
-    $filter = '';
-    // Verificar Notas de Pedidos y Remisiones
-    $MyLink = new My();
-    $n_articulos = array();
-    $articulos_buscados = getItemCodeLikeName($articulo);
-
-    if (( count($articulos_buscados) > 0) || is_numeric(trim($articulo))) {
-        $criterio = is_numeric($articulo) ? " d.lote = '$articulo' " : " d.codigo in (" . trim(implode(',', $articulos_buscados), ',') . ") ";
-        $ex_criterio = is_numeric($articulo) ? " or d.padre = '$articulo' " : "";
-
-        $pedido = "SELECT 'Pedido' as doc,p.n_nro,lote, suc from pedido_traslado p inner join pedido_tras_det d using(n_nro) where $criterio and(p.estado = 'Abierta' or d.estado='Pendiente')";
-        $remision = "SELECT 'Remision',CONCAT(r.n_nro,', (',r.estado,'), '),lote,suc_d as suc from nota_remision r inner join nota_rem_det d using(n_nro) where $criterio and r.estado <> 'Cerrada'";
-        //$fraccionamiento = "SELECT 'Reserva' as doc,'',lote,suc_destino as suc from fraccionamientos d where ($criterio $ex_criterio) and suc_destino not in  ('$suc','00')";
-        $fraccionamiento = "SELECT 'Reserva' as doc,'',lote,suc from orden_procesamiento d where $criterio and suc not in  ('$suc','00')";
-
-
-        $MyLink->Query("$pedido union $remision  union $fraccionamiento ");
-        while ($MyLink->NextRecord()) {
-            $l = $MyLink->Record['lote'];
-            if (!array_key_exists($l, $n_articulos)) {
-                $n_articulos[$l] = $MyLink->Record;
-            }
-        }
-        // Filtros
-        if (isset($_POST['sucOrigen']) && isset($_POST['sucDestino']) && isset($_POST['filtroStock'])) {
-            $sucOrigen = $_POST['sucOrigen'];
-            $sucDestino = $_POST['sucDestino'];
-            $filtroStock = $_POST['filtroStock'];
-
-            $ex_filter = " and round(q.Quantity - isnull(q.CommitQty,0),2) > $filtroStock";
-            $orderby = "order by case w.WhsCode when '$sucOrigen' then 1 when '$sucDestino' then 2 else 3 end,RIGHT(o.DistNumber,2) ASC, Stock desc";
-        }
-        $filtro_suc = "";
-        if ($mi_suc == "false") {//Incluir
-            $filtro_suc = " and w.WhsCode != '$suc'";
-        }
-        $filter = "(o.ItemCode LIKE '$articulo%' or   i.U_NOMBRE_COM LIKE '$articulo%' or o.DistNumber like '$articulo%') AND c.Name LIKE '%$color%' $filtro_suc  $ex_filter $orderby";
-        if (is_numeric($articulo)) {
-            $campo = $campo == 'BatchNum' ? 'DistNumber' : $campo;
-            $filter = " round(q.Quantity - isnull(q.CommitQty,0),2)>0 and o.$campo = '$articulo' ";
-        }
-        require_once("Y_DB_MSSQL.class.php");
-        $query = "SELECT TOP 50 o.ItemCode,o.DistNumber as Lote,ItmsGrpNam as Sector,i.U_NOMBRE_COM as NombreComercial, cast(round(q.Quantity - isnull(q.CommitQty,0),2) as numeric(20,2)) as Stock,o.U_ancho as Ancho,ISNULL(c.Name,o.U_color_comercial) as Color,Status,w.WhsCode AS Suc,U_img as Img,l.Price - (( l.Price * o.U_desc1 ) / 100) as Precio1, o.U_F1 as f1,o.U_F2 as f2,o.U_F3 as f3 "
-                . " FROM OBTN o INNER JOIN OITM i ON i.ItemCode = o.ItemCode INNER JOIN OITB t ON  i.ItmsGrpCod = t.ItmsGrpCod LEFT JOIN	OBTQ q ON o.ItemCode = q.ItemCode AND o.SysNumber = q.SysNumber INNER JOIN	OBTW w ON o.ItemCode = w.ItemCode AND o.SysNumber = w.SysNumber and q.AbsEntry=w.AbsEntry  left JOIN [@EXX_COLOR_COMERCIAL] c ON replace(o.U_color_comercial,'*','-') = c.Code "
-                . "inner join ITM1 l on o.ItemCode = l.ItemCode and l.PriceList = 1"
-                . " WHERE   $filter ";
-        //echo $query;
-
-        $articulos = array();
-        $MsLink = new Ms();
-        $MsLink->Query($query);
-        while ($MsLink->NextRecord()) {
-            $lote = $MsLink->Record;
-            if (array_key_exists($lote['Lote'], $n_articulos)) {
-                if ($n_articulos[$lote['Lote']]['doc'] === 'Reserva') {
-                    if ($lote['Suc'] === '00') {
-                        $lote['doc'] = $n_articulos[$lote['Lote']];
-                    } else {
-                        $lote['doc'] = array();
-                    }
-                } else {
-                    $lote['doc'] = $n_articulos[$lote['Lote']];
-                }
-            } else {
-                $lote['doc'] = array();
-            }
-            array_push($articulos, array_map('utf8_string', $lote));
-        }
-    } else {
-        $articulos['error'] = "No se encontro resultado";
-    }
-
-    // $articulos = getResultArrayMSSQL($query);
-
-    echo json_encode($articulos);
-}
-
-function getItemCodeLikeName($nameSearch) {
-    require_once("Y_DB_MSSQL.class.php");
-    $link = new MS();
-    $ItemCodes = array();
-    $link->Query("SELECT count(*) as art FROM OITM where ItemCode = '" . trim($nameSearch) . "'");
-    $link->NextRecord();
-    if ((int) $link->Record['art'] == 0) {
-        $link->Query("SELECT ItemCode FROM OITM where ItemName like '%$nameSearch%'");
-        while ($link->NextRecord()) {
-            array_push($ItemCodes, "'" . $link->Record['ItemCode'] . "'");
-        }
-    } else {
-        array_push($ItemCodes, "'" . trim($nameSearch) . "'");
-    }
-    $link->Close();
-    return $ItemCodes;
-}
-
+ 
 function utf8_string($data) {
     if (gettype($data) === "string") {
         return utf8_encode($data);
@@ -2831,104 +2291,7 @@ function utf8_string($data) {
         return $data;
     }
 }
-
-function buscarLotesXColor() {
-    require_once("Y_DB_MSSQL.class.php");
-    $codigo = $_POST['codigo'];
-    $color = $_POST['color'];
-    $lotes = "SELECT o.ItemCode,o.BatchNum as Lote,ItmsGrpNam as Sector,i.U_NOMBRE_COM, cast(round(Quantity - isnull(o.IsCommited,0),2) as numeric(20,2)) as Stock,o.U_ancho as Ancho,c.Name as Color,Status,WhsCode AS Suc,U_img as Img 
-    FROM OITM i INNER JOIN OITB t ON  i.ItmsGrpCod = t.ItmsGrpCod INNER JOIN OIBT o ON i.ItemCode = o.ItemCode inner JOIN [@EXX_COLOR_COMERCIAL] c ON o.U_color_comercial = c.Code
-    WHERE  o.ItemCode like '$codigo' AND c.Name like '$color%' AND cast(round(Quantity - o.IsCommited,2) as numeric(20,2)) > 0 order by Stock DESC";
-    $ms = new MS();
-    $ms->Query($lotes);
-    $hist = "<table border='1' style='border:1px solid gray;border-collapse: collapse;width:250px'>";
-    $hist.="<tr class='titulo'><th>Lote</th><th>Stock</th><th>Status</th><th>Suc</th></tr>";
-    while ($ms->NextRecord()) {
-        $Lote = $ms->Record['Lote'];
-        $Stock = number_format($ms->Record['Stock'], 2, ',', '.');
-        $Status = $ms->Record['Status'];
-        if ($Status == "0") {
-            $Status = "Liberado";
-        } else {
-            $Status = "En Transito";
-        }
-        $Suc = $ms->Record['Suc'];
-        $hist.="<tr><td class='item'>$Lote</td><td class='num'>$Stock</td><td class='itemc'>$Status</td><td class='itemc'>$Suc</td></tr>";
-    }
-    $hist.="</table>";
-    echo $hist;
-}
-
-function getHistorialPreciosArticulo() {
-
-    $codigo = $_POST['codigo'];
-    require_once("Y_DB_MSSQL.class.php");
-    $sql = "SELECT distinct o.DocEntry, CONVERT(VARCHAR(10), o.DocDate, 103) DocDate,  o.CardName,sum( p.Quantity) as Quantity,p.Price,p.Currency,p.Rate  from  OPDN o,PDN1 p WHERE  o.DocEntry = p.DocEntry  AND  ItemCode = '$codigo' group by o.DocEntry,    o.DocDate, o.CardName, p.Price,p.Currency,p.Rate; ";
-
-    //echo "<1>".$sql."<br>";
-
-    $ms = new MS();
-    $ms->Query($sql);
-    $hist = "<table border='1' style='border:1px solid gray;border-collapse: collapse'>";
-    $hist.="<tr class='titulo'><th>N&deg;</th><th>Proveedor</th><th>Fecha</th><th>Cantidad Compra</th><th>Precio</th><th>Moneda</th><th>Cotiz</th></tr>";
-    while ($ms->NextRecord()) {
-        $DocEntry = $ms->Record['DocEntry'];
-        $CardName = $ms->Record['CardName'];
-        $DocDate = $ms->Record['DocDate'];
-        $Quantity = number_format($ms->Record['Quantity'], 2, ',', '.');
-        $Price = number_format($ms->Record['Price'], 2, ',', '.');
-        $Currency = $ms->Record['Currency'];
-        $Rate = number_format($ms->Record['Rate'], 0, ',', '.');
-        //$DocDate =  $ms->Record['DocDate']; 
-        $hist.="<tr title='Entrada de Mercaderias'><td class='itemc'>$DocEntry</td><td class='item'>$CardName</td><td class='itemc'>$DocDate</td><td class='num'>$Quantity</td><td class='num'>$Price</td><td class='itemc'>$Currency</td><td class='num'>$Rate</td></tr>";
-    }
-    $sql2 = "SELECT distinct o.DocEntry, CONVERT(VARCHAR(10), o.DocDate, 103) DocDate,  o.CardName, sum( p.Quantity) as Quantity,p.Price,p.Currency,p.Rate  from  OPCH o,PCH1 p WHERE  o.DocEntry = p.DocEntry  AND  ItemCode = '$codigo' group by o.DocEntry,    o.DocDate, o.CardName, p.Price,p.Currency,p.Rate;";
-    //echo "<1>".$sql."<br>";
-    $ms->Query($sql2);
-    while ($ms->NextRecord()) {
-        $DocEntry = $ms->Record['DocEntry'];
-        $CardName = $ms->Record['CardName'];
-        $DocDate = $ms->Record['DocDate'];
-        $Quantity = number_format($ms->Record['Quantity'], 2, ',', '.');
-        $Price = number_format($ms->Record['Price'], 2, ',', '.');
-        $Currency = $ms->Record['Currency'];
-        $Rate = number_format($ms->Record['Rate'], 0, ',', '.');
-        //$DocDate =  $ms->Record['DocDate']; 
-        $hist.="<tr title='Factura de Proveedor' ><td class='itemc'>$DocEntry</td><td class='item'>$CardName</td><td class='itemc'>$DocDate</td><td class='num'>$Quantity</td><td class='num'>$Price</td><td class='itemc'>$Currency</td><td class='num'>$Rate</td></tr>";
-    }
-    $hist.="</table>";
-    echo $hist;
-}
-
-function nuevoArticulo() {
-    require_once("ConfigSAP.class.php");
-    $c = new ConfigSAP();
-    $vCmp = $c->connectToSAP();
-    $oitm = $vCmp->GetBusinessObject(4);  // OITM 
-
-
-    $oitm->ItemCode = "";
-    $oitm->ItemName = "";
-    // FechaNac
-    $oitm->UserFields->Fields->Item("U_xxxxx")->Value = $fxxxxxx;
-
-    $err = $vSN->add();
-
-    if ($err == 0) {
-        echo "true";
-    } else {
-
-        $lErrCode = 0;
-        $sErrMsg = "";
-        $vCmp->GetLastError($lErrCode, $sErrMsg);
-
-        require_once("Log.class.php");
-        $l = new Log();
-        $l->error("Error al Registrar Cliente ErrCode: $lErrCode   ErrMsg: $sErrMsg");
-
-        echo "false";
-    }
-}
+ 
 
 function getHistorialTracking() {
     $id = $_POST['id'];
@@ -2961,6 +2324,7 @@ function getAnchoGramajeTara($codigo,$lote){
     return getResultArray($sql)[0];
 }
 
+/*
 function registarAjuste() {
     $codigo = $_POST['codigo'];
     $lote = $_POST['lote'];
@@ -3047,7 +2411,7 @@ function registarAjuste() {
         $db->Rollback();
     }
     echo json_encode($array);
-}
+}*/
 
 function generarSolicitudTraslado() {
     $suc = $_POST['suc'];
@@ -3074,187 +2438,7 @@ function generarSolicitudTraslado() {
     echo json_encode(getResultArray($ultima));
 }
 
- 
-
-function addLoteSolicitudTraslado() {
-    $db = new My();
-    $nro = $_REQUEST['nro_nota'];
-    $codigo = $_REQUEST['codigo'];
-    $lote = $_REQUEST['lote'];
-    $descrip = $_REQUEST['descrip'];
-    $cantidad = $_REQUEST['cantidad'];
-    $color = $_REQUEST['color'];
-    $mayorista = $_REQUEST['mayorista'];
-    $urge = $_REQUEST['urge'];
-    $obs = $_REQUEST['obs'];
-    $destino = $_REQUEST['destino'];
-    
-    $precio_venta = 0;
-    if (isset($_REQUEST['precio_venta'])) {
-        $precio_venta = $_REQUEST['precio_venta'];
-    }
-    $respuesta = array();
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-    $ms->Query(" select  Quantity from oibt where BatchNum = '$lote' and WhsCode ='$destino'");
-    $ms->NextRecord();
-    $stock = $ms->Record['Quantity'];
-
-    $pedido = "SELECT 'Pedido' as doc,p.n_nro as nro, p.suc,$stock -  d.cantidad AS disponible from pedido_traslado p inner join pedido_tras_det d using(n_nro) inner join pedido_traslado t on p.suc_d=t.suc_d where t.n_nro=$nro and d.lote = '$lote'  and(p.estado = 'Abierta' or d.estado='Pendiente') AND $cantidad + d.cantidad >  $stock";
-
-    $remision = "SELECT 'Remision' as doc,r.n_nro as nro, r.suc_d, $stock   AS disponible  from nota_remision r inner join nota_rem_det d using(n_nro) inner join pedido_traslado t on r.suc=t.suc_d where t.n_nro=$nro and d.lote = '$lote'  and(r.estado = 'Abierta' or r.estado='En proceso')";
-
-    $venta = "SELECT 'Venta' as doc,f.f_nro as nro, f.suc, $stock   AS disponible from factura_venta f inner join fact_vent_det d using(f_nro) inner join pedido_traslado t on f.suc=t.suc_d where t.n_nro=$nro and d.lote = '$lote'  and(f.estado = 'Abierta' or f.estado='En_caja')";
-
-    //echo "$pedido union $remision union $venta";
-
-    $db->Query("$pedido union $remision union $venta");    
-
-    if ($db->NumRows() > 0) {
-        $db->NextRecord();
-        $doc = $db->Record['doc'];
-        $suc = $db->Record['suc'];
-        $nro = $db->Record['nro'];
-        $disponible= $db->Record['disponible'];      
-        $respuesta['estado'] = 'error';
-        $respuesta['mensaje'] = "El lote ya esta en $doc:  $suc solo puede pedir $disponible, nro: $nro";
-    } else {
-        $db->Query("INSERT INTO pedido_tras_det(n_nro, codigo, lote, um_prod, descrip, cantidad, precio_venta, color, estado, mayorista, urge, obs, lote_rem, e_sap) VALUES ($nro, '$codigo', '$lote', '', '$descrip', '$cantidad', $precio_venta, '$color', 'Pendiente', '$mayorista', '$urge', '$obs','', 0);");
-        $respuesta['estado'] = 'Ok';
-        $respuesta['mensaje'] = "Articulo cargado...";
-    }
-    echo json_encode($respuesta);
-}
-
-function borrarLoteDeSolicitudTraslado() {
-    $db = new My();
-    $nro = $_POST['nro_nota'];
-    $lote = $_POST['lote'];
-    $db->Query("DELETE FROM pedido_tras_det WHERE n_nro = $nro AND lote = '$lote'");
-    echo "Ok";
-}
-
-function cambiarEstadoSolicitudTraslado() {
-    $db = new My();
-    $dba = new My();
-    $nro = $_POST['nro'];
-    $usuario = $_POST['usuario'];
-    $estado = $_POST['estado'];
-    $db->Query("UPDATE pedido_traslado SET estado = '$estado',fecha_cierre = current_date, hora_cierre = current_time WHERE n_nro = $nro");
-    makeLog($usuario, "MODIFICAR", 'Cambio estado de Solicitud a $estado', 'Solicitud Traslado', $nro);
-    //makeLog($usuario, $accion, $data, $tipo, $doc_num)
-
-    if ($estado == "Pendiente") {
-        require_once("Y_DB_MSSQL.class.php");
-        $ms = new MS();
-        $db->Query("SELECT suc_d,codigo, lote  FROM pedido_traslado p, pedido_tras_det d WHERE p.n_nro = d.n_nro AND d.n_nro = $nro");
-        while ($db->NextRecord()) {
-            $codigo = $db->Record['codigo'];
-            $lote = $db->Record['lote'];
-            $suc_d = $db->Record['suc_d'];
-            $ub = "select CONCAT(U_nombre,'-',U_fila,'-',U_col) as U_ubic, CONCAT(U_nombre,U_col) as Nodo  from [@REG_UBIC] where  U_codigo = '$codigo' and U_lote = '$lote' and U_suc = '$suc_d'";
-            $ms->Query($ub);
-            if ($ms->NumRows() > 0) {
-                $ms->NextRecord();
-                $ubic = $ms->Record['U_ubic'];
-                $nodo = $ms->Record['Nodo'];
-                $dba->Query("update pedido_tras_det set ubic = '$ubic',nodo = '$nodo' where n_nro = $nro and codigo = '$codigo' and lote = '$lote' ");                
-            }else{
-                //Si no esta en [@REG_UBIC] borrar en OIBT tb
-                 $ms->Query("update oibt set U_ubic = '' where ItemCode = '$codigo' and BatchNum = '$lote'");
-            }
-        }
-    }
-
-    echo "Ok";
-}
-
-/**
- * 
- * @todo: Verificar si el Lote de Remplazo no esta en alguna otra nota de Remision Abierta o en proceso de envio.
- */
-function agregarCodigoRemplazoSolicitud() {
-    $db = new My();
-    $lote = $_POST['lote'];
-    $lote_rem = $_POST['lote_rem'];
-    $nro = $_POST['nro'];
-    $usuario = $_POST['usuario'];
-    $suc = $_POST['suc'];
-
-    if ($lote_rem == "") {
-        $db->Query("UPDATE pedido_tras_det SET lote_rem = '$lote_rem' WHERE n_nro = $nro AND lote = '$lote';");
-        // Chequear estado 
-        /*  $db->Query("SELECT count(*) AS CANT FROM pedido_tras_det WHERE n_nro = $nro AND estado = 'Pendiente' ");
-          $db->NextRecord();
-          $cant = $db->Record['CANT'];
-          if($cant < 1){
-          $db->Query("UPDATE  pedido_traslado SET estado = 'Cerrada' WHERE n_nro = $nro");
-          makeLog($usuario,"MODIFICAR",'Cambio estado de Solicitud a Cerrada','Solicitud Traslado', $nro);
-          } */
-        echo "Ok";
-        return;
-    }
-
-    /**
-     *  @todo: Verificar si el Lote de Remplazo no esta en alguna otra nota de Remision Abierta o en proceso de envio.
-     */
-    $lote_to_check = $lote;
-    if($lote_rem != ""){
-        $lote_to_check = $lote_rem;
-    }
-    $rem = "SELECT r.n_nro AS nro, DATE_FORMAT(fecha,'%d-%m-%Y') AS fecha, CONCAT( r.suc,'-->',r.suc_d) AS direccion, r.estado FROM nota_remision r, nota_rem_det d WHERE r.n_nro = d.n_nro AND lote = '$lote_to_check' AND r.estado <> 'Cerrada' ";
-    $db->Query($rem);
-    if($db->NumRows() > 0){
-        $db->NextRecord();
-        $nro =  $db->Record['nro'];
-        $fecha =  $db->Record['fecha'];
-        $direccion =  $db->Record['direccion'];
-        $estado =  $db->Record['estado'];
-        echo "Error: Lote en un Remision: $estado de:  $direccion   Fecha: $fecha";
-    }else{
-    
-        // Controlar si el Lote es correcto
-        require_once("Y_DB_MSSQL.class.php");
-        $ms = new MS();
-
-        // Buscar Primero datos del Codigo de Remplazo
-        $ms->Query("select TOP 1 o.ItemCode,BatchNum,U_color_comercial, i.U_NOMBRE_COM,o.Quantity from OIBT o INNER JOIN OITM i ON o.ItemCode = I.ItemCode WHERE BatchNum = '$lote_rem' and WhsCode = '$suc'");
-        if ($ms->NumRows() > 0) {
-            $ms->NextRecord();
-            $ItemCodeR = $ms->Record['ItemCode'];
-            $BatchNumR = $ms->Record['BatchNum'];
-            $U_NOMBRE_COMR = $ms->Record['U_NOMBRE_COM'];
-            $U_color_comercialR = $ms->Record['U_color_comercial'];
-            $Quantity = $ms->Record['Quantity'];
-
-            $encontro = false;
-            $ms->Query("select TOP 1 o.ItemCode,BatchNum,U_color_comercial, i.U_NOMBRE_COM,U_color_cod_fabric from OIBT o INNER JOIN OITM i ON o.ItemCode = I.ItemCode WHERE BatchNum = '$lote' and WhsCode = '$suc';");
-            while ($ms->NextRecord()) {
-                $ItemCode = $ms->Record['ItemCode'];
-                $BatchNum = $ms->Record['BatchNum'];
-                $U_NOMBRE_COM = $ms->Record['U_NOMBRE_COM'];
-                $U_color_comercial = $ms->Record['U_color_comercial'];
-                $U_color_cod_fabric = $ms->Record['U_color_cod_fabric'];
-
-                if ($ItemCodeR != $ItemCode) {
-                    echo "Error: Articulos diferentes, Lote $lote: $U_NOMBRE_COM  Remplazo $lote_rem: $U_NOMBRE_COMR";
-                    return;
-                } else {
-                    if ($U_color_comercialR != $U_color_comercial) {
-                        echo "Error: Colores no coinciden...";
-                        return;
-                    } else {
-                        $db->Query("UPDATE pedido_tras_det SET lote_rem = '$lote_rem',cantidad = $Quantity WHERE n_nro = $nro AND lote = '$lote';");
-                         
-                        echo "Ok: $Quantity,Cod Color Fab: $U_color_cod_fabric";
-                    }
-                }
-            }
-        } else {
-            echo "Error: Lote no existe...";
-        }
-    }
-}
+   
 
 function getRemitosAbiertos() {
     $suc = $_POST['suc'];
@@ -3379,116 +2563,7 @@ function insertarEnRemision() {
     }
     echo json_encode($respuesta);
 }
-
-/** Desde una Pedido de Traslado */
-function insertarLotesEnRemito() {
-    $time_start = microtime(true);
-    $nro = $_REQUEST['nro'];
-    $suc = $_REQUEST['suc'];
-    $db = new My();
-    $db->Query("SELECT estado  from nota_remision where n_nro=$nro");
-    $db->NextRecord();
-    $estado = $db->Record['estado'];
-     
-    $usuario = $_REQUEST['usuario'];
-
-    if ($estado == 'Abierta') {
-        $lotes = json_decode($_REQUEST['lotes']);
-        $insertados = array();
-        //debug("insertarLotesEnRemito: Rem: $nro, suc $suc");
-        require_once("Y_DB_MSSQL.class.php");
-        $ms = new MS();
-
-        // Buscar Primero datos del Codigo de Remplazo     
-        //debug("insertarLotesEnRemito: suc:$suc, Lotes: ".count($lotes));
-
-        foreach ($lotes as $key => $val) {
-
-            $nro_pedido = $lotes[$key]->nro_pedido;
-            $codigo = trim($lotes[$key]->codigo);
-            $lote = $lotes[$key]->lote;
-
-            $control = verificarLoteEnRemito($nro, $lote);
-            if ($control < 1) {
-                
-                $ms->Query("SELECT InvntryUom as UM,CONCAT( m.ItemName,'-',c.Name) as descrip,U_tara as Tara,U_gramaje as Gramaje,o.U_ancho as Ancho,cast(round(q.Quantity - ISNULL(q.CommitQty,0),2) as numeric(20,2)) as Stock FROM OBTN o inner join OBTW w on o.SysNumber=w.SysNumber and o.ItemCode=w.ItemCode inner join OBTQ q on o.SysNumber=q.SysNumber and w.WhsCode=q.WhsCode and q.ItemCode=w.ItemCode inner join OITM m on o.ItemCode=m.ItemCode LEFT JOIN [@EXX_COLOR_COMERCIAL] c ON o.U_color_comercial = c.Code where o.ItemCode='$codigo' and o.DistNumber = '$lote' and w.WhsCode = '$suc'");
-                $ms->NextRecord();
-                $um = $ms->Record['UM'];
-                $tara = $ms->Record['Tara'];
-                $gramaje = $ms->Record['Gramaje'];
-                $ancho = $ms->Record['Ancho'];
-                $cant = $ms->Record['Stock'];
-                $descrip = ucfirst(strtolower($ms->Record['descrip']));
-                //debug("insertarLotesEnRemito: Obtenido datos de lote");
-                if ($um == "") {
-                    $um = "Mts";
-                }
-                if ($tara == null) {
-                    $tara = 0;
-                }
-
-
-                $ms->Query("SELECT (CASE WHEN ABS(SUM(a.Quantity)) = 0 THEN SUM(a.AllocQty) ELSE ABS(SUM(a.Quantity)) END) as CantCompra FROM ITL1 a INNER JOIN	OITL b ON a.LogEntry = b.LogEntry INNER JOIN	OBTN c ON a.ItemCode = c.ItemCode and a.SysNumber = c.SysNumber where b.ItemCode = '$codigo' and c.DistNumber = '$lote'  and (b.ApplyType = '20' or b.ApplyType = '59') AND b.LocCode = '$suc'"); // 20 Entrada de Mercaderias, 59 Entrada Ajuste + o Fraccionamiento 
-                $cant_compra = 0;
-                if ($ms->NumRows() > 0) {
-                    $ms->NextRecord();
-                    $cant_compra = (strlen(trim($ms->Record['CantCompra'])) > 0) ? $ms->Record['CantCompra'] : 0;
-                    //debug("insertarLotesEnRemito: Obtenido Cantidad Comprada");
-                }
-
-                //$control = verificarLoteEnRemito($nro,$lote);
-                //if($control < 1){
-                if ((float) $cant > 0) {
-                    
-                    $queryr  = "SELECT 'Remedir' as TipoDocumento, n.n_nro as Nro, d.verificado_por as usuario,DATE_FORMAT(n.fecha_cierre,'%d-%m-%Y') AS fecha,n.suc_d as suc,d.estado,d.cantidad as cantidad from nota_remision n inner join nota_rem_det d using(n_nro) where n.suc_d = '$suc' and d.lote = '$lote' and d.estado = 'FR' ";
-                    $db->Query($queryr);
-                    if($db->NumRows() > 0){
-                        $insertados['error'] = "Remedir: Fuera de Rango lote: $lote";
-                    }else{                    
-                        $tipo_control_ch = (verifRollo($lote, $codigo)) ? 'Rollo' : 'Pieza';
-                        $query = "INSERT INTO nota_rem_det( n_nro, codigo, lote, um_prod, descrip, cantidad,cant_inicial,gramaje,ancho, kg_env, kg_rec, cant_calc_env, cant_calc_rec, tara, procesado, estado,tipo_control, e_sap, usuario_ins,fecha_ins) VALUES ($nro, '$codigo', '$lote', '$um', '$descrip', $cant,$cant_compra,$gramaje,$ancho,0, 0, 0, 0, $tara,0, 'Pendiente','$tipo_control_ch', 0,'$usuario',current_timestamp)";
-
-                        //debug("insertarLotesEnRemito: Query:$query");
-                        $db->Query($query);
-                        array_push($insertados, $lote);
-                        $db->Query("UPDATE pedido_tras_det set estado = 'En Proceso' WHERE n_nro = $nro_pedido AND codigo = '$codigo' AND (lote = '$lote' OR lote_rem = '$lote')");
-                    }
-                    //debug("insertarLotesEnRemito: Insertado lote");
-                } else {
-                    $insertados['error'] = "Stock 0 lote:$lote";
-                }
-                //}
-
-                
-                //debug("insertarLotesEnRemito: Actualizado Estado");
-            } else {
-                array_push($insertados, $lote);
-                //debug("insertarLotesEnRemito: Ya existe lote:$lote en Rem: $nro");
-            }
-        }
-
-        echo json_encode($insertados);
-    } else {
-        echo '{"error":"La remision ' . $nro . ' esta ' . $estado . '"}';
-    }
-    $time_end = microtime(true);
-    //debug("Fin $nro, tiempo: ".(($time_end - $time_start)/60));
-}
-
-function verificarLoteEnRemito($n_nro, $lote) {
-    $db = new My();
-    $db->Query("SELECT COUNT(*) AS cant FROM nota_rem_det WHERE n_nro = $n_nro AND lote = '$lote'");
-    $db->NextRecord();
-    $cant = $db->Record['cant'];
-    return $cant;
-}
-
-function resumenPagosAplicados() {
-    $factura = $_POST['factura'];
-    $sql = " SELECT o.DocNum,CONVERT(VARCHAR(10), o.DocDate, 103) DocDate,o.CashSum,o.CreditSum,o.CheckSum,o.TrsfrSum,o.DocTotal,SumApplied  FROM ORCT o, RCT2 r, OINV i WHERE r.DocEntry = i.DocEntry  and o.DocNum = r.DocNum AND  o.Canceled != 'Y' and i.U_Nro_Interno = $factura";
-    echo json_encode(getResultArrayMSSQL($sql));
-}
-
+ 
 function cancelarPagoFactura() {
     $factura = $_POST['factura'];
     $nro_pago = $_POST['nro_pago'];
@@ -3569,460 +2644,8 @@ function remAbierta($n_nro){
     }
     $my->Close();
     return $estado;
-}
-/**
- * @param int $lote 
- * @param String $codigo
- */
-function verifRollo($lote, $codigo) {
-    require_once("Y_DB_MSSQL.class.php");
-    $ms_link = new MS();
-    $my_link = new My();
-    $fracciones = 0;
-    $ventas = 0;
-    $esRollo = true;
-
-    $ms_link->Query("SELECT U_padre,InvntryUom as UM from OBTN o inner join OITM m on o.ItemCode=m.ItemCode where o.ItemCode = '$codigo' and DistNumber =  '$lote'");
-    $ms_link->NextRecord();
-    if (trim($ms_link->Record['U_padre']) !== '' || trim($ms_link->Record['UM']) == 'Unid') {
-        $esRollo = false;
-    } else {
-        $ms_link->Query("SELECT count(*) as fracciones from OBTN o where ItemCode = '$codigo' and U_padre =  '$lote'");
-        $ms_link->NextRecord();
-        $fracciones = (int) $ms_link->Record['fracciones'];
-        $ms_link->Close();
-
-        if ($fracciones > 0) {
-            $esRollo = false;
-        } else {
-            $my_link->Query("SELECT count(*) as ventas from factura_venta f inner join fact_vent_det d using(f_nro) where codigo = '$codigo' and lote =  '$lote' and f.estado='Cerrada'");
-            $ventas = (int) $my_link->Record['ventas'];
-            $my_link->Close();
-
-            if ($ventas > 0) {
-                $esRollo = false;
-            }
-        }
-    }
-    return $esRollo;
-}
-
-function controlarLotesEnRemitos() {
-    $origen = $_REQUEST['origen'];
-    $destino = $_REQUEST['destino'];
-    $codigo = $_REQUEST['codigo'];
-    $lote = $_REQUEST['lote'];
-    $remplazo = $_REQUEST['remplazo'];
-    $sql = "SELECT r.n_nro as nro,date_format(fecha,'%d-%m-%Y') as fecha, suc_d AS destino from nota_remision r, nota_rem_det d where r.n_nro = d.n_nro and r.estado != 'Cerrada' and r.suc = '$origen' and r.suc_d = '$destino' and d.codigo = '$codigo' and (lote = '$lote' or lote = '$remplazo')";
-
-    $db = new My();
-    $db->Query($sql);
-
-    if ($db->NumRows() > 0) {
-        $db->NextRecord();
-        $nro = $db->Record['nro'];
-        $fecha = $db->Record['fecha'];
-        $destino = $db->Record['destino'];
-        $array = Array('estado' => 'En Remision', 'Remision' => "En Remision Nro: $nro, Fecha: $fecha Destino: $destino");
-    } else {
-
-        $sql = "SELECT r.f_nro AS nro,DATE_FORMAT(fecha,'%d-%m-%Y') AS fecha, suc AS destino FROM factura_venta r, fact_vent_det d 
-        WHERE r.f_nro = d.f_nro AND r.estado != 'Cerrada' AND r.suc = '$origen' AND d.codigo = '$codigo' AND (lote = '$lote' OR lote = '$remplazo')";
-        $db->Query($sql);
-        if ($db->NumRows() > 0) {
-            $db->NextRecord();
-            $nro = $db->Record['nro'];
-            $fecha = $db->Record['fecha'];
-            $suc = $db->Record['suc'];
-            $array = Array('estado' => 'En Remision', 'Remision' => "En Factura Nro: $nro, Fecha: $fecha Suc: $suc");
-        } else {
-            $sql = "SELECT COUNT(*) AS frac FROM orden_procesamiento WHERE estado = 'Pendiente' AND (lote = '$lote' OR lote = '$remplazo')";
-            $db->Query($sql);
-            $db->NextRecord();
-			$frc = $db->Record['frac'];
-            if((int)$frc > 0){
-                $array = Array('estado' => 'En Reserva', 'Remision' => "");
-            }else{
-                $array = Array('estado' => 'Libre', 'Remision' => "$frc");
-            }
-        }
-    }
-    echo json_encode($array);
-}
-
-function generarRemito() {
-    $usuario = $_POST['usuario'];
-    $suc = $_POST['origen'];
-    $suc_d = $_POST['destino'];
-    $db = new My();
-    $db->Query("INSERT INTO nota_remision( fecha, hora, usuario, recepcionista, suc, suc_d, fecha_cierre, hora_cierre, obs, estado, e_sap)
-                VALUES ( CURRENT_DATE, CURRENT_TIME, '$usuario', null, '$suc', '$suc_d', null, '', '', 'Abierta', 0);");
-
-    $db->Query("SELECT n_nro FROM nota_remision WHERE suc = '$suc' and suc_d = '$suc_d' and usuario = '$usuario' ORDER BY n_nro DESC limit 1");
-    $db->NextRecord();
-    $nro = $db->Record['n_nro'];
-    echo $nro;
-}
-
-function borrarDetalleRemito() {
-    $id_det = $_POST['id_det'];
-    $usuario = $_POST['usuario'];
-    $db = new My();
-    //$db->Query("DELETE FROM nota_rem_det WHERE n_nro = $nro_remito AND codigo = '$codigo' AND lote = '$lote';");
+} 
     
-    $check = " SELECT n_nro, IF(paquete IS NULL,0,1) as punteado, lote FROM nota_rem_det WHERE    id_det = $id_det ";
-    $db->Query($check);
-    $db->NextRecord();
-    $punteado = $db->Record['punteado'];
-    $lote = $db->Record['lote'];
-    $nro_remito = $db->Record['n_nro'];
-    $estado = "Ok";
-    $mensaje = "";
-    if($punteado  < 1){
-       $db->Query("DELETE FROM nota_rem_det WHERE id_det=$id_det");
-       makeLog($usuario, "Eliminar", "Borrar lote $lote de detalle de Nota de Remision Nro: $nro_remito" ,"NotaRemision", $nro_remito);
-    }else{
-       $estado = "Error";
-       $mensaje = "Este paquete ya ha sido punteado no se puede eliminar";
-    }
-    $array = Array('estado' => $estado,"mensaje"=>$mensaje);
-    echo json_encode($array);
-}
-
-function actualizarDatosDeRemision() {
-    $usuario = $_POST['usuario'];
-    $nro_remito = $_POST['nro_remito'];
-    $codigo = $_POST['codigo'];
-    $lote = $_POST['lote'];
-    $cant_calc = $_POST['cant_calc'];
-    $kg_env = $_POST['kg_env'];
-    $tipo_control = $_POST['tipo'];
-    $paquete = 1;
-    if (isset($_POST['paquete'])) {
-        $paquete = $_POST['paquete'];
-    }
-    $db = new My();
-    $db->Query("UPDATE nota_rem_det SET  kg_env = $kg_env, cant_calc_env = $cant_calc, tipo_control='$tipo_control',paquete = $paquete , procesado = 1 WHERE n_nro = $nro_remito AND codigo = '$codigo' AND lote = '$lote';");
-    
-    makeLog($usuario, "Actualizar", "kg_env:$kg_env, cant_calc_env:$cant_calc, tipo_control:$tipo_control, Lote:$lote,  paquete:$paquete" ,"NotaRemision", $nro_remito);
-    
-    echo "Ok";
-}
-
-function actualizarKgDescRemision() {
-    $usuario = $_POST['usuario'];
-    $nro_remito = $_POST['nro_remito'];
-    $codigo = $_POST['codigo'];
-    $lote = $_POST['lote'];
-    $kg = $_POST['kg_env'];
-    $suc = $_POST['suc'];
-    $db = new My();
-
-    $sql = "INSERT INTO edicion_lotes( usuario, codigo, lote, descrip, fecha, hora, suc, kg, e_sap)VALUES ( '$usuario', '$codigo', '$lote', '$descrip', CURRENT_DATE, CURRENT_TIME, '$suc', $kg, 0);";
-    $db->Query($sql);
-
-    $db->Query("UPDATE nota_rem_det SET  kg_desc = $kg  WHERE n_nro = $nro_remito AND codigo = '$codigo' AND lote = '$lote';");
-
-    // Actualizar kg_desc en el lote
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-    $ms->Query("UPDATE OIBT  SET  U_kg_desc = $kg WHERE ItemCode = '$codigo' AND BatchNum =  '$lote' AND WhsCode = '$suc'");
-
-    echo "Ok";
-}
-
-function recibirLoteNotaRemision() {
-    $usuario = $_POST['usuario'];
-    $nro_remito = $_POST['nro_remito'];
-    $codigo = $_POST['codigo'];
-    $lote = $_POST['lote'];
-    $cant_calc = $_POST['cant_calc'];
-    $kg_env = $_POST['kg_env'];
-    $db = new My();
-    $db->Query("UPDATE nota_rem_det SET  kg_rec = $kg_env, cant_calc_rec = $cant_calc WHERE n_nro = $nro_remito AND codigo = '$codigo' AND lote = '$lote';");
-    echo "Ok";
-}
-
-function guardarObservacionNotaRemision() {
-    $nro_remito = $_POST['nro_remito'];
-    $obs = $_POST['obs'];
-    $db = new My();
-    $db->Query("UPDATE nota_remision SET  obs = '$obs'  WHERE n_nro = $nro_remito ;");
-    echo "Ok";
-}
-
-/* Ponde de Abierta a En Proceso para que se pueda Recibir Verifica si un codigo no esta en otro remito de esta sucursal */
-
-function finalizarNotaRemision() {
-    $nro_remito = $_POST['nro_remito'];
-    $suc = $_POST['suc'];
-    $suc_d = "";
-    $rem_errores = false;
-
-    $db = new My();
-    $db2 = new My();
-    $db->Query("UPDATE nota_remision SET estado = 'Procesando'  WHERE n_nro = $nro_remito");
-    $array = Array('estado' => 'Ok');
-
-    $codigos_con_problemas = controlarStockXRemision($nro_remito);
-
-    if ($codigos_con_problemas == "") { // No hay problema
-        $db->Query("select codigo,lote,r.estado,suc_d from nota_remision r, nota_rem_det d where r.n_nro = d.n_nro and r.suc = '$suc' and r.n_nro = $nro_remito and r.estado != 'Cerrada'");
-        while ($db->NextRecord()) {
-            $codigo = $db->Record['codigo'];
-            $lote = $db->Record['lote'];
-            $suc_d = $db->Record['suc_d'];
-            
-            $db2->Query("SELECT  CONCAT('En remision Nro:',r.n_nro ,' Estado: ', r.estado,'  ',suc,'=>',suc_d) AS estado  FROM nota_remision r, nota_rem_det d WHERE r.n_nro = d.n_nro AND r.suc = '$suc' AND r.n_nro != $nro_remito AND r.estado != 'Cerrada' AND d.codigo = '$codigo' AND d.lote = '$lote'");
-            if ($db2->NumRows() > 0) {
-                $codigos_con_problemas.= $db2->Record['estado'];
-            }
-        }
-
-        if ($codigos_con_problemas != "") {
-            $array = Array('estado' => 'Problema', 'lotes' => $codigos_con_problemas);
-        } else {
-            $lotes == null;
-            
-            // No controlar para Origen 00 --> 03
-            if($suc == "00" && $suc_d == "03"){
-                $porc_tolerancia_remsiones = 100;
-            }else{
-                $db->Query("select valor from parametros where clave = 'porc_tolerancia_remsiones'");
-                $db->NextRecord();
-                $porc_tolerancia_remsiones = $db->Record['valor'];
-                $db->Query("SELECT GROUP_CONCAT(lote) AS lotes  FROM nota_rem_det WHERE (( cant_calc_env BETWEEN (cantidad - (cantidad * $porc_tolerancia_remsiones / 100)) AND (cantidad + (cantidad * $porc_tolerancia_remsiones / 100)) < 1 and tipo_control ='Pieza' ) OR (kg_desc BETWEEN (kg_env - (kg_env * $porc_tolerancia_remsiones / 100)) AND (kg_env + (kg_env * $porc_tolerancia_remsiones / 100)) < 1 AND  tipo_control ='Rollo')) AND  n_nro = $nro_remito");
-
-                $db->NextRecord();
-                $lotes = $db->Record['lotes'];
-            }
-            //$db->Query("SELECT GROUP_CONCAT(lote) AS lotes  FROM nota_rem_det WHERE   cant_calc_env BETWEEN (cantidad - (cantidad * $porc_tolerancia_remsiones / 100)) AND (cantidad + (cantidad * $porc_tolerancia_remsiones / 100)) < 1 AND  n_nro = $nro_remito");
-
-           
-
-            if ($lotes == null) {
-                // Corregir Ubicaciones  // Actualizar Ubicacion de estos Productos
-                require_once("Y_DB_MSSQL.class.php");
-                $ms = new MS();
-                $db2->Query("SELECT codigo,lote from  nota_rem_det where n_nro = $nro_remito");
-                while ($db2->NextRecord()) {
-                    $codigo = $db2->Record['codigo'];
-                    $lote = $db2->Record['lote'];
-                    $update = "UPDATE OIBT SET U_ubic = '',U_pallet_no = '' WHERE ItemCode = '$codigo' and BatchNum = '$lote' and WhsCode = '$suc'";
-                    $ms->Query($update);
-                    $delete = "DELETE FROM [@REG_UBIC] WHERE U_codigo = '$codigo' and U_lote = '$lote' and U_suc = '$suc'";
-                    $ms->Query($delete);
-                }
-
-                $array = Array('estado' => 'Ok');
-                $db->Query("UPDATE nota_remision SET estado = 'En Proceso'  WHERE n_nro = $nro_remito");
-
-                if ($suc == '00') {
-                    $db->Query("UPDATE nota_ped_comp_det n INNER JOIN nota_rem_det r ON n.lote=r.lote SET n.estado = 'Despachado' WHERE r.n_nro= $nro_remito");
-                }
-            } else {
-                $array = Array('estado' => 'Error', 'lotes' => $lotes);
-                $rem_errores = true;
-            }
-        }
-    } else {
-        $array = Array('estado' => 'Problema', 'lotes' => $codigos_con_problemas);
-        $rem_errores = true;
-    }
-    if($rem_errores){
-        $db->Query("UPDATE nota_remision SET estado = 'Abierta'  WHERE n_nro = $nro_remito");
-    }
-    echo json_encode($array);
-}
-
-function controlarStockXRemision($nro_remito) {
-    $db = new My();
-    $db->Query("select suc, suc_d from nota_remision where n_nro = $nro_remito");
-    $db->NextRecord();
-    $suc = $db->Record['suc'];
-    $suc_d = $db->Record['suc_d'];
-    
-          
-       
-        $ms = new My();
-
-        $lotes = "";     
-        $db->Query("SELECT codigo,lote,cantidad,kg_env, procesado  FROM nota_rem_det WHERE n_nro = $nro_remito");
-        while ($db->NextRecord()) {
-            $codigo = $db->Record['codigo'];
-            $lote = $db->Record['lote'];
-            $cantidad = $db->Record['cantidad'];
-            $kg_env = $db->Record['kg_env'];
-            $procesado = $db->Record['procesado'];
-            $ms->Query("SELECT  mnj_x_lotes, SUM(cantidad) AS StockReal FROM articulos a , stock  s WHERE a.codigo = s.codigo AND   s.codigo = '$codigo'  AND s.lote =  '$lote' AND s.suc = '$suc'");
-            $ms->NextRecord();
-            $StockReal = $ms->Record['StockReal'];
-            if ($cantidad < $StockReal || $cantidad > $StockReal) {
-                $lotes.=" Stock Insuficiente: $lote [$cantidad  / $StockReal] ,";
-            }
-            if(!( $suc == "00" && $suc_d == "03")){   
-               if ($kg_env == 0  ) {
-                  $lotes.=" Lote sin pesar: $lote [$cantidad] ,";
-               } 
-               if (  $procesado == 0) {
-                  $lotes.=" Lote sin Puntear: $lote [$cantidad] ,";
-               } 
-            }
-            
-        }
-        return $lotes;
-     
-}
-
-/* Cambia de En Proceso a Cerrada */
-
-function cerrarNotaRemision() {
-    $nro_remito = $_POST['nro_remito'];
-    $recepcionista = $_POST['recepcionista']; 
-    $usuario = $_POST['recepcionista'];
-    
-    $db = new My();    
-    $db_upd = new My();
-    
-    $db->Query("SELECT suc ,suc_d FROM nota_remision WHERE n_nro = $nro_remito");
-    $db->NextRecord();
-    $origen = $db->Get("suc");
-    $destino = $db->Get("suc_d");
-
-    $db->Query("select valor from parametros where clave = 'porc_tolerancia_remsiones'");
-    $db->NextRecord();
-    $porc_tolerancia_remsiones = $db->Record['valor'];
-
-
-    // Control del Stock
-    $lotes = controlarStockXRemision($nro_remito);
-
-    if ($lotes == "") {
-
-        // Control de Porcentaje de Tolerancia
-        $db->Query("SELECT GROUP_CONCAT(lote) AS lotes  FROM nota_rem_det WHERE   cant_calc_rec BETWEEN (cantidad - (cantidad * $porc_tolerancia_remsiones / 100)) AND (cantidad + (cantidad * $porc_tolerancia_remsiones / 100)) < 1 AND  n_nro = $nro_remito");
-        $db->NextRecord();
-        $lotes = $db->Record['lotes'];
-        
-         // Realizar el cambio de Sucursal de los lotes y las cantidades de los articulos
-        
-        $db->Query("SELECT tipo_ent,nro_identif,linea, d.codigo,d.lote,d.cantidad,ancho,gramaje,tara FROM nota_rem_det d, stock s WHERE d.codigo = s.codigo AND d.lote = s.lote AND n_nro = $nro_remito");
-        while($db->NextRecord()){
-            $codigo = $db->Get("codigo");
-            $lote = $db->Get("lote");
-            $cantidad = $db->Get("cantidad");
-            $ancho = $db->Get("ancho");
-            $gramaje = $db->Get("gramaje");
-            $tara = $db->Get("tara");
-            
-            $kg_ent = (($gramaje * $cantidad * $ancho) / 1000) + ($tara / 1000); 
-            
-            $tipo_ent = $db->Get("tipo_ent");
-            $nro_identif = $db->Get("nro_identif");
-            $linea = $db->Get("linea");
-            //Salida
-            $db_upd->Query("UPDATE stock SET cantidad = cantidad - $cantidad  WHERE suc ='$origen' AND codigo = '$codigo' and lote ='$lote';");
-            $db_upd->Query("INSERT INTO historial(suc, codigo, lote, tipo_ent, nro_identif, linea, tipo_doc, nro_doc, fecha_hora, usuario, direccion, cantidad, gramaje, tara, ancho)
-            VALUES ('$origen', '$codigo', '$lote', '$tipo_ent', $nro_identif, $linea, 'RM', $nro_remito, CURRENT_TIMESTAMP, '$usuario', 'S', -$cantidad, $gramaje, $tara, $ancho);");
-            //Entrada
-            $db_upd->Query("SELECT count(*) as cant FROM stock WHERE suc ='$destino' AND codigo = '$codigo' and lote ='$lote';");
-            $db_upd->NextRecord();
-            $cant = $db_upd->Get("cant");
-            if($cant > 0){
-                $db_upd->Query("UPDATE stock SET cantidad = $cantidad  WHERE suc ='$destino' AND codigo = '$codigo' and lote ='$lote';");
-                $db_upd->Query("UPDATE historial SET cantidad = $cantidad  WHERE suc ='$destino' AND codigo = '$codigo' and lote ='$lote';");
-            }else{
-                $db_upd->Query("INSERT INTO stock(suc, codigo, lote, tipo_ent, nro_identif, linea, cant_ent, kg_ent, cantidad, ubicacion, estado_venta)
-                VALUES ('$destino','$codigo', '$lote', '$tipo_ent', $nro_identif, $linea, $cantidad, $kg_ent, $cantidad, '', 'Normal');");
-                $db_upd->Query("INSERT INTO historial(suc, codigo, lote, tipo_ent, nro_identif, linea, tipo_doc, nro_doc, fecha_hora, usuario, direccion, cantidad, gramaje, tara, ancho)
-                VALUES ('$destino', '$codigo', '$lote', '$tipo_ent', $nro_identif, $linea, 'RM', $nro_remito, CURRENT_TIMESTAMP, '$usuario', 'E', $cantidad, $gramaje, $tara, $ancho);");
-            }            
-        }
-        
-
-        if ($lotes == null) {
-            $array = Array('estado' => 'Ok');
-            $db->Query("UPDATE nota_remision SET estado = 'Cerrada',fecha_cierre = current_date,hora_cierre = current_time,recepcionista = '$recepcionista'    WHERE n_nro = $nro_remito ;");
-        } else {
-            $array = Array('estado' => 'Ok');
-            $db->Query("UPDATE nota_remision SET estado = 'Cerrada',fecha_cierre = current_date,hora_cierre = current_time,recepcionista = '$recepcionista'    WHERE n_nro = $nro_remito ;");
-            $db->Query("update nota_rem_det set estado = 'FR' where n_nro='$nro_remito' and lote in ($lotes)");
-        }
-        
-          /* else {
-             $array = Array('estado' => 'Error', 'lotes' => $lotes);
-          } */
-         
-
-        $db->Query("update pedido_tras_det p inner join pedido_traslado t on p.n_nro=t.n_nro inner join nota_remision n on t.suc=n.suc_d and t.suc_d=n.suc inner join nota_rem_det r on n.n_nro=r.n_nro and (p.lote = r.lote or p.lote_rem = r.lote) set p.estado = if(r.lote is not null,'Despachado',p.estado) where r.n_nro=$nro_remito");
-        $db->Query("UPDATE  orden_procesamiento p ,  nota_rem_det d SET p.estado ='Remitido' WHERE d.lote = p.lote  AND d.n_nro = $nro_remito;");
-        
-    } else {
-        $array = Array('estado' => 'Error', 'lotes' => $lotes);
-    }
-    echo json_encode($array);
-}
-
-function eliminarNotaRemision() {
-    $nro_remito = $_POST['nro_remito'];
-    $db = new My();
-    $db->Query("SELECT count(*) as items  FROM nota_rem_det WHERE n_nro = $nro_remito");
-    $db->NextRecord();
-    $items = $db->Record['items'];
-    if ($items < 1) {
-        $db->Query("DELETE FROM nota_remision WHERE n_nro = $nro_remito");
-        echo "Ok";
-    } else {
-        echo "Error";
-    }
-}
-
-// Funcion Generica para Buscar Articulos dado un Lote
-function buscarArticulosSimilares() {
-    $lote = $_POST['lote'];
-    $suc = $_POST['suc'];
-
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-    $ms->Query("SELECT ItemCode,BaseEntry,U_img,U_color_comercial FROM OIBT WHERE BatchNum = '$lote';");
-    $ms->NextRecord();
-    $BaseEntry = $ms->Record['BaseEntry']; // Nro de Compra
-    $ItemCode = $ms->Record['ItemCode'];
-    $U_img = $ms->Record['U_img'];
-    $U_color_comercial = $ms->Record['U_color_comercial'];
-    $fraccionados = getResultArrayMSSQL("SELECT BatchNum,WhsCode,cast(round(Quantity - ISNULL(IsCommited,0),2) as numeric(20,2)) as Stock,U_img,BaseEntry,'Hijo' as Tipo FROM OIBT WHERE U_padre = '$lote' and ItemCode = '$ItemCode' and WhsCode like '$suc' and round(Quantity - ISNULL(IsCommited,0),2) > 0;");
-    $articulos = getResultArrayMSSQL("SELECT BatchNum,WhsCode,cast(round(Quantity - ISNULL(IsCommited,0),2) as numeric(20,2)) as Stock,U_img,BaseEntry,'Hermano' as Tipo FROM OIBT WHERE BatchNum <> '$lote' AND U_padre <> '$lote' and ItemCode = '$ItemCode' and WhsCode like '$suc' and U_img = '$U_img' and U_img !='0/0' and U_color_comercial = '$U_color_comercial'  and round(Quantity - ISNULL(IsCommited,0),2) > 0;");
-
-    //echo "SELECT BatchNum,WhsCode,cast(round(Quantity - ISNULL(IsCommited,0),2) as numeric(20,2)) as Stock,U_img,BaseEntry,'Hijo' as Tipo FROM OIBT WHERE U_padre = '$lote' and ItemCode = '$ItemCode' and WhsCode like '$suc' and round(Quantity - ISNULL(IsCommited,0),2) > 0;";
-    $result = array_merge($fraccionados, $articulos);
-    echo json_encode($result);
-}
-
-// Funcion Generica para Buscar Articulos dado un Lote Mas informacion
-function buscarArticulosSimilaresColor() {
-    $lote = $_POST['lote'];
-    $suc = $_POST['suc'];
-
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-    $ms->Query("SELECT ItemCode,BaseEntry FROM OIBT WHERE BatchNum = '$lote';");
-    $result = '';
-
-    if ($ms->NumRows() > 0) {
-        $ms->NextRecord();
-        $BaseEntry = $ms->Record['BaseEntry']; // Nro de Compra
-        $ItemCode = $ms->Record['ItemCode'];
-
-        $fraccionados = getResultArrayMSSQL("SELECT BatchNum as Lote,o.ItemCode,ItmsGrpNam as Sector,i.U_NOMBRE_COM as NombreComercial,c.Name as Color,WhsCode as Suc,cast(round(Quantity - ISNULL(o.IsCommited,0),2) as numeric(20,2)) as Stock, o.U_ancho as Ancho,U_img,BaseEntry,'Hijo' as Tipo FROM OIBT o inner join [@EXX_COLOR_COMERCIAL] c ON o.U_color_comercial = c.Code inner join OITM i on o.ItemCode = i.ItemCode INNER JOIN OITB t ON  i.ItmsGrpCod = t.ItmsGrpCod WHERE U_padre = $lote and o.ItemCode = '$ItemCode' and WhsCode like '$suc' and round(Quantity - ISNULL(o.IsCommited,0),2) > 0");
-
-        $articulos = getResultArrayMSSQL("SELECT BatchNum as Lote,o.ItemCode,ItmsGrpNam as Sector,i.U_NOMBRE_COM as NombreComercial,c.Name as Color,WhsCode as Suc,cast(round(Quantity - ISNULL(o.IsCommited,0),2) as numeric(20,2)) as Stock, o.U_ancho as Ancho,U_img,BaseEntry,'Hermano' as Tipo FROM OIBT o inner join [@EXX_COLOR_COMERCIAL] c ON o.U_color_comercial = c.Code inner join OITM i on o.ItemCode = i.ItemCode INNER JOIN OITB t ON  i.ItmsGrpCod = t.ItmsGrpCod WHERE BatchNum <> $lote and o.ItemCode = '$ItemCode' and WhsCode like '$suc' and BaseEntry = $BaseEntry and round(Quantity - ISNULL(o.IsCommited,0),2) > 0");
-
-        //echo "SELECT BatchNum,WhsCode,cast(round(Quantity - ISNULL(IsCommited,0),2) as numeric(20,2)) as Stock,U_img,BaseEntry,'Hijo' as Tipo FROM OIBT WHERE U_padre = '$lote' and ItemCode = '$ItemCode' and WhsCode like '$suc' and round(Quantity - ISNULL(IsCommited,0),2) > 0;";
-        $result = array_merge($fraccionados, $articulos);
-    }
-    echo json_encode($result);
-}
-
 function actualizarCabeceraFactura($factura, $cod_desc, $tipo_doc = "C.I.") {
     
     aplicarDescuentoSEDECO($factura);
@@ -4076,77 +2699,7 @@ function actualizarCabeceraFactura($factura, $cod_desc, $tipo_doc = "C.I.") {
         $my->Query($sql_f);
     }
 }
-
-function discriminarPrecios() {
-    
-    $factura = $_POST['factura'];
-    $usuario = $_POST['usuario'];
-    $tipo_doc = $_POST['tipo_doc'];
-    $suc = $_POST['suc'];
-    
-    $estado = getEstadoFactura($factura);
-    if ($estado['estado'] == "Abierta" && is_null($estado['e_sap'])) {
-        $ms = new MS();
-        $my = new My();
-        $db = new My();
-        $sql = "update factura_venta set cod_desc = 2  WHERE f_nro = $factura";
-        $my->Query($sql);
-        $sql = "update fact_vent_det set descuento = 0 WHERE f_nro = $factura";
-        $my->Query($sql);
-
-        $array = array();
-
-        $my->Query("SELECT codigo,SUM(cantidad) AS Cantidad FROM fact_vent_det WHERE f_nro = $factura and estado_venta = 'Normal' GROUP BY codigo");
-        while ($my->NextRecord()) {
-            $codigo = $my->Record['codigo'];
-            $Cantidad = $my->Record['Cantidad'];
-            $array[$codigo] = $Cantidad;
-        }
-        foreach ($array as $codigo => $cant) {
-            $precio = 1;
-            if ($cant < 5) {
-                $precio = 1;
-            } else if ($cant >= 5 && $cant <= 9.999) {
-                $precio = 2;
-            } else if ($cant >= 10 && $cant <= 29.999) {
-                $precio = 3;
-            } else if ($cant >= 30 && $cant <= 99.999) {
-                $precio = 4;
-            } else if ($cant >= 100) {
-                $precio = 5;
-            }
-
-            $my->Query("SELECT lote FROM fact_vent_det WHERE f_nro = $factura  AND codigo = '$codigo'");
-            while ($my->NextRecord()) {
-                $lote = $my->Record['lote'];
-                $ms->Query("SELECT Price, o.U_desc$precio as Descuento  FROM OIBT o, ITM1 p where o.ItemCode = p.ItemCode and o.ItemCode = '$codigo' and p.PriceList = $precio and o.BatchNum = '$lote' and WhsCode LIKE '$suc'");
-                //echo "SELECT Price, o.U_desc$precio as Descuento  FROM OIBT o, ITM1 p where o.ItemCode = p.ItemCode and o.ItemCode = '$codigo' and p.PriceList = $precio and o.BatchNum = '$lote' and WhsCode LIKE '$suc'<br>";
-
-                if ($ms->NumRows() > 0) {
-                    $ms->NextRecord();
-                    $Price = $ms->Record['Price'];
-                    $descuento = $ms->Record['Descuento'];
-                    $PrecioCat = round($Price - (($Price * $descuento) / 100));
-                    if($PrecioCat > 0){
-                      $db->Query("UPDATE fact_vent_det SET precio_venta = $PrecioCat, subtotal =  round( $PrecioCat * cantidad,0) WHERE f_nro = $factura AND codigo = '$codigo' AND lote = '$lote'");
-                    }else{
-                        echo "Error problemas con el precio establecido para $codigo...";
-                    }
-                } else {
-                    echo "Error Precio no establecido para $codigo...";
-                }
-            }
-        }
-        
-        actualizarCabeceraFactura($factura, 2, $tipo_doc);
-        
-        makeLog($usuario, "Modificar", "Venta Discriminada" , "Cod. Desc = 2 ", $factura);
-        echo "Ok";
-    }else{
-        echo "Error! estado de la factura es " . $estado['estado'] . (is_null($estado['e_sap'])?'.':' y ya fue enviada a SAP');
-    }
-}
-
+ 
 function actualizarPrecioMayorista() {
     $factura = $_POST['factura'];
     $usuario = $_POST['usuario'];
@@ -4221,7 +2774,8 @@ function agregarDetalleFactura() {
     $descrip = $_POST['descrip'];
     $cat = $_POST['cat'];
     $cod_falla = $_POST['cod_falla'];
-    $cm_falla = $_POST['cm_falla'];
+    //$cm_falla = $_POST['cm_falla'];
+    $cm_falla = 0; //Anuladas las fallas
     $fp = $_POST['fp'];
     $um_prod = $_POST['um_prod'];
     $cod_falla_e = $cod_falla;
@@ -4237,22 +2791,12 @@ function agregarDetalleFactura() {
 
     $estado = getEstadoFactura($factura);
 
-    if ($estado['estado'] == "Abierta" && is_null($estado['e_sap'])) {
+    if (($estado['estado'] == "Abierta"  || $estado['estado'] == "Presupuesto") && is_null($estado['e_sap'])) {
 
-        if ($cm_falla > 0) {
-            $cm_falla = $cm_falla / 100;
-            if ($fp == "true") {
-                $cod_falla = "F";
-                if($cm_falla > 0.3 ){
-                    $cod_falla = "F+FP";
-                }
-            } else {
-                $cod_falla = "F";
-            }
-        } else {
-            $cod_falla = "";
-            $cm_falla = 0;
+        if($mnj_x_lotes === "No"){
+           $lote = "";
         }
+        
         $cod_falla_e = $cod_falla;
 
         if ($um === "Mts") {
@@ -4271,19 +2815,22 @@ function agregarDetalleFactura() {
         $cant = $my->Record['cant'];
 
         $datos = array();
-
+        
+        
         if ($cant > 0) {
             $datos["Mensaje"] = "Codigo Duplicado";
+            $sql = "UPDATE fact_vent_det SET cantidad = cantidad + $cantidad , precio_venta = $precio_venta, subtotal = precio_venta * cantidad, precio_neto = subtotal / cantidad WHERE codigo = '$codigo' AND lote = '$lote' AND f_nro = $factura;";
+            $my->Query($sql);
         } else {
             $precio_neto = $subtotal / $cantidad;
-            if($mnj_x_lotes === "No"){
-                $lote = "";
-            }
+            
             $sql = "INSERT INTO fact_vent_det (f_nro, codigo, lote,um_prod, descrip, um_cod,cod_falla,cant_falla,cod_falla_e,falla_real, cantidad, precio_venta, descuento, precio_neto, subtotal, estado,gramaje,ancho,kg_calc,cant_med,estado_venta)"
                     . "VALUES ($factura, '$codigo', '$lote','$um_prod', '$descrip', '$um','$cod_falla',$cm_falla,'$cod_falla_e',$cm_falla, $cantidad , $precio_venta, 0,$precio_neto, $subtotal, 'Pendiente',$gramaje,$ancho,$kg_calc, $cantidad,'$estado_venta');";
 
             $my->Query($sql);
-            //$sql_total = "SELECT SUM(subtotal) AS Total,SUM(IF(estado_venta='Normal',subtotal,0)) AS TotalNormal, SUM(descuento) AS Descuento, SUM(IF(estado_venta='Normal',descuento,0)) AS DescuentoNormal FROM fact_vent_det WHERE f_nro =  $factura";
+        }    
+            
+            
             $sql_total = "SELECT SUM(subtotal) AS Total,SUM(IF(estado_venta='Normal',subtotal,0)) AS TotalNormal, SUM(descuento) AS Descuento, SUM(IF(estado_venta='Normal',descuento,0)) AS DescuentoNormal, desc_sedeco FROM fact_vent_det d, factura_venta f WHERE f.f_nro = d.f_nro AND d.f_nro =  $factura";
             $my->Query($sql_total);
             $my->NextRecord();
@@ -4341,23 +2888,20 @@ function agregarDetalleFactura() {
             $total_sin_desc = $total + $descuento;
             $desc_sedeco = $my->Record['desc_sedeco'];
           
-            $datos["Mensaje"] = "Ok";
+            if($datos["Mensaje"] != "Codigo Duplicado"){
+               $datos["Mensaje"] = "Ok";
+            }
             $datos["Total"] = $total;
             $datos["Descuento"] = $descuento;
             $datos["DescuentoSEDECO"] = $desc_sedeco;
             $datos["DescuentoNormal"] = $DescuentoNormal;
             $datos["Total_sin_desc"] = $total_sin_desc;
             $datos["DetalleDescuentos"] = getDescuentosYSubtotales($factura);
-            
-            // Registrar Fin de Pieza
-            if ($fp == "true") {
-                $sql = "INSERT INTO edicion_lotes( usuario, codigo, lote, descrip, fecha, hora, suc, FP, e_sap)VALUES ( '$usuario', '$codigo', '$lote', '$descrip', CURRENT_DATE, CURRENT_TIME, '$suc', 'Si', 0);";
-                $my->Query($sql);                
-            }
-        }
+ 
+         
         echo json_encode($datos);
     } else {
-        echo json_encode(array("Mensaje" => "Error! estado de la factura es " . $estado['estado'] . (is_null($estado['e_sap'])?'.':' y ya fue enviada a SAP')));
+        echo json_encode(array("Mensaje" => "Error! estado de la factura es " . $estado['estado'] . (is_null($estado['e_sap'])?'.':' ')));
     }
 }
 function quitarDescuentosSEDECOYPromociones($factura){
@@ -4716,7 +3260,14 @@ function controlarStockFactura($factura) {
     $db->Query("select suc from factura_venta  where f_nro = $factura;");
     $db->NextRecord();
     $suc = $db->Record['suc'];
+    
+    $db->Query("SELECT valor FROM parametros WHERE clave = 'limite_stock_negativo'");
+    $db->NextRecord();
+    $limite_stock_negativo = $db->Get('valor');
+    
     $db->Query("SELECT d.codigo,lote, cantidad,art_inv FROM fact_vent_det d, articulos a where d.codigo = a.codigo and f_nro = $factura;");
+    
+    
     $errores = "";
     while ($db->NextRecord()) {
         $codigo = $db->Record['codigo'];
@@ -4727,8 +3278,8 @@ function controlarStockFactura($factura) {
             $ms->Query("SELECT cantidad as Stock FROM stock where codigo = '$codigo' and lote = '$lote' and suc = '$suc';");
             $ms->NextRecord();
             $stock = $ms->Record['Stock'];
-            if ($stock < $cantidad) {
-                $errores.= " | Stock insuficiente Codigo: $codigo  Lote: $lote  ($stock < $cantidad) | ";
+            if ( (($stock - $limite_stock_negativo) - $cantidad ) < 0) {
+                $errores.= " | Stock insuficiente Codigo: $codigo Limite Stock Negativo:$limite_stock_negativo  ($stock < $cantidad) | ";
             }
         }
     }
@@ -4754,7 +3305,7 @@ function finalizarVenta() {
     $control = controlarStockFactura($factura);
     if ($control == "Ok") {
          
-        $my->Query("update factura_venta set pref_pago = '$pref_pago',estado= 'En_caja',empaque='No' where f_nro = $factura and estado ='Abierta';");
+        $my->Query("update factura_venta set pref_pago = '$pref_pago',estado= 'En_caja',empaque='Si' where f_nro = $factura and estado in('Abierta','Presupuesto');");
         
         // Actualizar Precios de Costo del Articulo
         if ($my->AffectedRows() > 0) {
@@ -4776,43 +3327,7 @@ function finalizarVenta() {
     }
 }
 
-function getLotesUbic() {
-    $suc = $_POST['suc'];
-    $lotes = json_decode($_POST['lotes']);
-    foreach ($lotes as $key => $value) {
-        if (!is_numeric($value)) {
-            unset($lotes[$key]);
-        }
-    }
-    $_lotes = trim(implode(',', $lotes), ',');
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-    $array = array();
-    $ms->Query("SELECT o.DistNumber AS lote,isnull(o.U_ubic,'')  AS Ubic FROM OBTN o INNER JOIN OBTW w on o.SysNumber=w.SysNumber and o.AbsEntry=w.MdAbsEntry where w.WhsCode = '$suc' and o.DistNumber in ($_lotes)");
-    while ($ms->NextRecord()) {
-        $lote = $ms->Record['lote'];
-        if ($ms->Record['Ubic'] === '') {
-            $ubic = "---";
-        } else {
-            $ubic = $ms->Record['Ubic'];
-        }
-        $arr = array("lote" => $lote, "ubic" => $ubic);
-        array_push($array, $arr);
-    }/*
-      foreach ($lotes as $lote) {
-      $ms->Query("select U_ubic as Ubic from OIBT WHERE BatchNum = '$lote' AND WhsCode = '$suc'");
-      if ($ms->NumRows() > 0) {
-      $ms->NextRecord();
-      $ubic = $ms->Record['Ubic'];
-      } else {
-      $ubic = "---";
-      }
-      $arr = array("lote" => $lote, "ubic" => $ubic);
-      array_push($array, $arr);
-      } */
-
-    echo json_encode($array);
-}
+ 
 
 function getEstadoFactura($factura) {
     $my = new My();
@@ -4830,52 +3345,7 @@ function cambiarEstadoFactura() {
     $my->Query($sql);
     echo "Ok";
 }
-
-function finalizarReserva() {
-    $reserva = $_POST['reserva'];
-
-    require_once("Y_DB_MSSQL.class.php");
-    $usuario = $_REQUEST['usuario'];
-
-    $ms = new MS();
-    $db = new My();
-    $db->Query("select suc from reservas where nro_reserva = $reserva");
-    $db->NextRecord();
-    $suc = $db->Record['suc'];
-    $db->Query("SELECT codigo,lote, cantidad FROM reservas_det  where nro_reserva = $reserva");
-    $errores = "";
-
-    while ($db->NextRecord()) {
-        $codigo = $db->Record['codigo'];
-        $lote = $db->Record['lote'];
-        $cantidad = $db->Record['cantidad'];
-        $ms->Query("SELECT  cast(round(Quantity - ISNULL(IsCommited,0),2) as numeric(20,2)) as Stock FROM OIBT where BatchNum = '$lote' and ItemCode = '$codigo'  and WhsCode = '$suc';");
-        $ms->NextRecord();
-        $stock = $ms->Record['Stock'];
-        if ($stock < $cantidad) {
-            $errores.= " | Stock insuficiente Codigo: $codigo  Lote: $lote  ($stock < $cantidad) | ";
-        }
-    }
-    if ($errores != "") {
-        makeLog($usuario, "Error Stock", $errores, "Stock insuficiente", $reserva);
-        echo '{"error":"' . $errores . '"}';
-    } else {
-        //return "Ok";
-        $my = new My();
-        $sql_total = "SELECT SUM(subtotal) as Total  FROM reservas_det WHERE nro_reserva = $reserva";
-        $my->Query($sql_total);
-        $my->NextRecord();
-        $total = $my->Record['Total'];
-        $minimo_senha = ($total * 30) / 100;
-
-        $my->Query("update reservas set estado= 'En_caja',valor_total_ref=$total,  minimo_senia_ref  = $minimo_senha where nro_reserva = $reserva;");
-        echo '{"Ok":"OK"}';
-    }
-    $ms->Close();
-    $db->Close();
-    $my->Close();
-}
-
+ 
 /**
  * Agrega un Detalle a una Factuara de Venta
  */
@@ -5117,6 +3587,11 @@ function getEfectivoReserva() {
     getEfectivo($sql_where);
 }
 
+function getTransferenciaBancariaDeFactura(){
+    $factura = $_POST['factura'];    
+    echo json_encode( getResultArray("SELECT id_banco,cuenta,nro_deposito, f_nro, date_format(fecha,'%d-%m-%Y') as fecha_lat, fecha ,entrada FROM bcos_ctas_mov WHERE f_nro = $factura"));
+}
+
 function getEfectivo($sql_where) {
     $db = new My();
     $db2 = new My();
@@ -5156,7 +3631,7 @@ function getConvenios() {
 function tiecketEstado($f_nro){
     $my = new My();
     $ticket = array("estado"=>"","e_sap"=>0);
-    $my->Query("SELECT estado,e_sap FROM factura_venta WHERE estado = 'En_caja' AND f_nro = $f_nro");
+    $my->Query("SELECT estado,e_sap FROM factura_venta WHERE  f_nro = $f_nro");
     if($my->NextRecord()){
         $ticket = $my->Record;
     }
@@ -5197,7 +3672,7 @@ function agregarEfectivo() {
 
     if($campo == 'f_nro'){
         $ticket = tiecketEstado($nro_referencia);
-        $check = ($ticket['estado'] == 'En_caja');
+        $check = ($ticket['estado'] == 'Abierta' || $ticket['estado'] == 'Presupuesto'  );
     }
     
     if($check){
@@ -5250,7 +3725,7 @@ function agregarEfectivo() {
     
         echo "Ok";
     }else{
-        echo "Error el ticket no se encuentra En Caja";
+        echo "Error el la Factura o el Presupuesto ya se cerro";
     }
 }
 
@@ -5349,7 +3824,7 @@ function getFacturasContables() {
         $only_exp = " and pdv_cod = '$pdv_cod' ";
     }
 
-    if ($tipo == 'Pre' || $tipo == 'Pre-Impresa') {
+    if ($tipo == 'Pre' || $tipo == 'Pre-Impresa' || $tipo == '') {
         $tipo = "Pre-Impresa";
     } else {
         $tipo = "Manual";
@@ -5374,6 +3849,27 @@ function getFacturasContables() {
     echo json_encode($facts);
 }
 
+function agregarDepositoPorFacturaVenta() {
+
+    $factura = $_POST['factura'];
+    $cuenta = $_POST['cuenta'];
+    $nro_dep = $_POST['nro_dep'];
+    $id_banco = $_POST['banco'];
+    $fecha_transf = $_POST['fecha_trasnf'];
+    $suc = $_POST['suc'];
+    $total = $_POST['total'];
+    $usuario = $_POST['usuario'];
+    
+    $db = new My();
+    $sql = "DELETE FROM bcos_ctas_mov WHERE f_nro = $factura";
+    $db->Query($sql);
+    if ($total > 0) {
+        $sqlins = "INSERT INTO bcos_ctas_mov(nro_deposito, f_nro, id_banco, cuenta,fecha_reg, fecha, hora, entrada, salida, suc, estado, id_concepto,usuario)
+        VALUES ('$nro_dep', $factura, '$id_banco', '$cuenta',CURRENT_DATE,CURRENT_DATE, CURRENT_TIME, $total, 0, '$suc', 'Pendiente', 1 ,'$usuario');";
+        $db->Query($sqlins);
+    }
+    echo "Ok";
+}
 function agregarDepositoPorCobroCuota() {
 
     $nro_cobro = $_POST['trans_num'];
@@ -5383,12 +3879,14 @@ function agregarDepositoPorCobroCuota() {
     $fecha_transf = $_POST['fecha_trasnf'];
     $suc = $_POST['suc'];
     $total = $_POST['total'];
+    $usuario = $_POST['usuario'];
+    
     $db = new My();
     $sql = "DELETE FROM bcos_ctas_mov WHERE trans_num = $nro_cobro";
     $db->Query($sql);
     if ($total > 0) {
-        $sqlins = "INSERT INTO bcos_ctas_mov(nro_deposito, trans_num, id_banco, cuenta, fecha, hora, entrada, salida, suc, estado, id_concepto)
-        VALUES ('$nro_dep', '$nro_cobro', '$id_banco', '$cuenta',CURRENT_DATE, CURRENT_TIME, $total, 0, '$suc', 'Pendiente', 8 );";
+        $sqlins = "INSERT INTO bcos_ctas_mov(nro_deposito, trans_num, id_banco, cuenta,fecha_reg, fecha, hora, entrada, salida, suc, estado, id_concepto,usuario)
+        VALUES ('$nro_dep', '$nro_cobro', '$id_banco', '$cuenta',CURRENT_DATE,CURRENT_DATE, CURRENT_TIME, $total, 0, '$suc', 'Pendiente', 8 ,'$usuario');";
         $db->Query($sqlins);
     }
     echo "Ok";
@@ -5496,28 +3994,13 @@ function getResultArray($sql) {
     return $array;
 }
 
-/**
- * Metodo generico para devolver un array en MSSQL
- * @param type $sql
- * @return array
- */
-function getResultArrayMSSQL($sql) {
-    require_once("Y_DB_MSSQL.class.php");
-    $db = new MS();
-    $array = array();
-    $db->Query($sql);
-    while ($db->NextRecord()) {
-        array_push($array, array_map('utf8_encode', $db->Record));
-    }
-    $db->Close();
-    return $array;
-}
+ 
 
 /**
  * @todo: Agregar Filtro del Estado de las Cuotas o si ya estan Pagadas filtrar
  */
 function verCuentasCliente() {
-     
+
     $usuario = $_POST['usuario'];
     $CardCode = $_POST['CardCode'];
 
@@ -5532,11 +4015,11 @@ function verCuentasCliente() {
         $my->NextRecord();
         $dias_intereses_cheque = $my->Record['diff'];
     }
- 
+
 
     $db = new My();
 
-    $sql = "SELECT 'FV' as Tipo ,f.suc ,f.f_nro AS factura,f.fact_nro AS FolioNum, c.id_cuota,DATE_FORMAT(IF(f.fecha_cierre IS NULL,f.fecha,fecha_cierre),'%d-%m-%Y') AS fecha_factura, DATE_FORMAT(vencimiento,'%d-%m-%Y') AS vencimiento ,DATEDIFF(  CURRENT_DATE,vencimiento ) AS DiasAtraso,monto,c.moneda,monto_ref,saldo,monto - saldo AS pagado,c.cotiz  
+    $sql = "SELECT 'FV' as Tipo ,f.suc ,f.f_nro AS factura,f.fact_nro AS FolioNum, c.id_cuota,DATE_FORMAT(IF(f.fecha_cierre IS NULL,f.fecha,fecha_cierre),'%d-%m-%Y') AS fecha_factura, DATE_FORMAT(vencimiento,'%d-%m-%Y') AS vencimiento ,DATE_FORMAT(fecha_ult_pago,'%d-%m-%Y') as fecha_ult_pago,DATEDIFF(  CURRENT_DATE,IF( vencimiento > fecha_ult_pago, vencimiento, fecha_ult_pago)) + $dias_intereses_cheque AS DiasAtraso,monto,c.moneda,monto_ref,saldo,monto - saldo AS pagado,c.cotiz  
  
     FROM factura_venta f, cuotas c WHERE f.f_nro = c.f_nro AND c.estado ='Pendiente' AND cod_cli = '$CardCode' AND f.estado = 'Cerrada' "; // Solo Cerradas
 
@@ -5548,18 +4031,12 @@ function verCuentasCliente() {
     $my = new My();
 
     for ($i = 0; $i < sizeof($cuotas); $i++) {
-        $factura = $cuotas[$i]['factura'];         
+        $factura = $cuotas[$i]['factura'];    
         $id_cuota = $cuotas[$i]['id_cuota'];
-        //$vencimiento = $cuotas[$i]['DueDate'];  // DiasAtrasoFP Es por si pago adelantado 
-        $vencimiento =   $cuotas[$i]['vencimiento'] ;  // DiasAtrasoFP Es por si pago adelantado 
-        $DiasAtrasoInicial = $cuotas[$i]['DiasAtraso'];
-        $ultimo_pago = "SELECT p.fecha AS fecha_ult_pago, DATEDIFF(vencimiento, CURRENT_DATE ) + 20 AS DiasAtraso,DATEDIFF(vencimiento, CURRENT_DATE ) AS DiffPrimerPago FROM pagos_recibidos p, pago_rec_det d, cuotas c WHERE p.id_pago = d.id_pago AND d.factura = c.f_nro AND d.id_cuota = c.id_cuota  AND d.factura = $factura AND d.id_cuota = $id_cuota ORDER BY p.id_pago DESC LIMIT 1";
-        
-        $db->Query($ultimo_pago);
 
         // Buscar pagos pendientes de sincronizacion
 
-        $pend = "SELECT count(*) as PagosPendientes from pagos_recibidos p, pago_rec_det d where   p.id_pago = d.id_pago and d.factura = $factura and id_cuota = $id_cuota and p.e_sap is null  AND cod_cli = '$CardCode'";
+        $pend = "SELECT count(*) as PagosPendientes from pagos_recibidos p, pago_rec_det d where   p.id_pago = d.id_pago and d.factura = $factura and id_cuota = $id_cuota and p.estado = 'Cerrado' and p.control_caja is null  AND cod_cli = '$CardCode'";
         //echo $pend;
         $my->Query($pend);
         if ($my->NumRows() > 0) {
@@ -5572,31 +4049,12 @@ function verCuentasCliente() {
 
 
         $my->Query("SELECT  exonerada  FROM exoneraciones WHERE DocNum = $factura AND InstallmentID = $id_cuota order by id_ex desc limit 1");
-        if($my->NumRows()){
+        if ($my->NumRows()) {
             $my->NextRecord();
-            $exonerada = $my->Record['exonerada'];            
-            $cuotas[$i]['Exonerada'] = $exonerada;                    
-        }else{
+            $exonerada = $my->Record['exonerada'];
+            $cuotas[$i]['Exonerada'] = $exonerada;
+        } else {
             $cuotas[$i]['Exonerada'] = "0";
-        }
-        //$cuotas[$i]['DueDate'] = '10/10/2014';  
-        //$cuotas[$i]['DiasAtraso'] =  190;
-        // Si tiene un Pago mas Reciente ese deber� ser el Ultimo Pago
-        if ($db->NumRows() > 0) {
-            $db->NextRecord();
-            $f_ult_pago = $db->Record['fecha_ult_pago'];
-            $DiasAtraso = $db->Record['DiasAtraso'];
-            $DiffPrimerPago = $db->Record['DiffPrimerPago'];
-
-
-            $cuotas[$i]['vencimiento'] = $vencimiento;
-            $cuotas[$i]['DiasAtraso'] = $DiasAtraso;
-
-            if ($DiffPrimerPago < 0) {
-                $DiasAtraso = $DiasAtrasoInicial;
-                $cuotas[$i]['DueDate'] = $vencimiento;
-                $cuotas[$i]['DiasAtraso'] = $DiasAtraso;
-            }
         }
     }
 
@@ -5667,8 +4125,9 @@ function generarCuotas() {
 
             $dias = $cant_dias + (30 * $i);
             
-            $insert = "INSERT INTO cuotas(f_nro, id_cuota, moneda, monto, cotiz, tasa_interes, ret_iva, monto_ref,monto_s_total, valor_total, saldo,dias,porcentaje,vencimiento, estado,suc,fecha,hora)
-            VALUES ($factura, $i+1, '$moneda',$valor_cuota, $cotiz,$tasa_interes, $interes,$monto_ref,$valor_cuota_s_total, $valor_total_moneda,$valor_cuota,$dias,$porc, DATE_ADD($fecha_inicio,INTERVAL 30 * $i DAY), 'Pendiente','$suc',current_date,current_time);";
+            //$insert = "INSERT INTO cuotas(f_nro, id_cuota, moneda, monto, cotiz, tasa_interes, ret_iva, monto_ref,monto_s_total, valor_total, saldo,dias,porcentaje,vencimiento, estado,suc,fecha,hora) VALUES ($factura, $i+1, '$moneda',$valor_cuota, $cotiz,$tasa_interes, $interes,$monto_ref,$valor_cuota_s_total, $valor_total_moneda,$valor_cuota,$dias,$porc, DATE_ADD($fecha_inicio,INTERVAL 30 * $i DAY), 'Pendiente','$suc',current_date,current_time);";
+            $insert = "INSERT INTO cuotas(f_nro, id_cuota, moneda, monto, cotiz,valor_total,monto_s_total, tasa_interes, ret_iva, monto_ref, saldo,dias,porcentaje,vencimiento, estado,suc,fecha,hora, fecha_ult_pago) "
+                    . "          VALUES ($factura, $i+1, '$moneda',$valor_cuota,$valor_cuota,$valor_cuota, $cotiz,$tasa_interes, $interes,$monto_ref, $valor_cuota,$dias,$porc, DATE_ADD($fecha_inicio,INTERVAL 30 * $i DAY), 'Pendiente','$suc',current_date,current_time,DATE_ADD($fecha_inicio,INTERVAL 30 * $i DAY));";
             //echo $insert;
             $my->Query($insert);
             $valor_total_tmp -= $valor_cuota;
@@ -5705,12 +4164,12 @@ function eliminarCuotas() {
 
 function exonerarIntereses() {
     $DocNum = $_POST['DocNum'];
-    $InstlmntID = $_REQUEST['InstlmntID'];
+    $InstlmntID = $_REQUEST['id_cuota'];
     $usuario = $_REQUEST['usuario'];
     $exonerar = $_POST['exonerar']; //1 exonerar o 0 no exonerar
     $my = new My();     
      
-    $my->Query("INSERT INTO exoneraciones(usuario, DocNum, InstallmentID, fecha,exonerada)VALUES ('$usuario', '$DocNum', '$InstlmntID',CURRENT_TIMESTAMP,$exonerar);");
+    $my->Query("INSERT INTO exoneraciones(usuario, DocNum, InstallmentID, fecha,exonerada)VALUES ('$usuario', '$DocNum', '$InstlmntID',CURRENT_TIMESTAMP, $exonerar);");
     if($exonerar == "1"){
        echo "Exonerada";
     }else{
@@ -5773,13 +4232,17 @@ function getUsersParams() {
 
 function controlarPagosFactura($f_nro, $ticket_reserva) {
     $link = new My();
-    $query = "SELECT SUM(IF(u.mov IS NULL,0,u.mov)) AS total, SUM(IF(u.total IS NULL, 0, u.total * u.cotiz)) AS fact FROM  
-    (SELECT 'efectivo' AS tipo,SUM(entrada_ref - salida_ref) AS mov, '' AS total,cotiz FROM efectivo WHERE f_nro=$f_nro 
-    UNION SELECT 'chq' AS tipo,SUM(valor_ref) AS mov, '' AS total,cotiz FROM cheques_ter WHERE f_nro=$f_nro 
-    UNION SELECT 'cuota' AS tipo,SUM(monto_ref) AS mov, '' AS total,cotiz FROM cuotas WHERE f_nro=$f_nro 
-    UNION SELECT 'conv' AS tipo,SUM(monto) AS mov, '' AS total,cotiz FROM convenios WHERE f_nro=$f_nro 
-    UNION SELECT 'FV' AS tipo,'' AS mov,total,cotiz FROM factura_venta f WHERE f_nro =  $f_nro 
-    UNION SELECT 'RES' AS tipo,SUM(senia_entrega_ref) AS mov, '' AS total, 1 AS cotiz FROM reservas WHERE nro_reserva='$ticket_reserva') AS u";
+    
+    $link->Query("SELECT moneda FROM factura_venta WHERE f_nro = $f_nro"); 
+    $link->NextRecord();
+    $moneda_factura = $link->Get("moneda");
+     
+    $query = "SELECT SUM(IF(u.mov IS NULL,0,u.mov)) AS total, SUM(IF(u.total IS NULL, 0, u.total * u.cotiz)) AS fact FROM (SELECT 'efectivo' AS tipo,SUM(entrada_ref - salida_ref) AS mov, '' AS total,cotiz FROM efectivo WHERE f_nro=$f_nro    UNION SELECT 'chq' AS tipo,SUM(valor_ref) AS mov, '' AS total,cotiz FROM cheques_ter WHERE f_nro=$f_nro     UNION SELECT 'cuota' AS tipo,SUM(monto_ref) AS mov, '' AS total,cotiz FROM cuotas WHERE f_nro=$f_nro     UNION SELECT 'conv' AS tipo,SUM(monto) AS mov, '' AS total,cotiz FROM convenios WHERE f_nro=$f_nro UNION SELECT 'dep' AS tipo,SUM(entrada) AS mov, '' AS total,NULL AS cotiz FROM bcos_ctas_mov WHERE f_nro=$f_nro    UNION SELECT 'FV' AS tipo,'' AS mov,total,cotiz FROM factura_venta f WHERE f_nro =  $f_nro     UNION SELECT 'RES' AS tipo,SUM(senia_entrega_ref) AS mov, '' AS total, 1 AS cotiz FROM reservas WHERE nro_reserva='$ticket_reserva') AS u";   
+    
+    if($moneda_factura == "U$"){
+      $query = "SELECT SUM(IF(u.mov IS NULL,0,u.mov)) AS total, SUM(IF(u.total IS NULL, 0, u.total  )) AS fact FROM (SELECT 'efectivo' AS tipo,SUM(entrada_ref / cotiz - salida_ref / cotiz) AS mov, '' AS total,cotiz FROM efectivo WHERE f_nro=$f_nro    UNION SELECT 'chq' AS tipo,SUM(valor_ref) AS mov, '' AS total,cotiz FROM cheques_ter WHERE f_nro=$f_nro     UNION SELECT 'cuota' AS tipo,SUM(monto) AS mov, '' AS total,cotiz FROM cuotas WHERE f_nro=$f_nro     UNION SELECT 'conv' AS tipo,SUM(monto) AS mov, '' AS total,cotiz FROM convenios WHERE f_nro=$f_nro  UNION SELECT 'dep' AS tipo,SUM(entrada) AS mov, '' AS total,NULL AS cotiz FROM bcos_ctas_mov WHERE f_nro=$f_nro    UNION SELECT 'FV' AS tipo,'' AS mov,total,cotiz FROM factura_venta f WHERE f_nro =  $f_nro     UNION SELECT 'RES' AS tipo,SUM(senia_entrega_ref) AS mov, '' AS total, 1 AS cotiz FROM reservas WHERE nro_reserva='$ticket_reserva') AS u";   
+    }
+    
     $link->Query($query);
     if ($link->NextRecord()) {
         $sumMovs = (float) ($link->Record['total']);
@@ -5930,19 +4393,7 @@ function getVentasEnProcesoEmpaqueTodos() {
     echo json_encode($pendientes);
 }
 
-function getImagenLotes() {
-    $lotes = json_decode($_REQUEST['lotes']);
-    $suc = $_REQUEST['suc'];
-    
-    $grupo = "";
-    foreach ($lotes as $lote) {
-        $grupo.="'$lote',";
-    }
-    $grupo = substr($grupo, 0, -1);
-    $sql = "select BatchNum as Lote, U_img as Img, cast(round(Quantity - isNull(IsCommited,0),2) as numeric(20,2)) as StockReal from OIBT WHERE BatchNum IN($grupo)";
-
-    echo json_encode(getResultArrayMSSQL($sql));
-}
+ 
 
 function cambiarCantidadVenta() {
     $db = new My();
@@ -6158,7 +4609,7 @@ function enviarFacturaCaja() {
         $precio_costo = $ms->Record['costo_prom'];
         $StockReal = $ms->Record['stock_real'];
         
-        $my->Query("UPDATE fact_vent_det d SET precio_costo = $precio_costo WHERE f_nro = $factura AND precio_costo IS NULL AND codigo = '$codigo'");
+        //$my->Query("UPDATE fact_vent_det d SET precio_costo = $precio_costo WHERE f_nro = $factura AND precio_costo IS NULL AND codigo = '$codigo'");// el precio_cost es multiplicado por la cantidad hay otro campo precio_costo_unit
 
 
         if ($cant_med > $StockReal) { // Ajustar para que Finalmente quede en 0
@@ -6259,10 +4710,10 @@ function cerrarVenta() {
             $set_reserva = "";
             if ($ticket_reserva != "") {
                 $set_reserva = " ,nro_reserva = $ticket_reserva ";
-                $db->Query("UPDATE factura_venta SET estado = 'Cerrada',tipo = '$tipo_pago', fecha_cierre = current_date, hora_cierre = current_time $set_reserva  WHERE f_nro = $factura;");
+                $db->Query("UPDATE factura_venta SET estado = 'Cerrada',empaque = 'Si', tipo = '$tipo_pago', fecha_cierre = current_date, hora_cierre = current_time $set_reserva  WHERE f_nro = $factura;");
                 $db->Query("UPDATE reservas set estado = 'Retirada' where nro_reserva = $ticket_reserva");
             } else {
-                $db->Query("UPDATE factura_venta SET estado = 'Cerrada',tipo = '$tipo_pago', fecha_cierre = current_date, hora_cierre = current_time $set_reserva  WHERE f_nro = $factura;");
+                $db->Query("UPDATE factura_venta SET estado = 'Cerrada',empaque = 'Si', tipo = '$tipo_pago', fecha_cierre = current_date, hora_cierre = current_time $set_reserva  WHERE f_nro = $factura;");
             }
             //echo "UPDATE factura_venta SET estado = 'Cerrada', fecha_cierre = current_date, hora_cierre = current_time $set_reserva  WHERE f_nro = $factura;";
             // Actualizo las Fechas de Efectivo etc
@@ -6271,7 +4722,7 @@ function cerrarVenta() {
             $db->Query("UPDATE convenios SET fecha = CURRENT_DATE, hora = CURRENT_TIME WHERE f_nro = $factura");
             $db->Query("UPDATE cheques_ter SET fecha_ins = CURRENT_DATE   WHERE f_nro =  $factura");
             $db->Query("UPDATE cuotas SET fecha = CURRENT_DATE, hora = CURRENT_TIME WHERE f_nro = $factura");
-            $db->Query("UPDATE  orden_procesamiento p ,  fact_vent_det d SET p.estado = 'Vendido' WHERE d.lote = p.lote    AND d.f_nro =  $factura");
+            //$db->Query("UPDATE  orden_procesamiento p ,  fact_vent_det d SET p.estado = 'Vendido' WHERE d.lote = p.lote    AND d.f_nro =  $factura");
 
             
             descontarStock($factura);
@@ -6300,7 +4751,12 @@ function descontarStock($factura){
     $usuario = $db->Get("usuario");
     
     if($estado == "Si"){
-        $dbi->Query("SELECT d.codigo,d.lote,d.cantidad, s.tipo_ent, s.nro_identif,s.linea,a.mnj_x_lotes,a.um,art_inv,um_cod as um_venta,d.gramaje,d.ancho  FROM fact_vent_det d, stock s,articulos a WHERE d.codigo = a.codigo AND f_nro = $factura AND d.codigo = s.codigo AND d.lote = s.lote AND s.suc = '$suc'");
+        // Registro el precio de costo de cada articulo multiplicado por  el multiplicador de unidad de medida ej.: Caja 5  precio costo 20000 x unidad precio_costo en la linea = 20000 x 5 = 100000
+        $dbi->Query("UPDATE fact_vent_det d, articulos a, unidades_medida u SET d.precio_costo = a.costo_prom * u.um_mult * d.cantidad WHERE a.codigo = d.codigo AND d.um_cod = u.um_cod AND d.f_nro = $factura");
+        $dbi->Query("UPDATE fact_vent_det d  SET d.precio_costo_unit = d.precio_costo / d.cantidad WHERE  d.f_nro = $factura");
+        
+        //$dbi->Query("SELECT d.codigo,d.lote,d.cantidad, s.tipo_ent, s.nro_identif,s.linea,a.mnj_x_lotes,a.um,art_inv,um_cod as um_venta,d.gramaje,d.ancho  FROM fact_vent_det d, stock s,articulos a WHERE d.codigo = a.codigo AND f_nro = $factura AND d.codigo = s.codigo AND d.lote = s.lote AND s.suc = '$suc'");
+        $dbi->Query("SELECT d.codigo,d.lote,d.cantidad, s.tipo_ent, s.nro_identif,s.linea,a.mnj_x_lotes,a.um,art_inv,d.um_cod AS um_venta,d.gramaje,d.ancho, um.um_mult  FROM fact_vent_det d, stock s,articulos a, unidades_medida um  WHERE d.codigo = a.codigo AND f_nro = $factura AND d.codigo = s.codigo AND d.lote = s.lote AND s.suc = '$suc' AND d.um_cod = um.um_cod");
         while($dbi->NextRecord() ){
             
             $codigo = $dbi->Get('codigo');
@@ -6318,13 +4774,14 @@ function descontarStock($factura){
             $ancho_venta = $dbi->Get('ancho');            
             $um_venta = $dbi->Get('um_venta');
             $cantidad = $dbi->Get('cantidad');
+            $multiplicador = $dbi->Get('um_mult');
                         
             //Calcular aqui si la unidad de medida de venta es diferente a la de inventario
             
             $cant_descontar = ""; // Inducir al error temporalmente hasta que abarque todos los casos
             
-            if(($um_inv === "Mts" || $um_inv === "Unid") && ($um_venta === "Mts" || $um_venta === "Unid")){
-                $cant_descontar = $cantidad;
+            if(($um_inv === "Mts" || $um_inv === "Unid") && ($um_venta != "Kg")){
+                $cant_descontar = $cantidad * $multiplicador;
             }else if($um_inv === "Mts" && $um_venta === "Kg"){
                 $cant_descontar = ($cantidad * 1000) / ($gramaje_venta * $ancho_venta);
             }else if (($um_inv === "Kg") &&  ($um_venta === "Kg")){
@@ -6332,20 +4789,14 @@ function descontarStock($factura){
             }else if (($um_inv === "Kg") &&  ($um_venta === "Mts")){
                 $cant_descontar = ($cantidad * $gramaje_venta * $ancho_venta) / 1000;
             }
-            
-            
-            
-            $db_update->Query("UPDATE stock SET cantidad = cantidad - $cant_descontar WHERE codigo = '$codigo' AND lote = '$lote' AND suc ='$suc' AND tipo_ent = '$tipo_ent' AND nro_identif = $nro_identif AND linea = $linea ");
+              
+            $db_update->Query("UPDATE stock SET cantidad = cantidad - $cant_descontar WHERE codigo = '$codigo' AND lote = '$lote' AND suc ='$suc';");
+             
+             
             $gramaje = 0;
             $ancho = 0;
             $tara = 0;
-            if($mnj_x_lotes === "Si"){
-                $db->Query("SELECT gramaje,ancho,tara FROM lotes WHERE codigo = '$codigo' AND lote = '$lote'");
-                $db->NextRecord();
-                $gramaje = $db->Get('gramaje');
-                $ancho = $db->Get('ancho');
-                $tara = $db->Get('tara');
-            }
+             
             $db->Query("INSERT INTO historial( suc, codigo, lote, tipo_ent, nro_identif, linea, tipo_doc, nro_doc, fecha_hora, usuario, direccion, cantidad, gramaje, tara, ancho)
             VALUES ( '$suc', '$codigo', '$lote', '$tipo_ent', $nro_identif, $linea, 'FV', $factura, CURRENT_TIMESTAMP, '$usuario', 'S', -$cant_descontar, $gramaje, $tara, $ancho);");
             
@@ -6370,20 +4821,7 @@ function getPDVs() {
     echo json_encode(getResultArray($sql));
 }
 
-function verificarCotizMoneda() {
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-    $moneda = $_REQUEST['moneda'];
-    $sql = "SELECT Rate FROM ORTT WHERE Currency = '$moneda' and RateDate = CAST(CURRENT_TIMESTAMP AS DATE)";
-    $ms->Query($sql);
-    if ($ms->NumRows() > 0) {
-        $ms->NextRecord();
-        $Rate = $ms->Record['Rate'];
-        echo $Rate;
-    } else {
-        echo 0;
-    }
-}
+ 
 
 function generarContadorBilletes() {
     $suc = $_REQUEST['suc'];
@@ -6539,111 +4977,7 @@ if(nc.f_nro=$factura AND nc.n_nro =  $nro_nota  ,nc.cantidad,0) AS cant_dev,if(n
 
     echo json_encode(getResultArray($sql));
 }
-
-function generarNotaCredito() {
-
-    $usuario = $_REQUEST['usuario'];
-    $suc = $_REQUEST['suc'];
-    $factura = $_REQUEST['factura'];
-    $cod_cli = $_REQUEST['cod_cli'];
-    $req_auth = $_REQUEST['req_auth'];
-    $fuera_rango = $_REQUEST['fuera_rango'];
-    $moneda = $_REQUEST['moneda'];
-
-    $tipo = "Normal";
-    if ($fuera_rango) {
-        $tipo = "Excepcional";
-    }
-    require_once("Y_DB_MSSQL.class.php");
-    $ms = new MS();
-    $ms->Query("SELECT CardName as Cliente,LicTradNum as RUC  FROM OCRD WHERE CardCode = '$cod_cli';");
-    $ms->NextRecord();
-    $ruc = $ms->Record['RUC'];
-    $nombre = $ms->Record['Cliente'];
-    $db = new My();
-
-    $vendedor = "";
-    $cat = 1;
-
-    $db->Query("SELECT usuario,cat FROM factura_venta WHERE f_nro = $factura");
-    if ($db->NumRows() > 0) {
-        $db->NextRecord();
-        $vendedor = $db->Record['usuario'];
-        $cat = $db->Record['cat'];
-    }
-
-
-    $db->Query("INSERT INTO nota_credito(cod_cli,cliente,ruc_cli,usuario,f_nro,fecha,hora,suc,tipo,estado,moneda,fact_nro,pdv_cod,tipo_fact,autorizado_por,req_auth,vendedor,cat)"
-            . "VALUES('$cod_cli','$nombre','$ruc','$usuario','$factura',current_date,current_time,'$suc','$tipo','Abierta','$moneda','','','','','$req_auth','$vendedor',$cat)");
-    $db->Query("select n_nro FROM nota_credito order by n_nro desc limit 1");
-    $db->NextRecord();
-    $nro_nota = $db->Record['n_nro'];
-    echo $nro_nota;
-}
-
-function guardarDetalleNotaCredito() {
-
-    $nro_nota = $_REQUEST['nro_nota'];
-    $codigo = $_REQUEST['codigo'];
-    $lote = $_REQUEST['lote'];
-    $precio = $_REQUEST['precio'];
-    $cant_dev = $_REQUEST['cant_dev'];
-    $subtotal = $precio * $cant_dev;
-    $um_prod = $_REQUEST['um_prod'];
-    $descrip = $_REQUEST['descrip'];
-    $db = new My();
-    $db->Query("delete from nota_credito_det where n_nro = $nro_nota and lote = '$lote' and codigo = '$codigo';");
-
-    //echo "delete from nota_credito_det where n_nro = $nro_nota and lote = '$lote' and codigo = '$codigo';";
-    if ($cant_dev > 0 && $db->AffectedRows() > -1) {
-        $ev = "SELECT top 1 U_estado_venta FROM OIBT i where BatchNum = '$lote'";
-        require_once("Y_DB_MSSQL.class.php");
-        $ms = new MS();
-        $ms->Query($ev);
-        $ms->NextRecord();
-        $estado_venta = $ms->Record['U_estado_venta'];
-
-        //$db->Query("INSERT INTO nota_credito_det(n_nro,codigo,lote,um_prod,descrip,cantidad,precio_unit,subtotal,estado,estado_venta) VALUES($nro_nota,'$codigo','$lote','$um_prod','$descrip',$cant_dev,$precio,$subtotal,'','$estado_venta');");
-        $db->Query("INSERT INTO nota_credito_det(n_nro,codigo,lote,um_prod,descrip,cantidad,precio_unit,subtotal,estado,estado_venta) SELECT n.n_nro, fd.codigo, fd.lote, fd.um_prod, fd.descrip, $cant_dev, $precio, $subtotal,'',fd.estado_venta FROM fact_vent_det fd INNER JOIN nota_credito n on fd.f_nro=n.f_nro left join nota_credito_det d on n.n_nro=d.n_nro and fd.lote=d.lote WHERE fd.lote=$lote AND n.n_nro =  $nro_nota and d.lote is null");
-    }
-    $db->Query("select sum(subtotal) as total from nota_credito_det  where n_nro = $nro_nota");
-
-    $db->NextRecord();
-    $total = $db->Record['total'];
-    $db->Query("UPDATE nota_credito SET total = $total, saldo = $total  WHERE n_nro = $nro_nota");
-    echo "Ok";
-}
-
-function actualizarCabeceraNotaCredito() {
-    $nro_nota = $_REQUEST['nro_nota'];
-    $req_auth = $_REQUEST['req_auth'];
-    $estado = $_REQUEST['estado'];
-    $usuario = $_REQUEST['usuario'];
-    $suc = $_REQUEST['suc'];
-    $genCajaMov = $_REQUEST['genCajaMov'];
-    $ex_update = ($estado == 'Cerrada' ) ? ", fecha=date(now()), hora=time(now())" : "";
-
-    $tipo = 'Normal';
-    if ($req_auth) {
-        $req_auth = '1';
-        $tipo = 'Excepcional';
-    } else {
-        $req_auth = '';
-    }
-    $db = new My();
-
-
-
-    $db->Query("UPDATE nota_credito SET estado = '$estado', req_auth = '$req_auth',tipo = '$tipo' $ex_update WHERE n_nro = $nro_nota;");
-    if ($estado == 'Cerrada' && $genCajaMov == 'true') {
-        $db->Query("insert into efectivo (id_concepto,nota_credito,m_cod,salida,cotiz,salida_ref,fecha,fecha_reg,hora,suc,estado) select 12,$nro_nota,moneda,total,1,total,date(now()),date(now()),time(now()),suc,estado from nota_credito where n_nro='$nro_nota'");
-    }
-    if ($estado == 'Cerrada') {
-        $db->Query("INSERT INTO edicion_lotes( usuario, codigo, lote, descrip, fecha, hora, suc, FP, e_sap) SELECT '$usuario', codigo, lote, descrip, CURRENT_DATE, CURRENT_TIME, '$suc', 'No', NULL FROM nota_credito_det  WHERE n_nro = $nro_nota;");
-    }
-    echo $estado;
-}
-
+ 
 function makeLog($usuario, $accion, $data, $tipo, $doc_num) {
     $db = new My();
     $db->Query("INSERT INTO logs(usuario, fecha, hora, accion,tipo,doc_num, DATA) VALUES ('$usuario', current_date, current_time, '$accion','$tipo', '$doc_num', '$data');");
@@ -6675,218 +5009,7 @@ function logConectividad() {
     $db->Query("INSERT INTO logs(usuario, fecha, hora, accion,tipo,doc_num, DATA) VALUES ('$usuario', current_date, current_time, '$accion','$tipo', '$doc_num','$data');");
     echo $data;
 }
-
-// Compras
-
-function filtroEntradaMercaderias() {
-    require_once("Y_DB_MSSQL.class.php");
-
-    $DocEntry = $_REQUEST['DocEntry'];
-    $articulo = $_REQUEST['articulo'];
-    $design = $_REQUEST['design'];
-    $mar = $_REQUEST['mar'];
-    $color_desc = $_REQUEST['color_desc'];
-    $color_com = $_REQUEST['color_com'];
-    $solo_faltantes = $_REQUEST['solo_faltantes'];
-    $deposito = $_REQUEST['suc'];
-
-    $filtro_faltantes = "";
-    if ($solo_faltantes == "Si") {
-        $filtro_faltantes = " and o.U_quty_ticket = 0 ";
-    }
-
-    $filtro_articulo = "";
-    if ($articulo != "") {
-        $filtro_articulo = "and o.ItemCode LIKE '$articulo%' ";
-        // $filtro_articulo = "and it.U_NOMBRE_COM LIKE '$articulo%' ";
-    }
-
-    $filtro_design = "";
-    if ($design != "") {
-        $filtro_design = "and o.U_design LIKE '$design%' ";
-    }
-    $filtro_mar = "";
-    if ($mar != "") {
-        $filtro_mar = "and o.U_prov_mar LIKE '$mar%' ";
-    }
-    $filtro_color_desc = "";
-    if ($color_desc != "") {
-        $filtro_color_desc = "and o.U_color_cod_fabric LIKE '$color_desc%' ";
-    }
-    $filtro_color_com = "";
-    if ($color_com != "") {
-        $filtro_color_com = "and o.U_color_comercial LIKE '$color_com%' ";
-        $left_or_inner = 'INNER';
-    }
-    /*
-
-      echo "SELECT o.AbsEntry, i.ItemCode, it.U_NOMBRE_COM as ItemName, i.U_design ,SUBSTRING(master.dbo.fn_varbintohexstr(HashBytes('MD5',i.ItemCode+i.U_design+i.U_prov_mar)), 3, 32)  as DesignHash, i.BatchNum, i.U_quty_c_um,i.U_notas,i.U_prov_mar,i.U_bag,i.U_quty_ticket,i.U_gramaje_m,i.U_printed, i.U_ancho,i.U_img,
-      i.U_tara,i.U_kg_desc,c.Name as U_color_comercial,i.U_umc ,i.U_color_cod_fabric as ColorDescription, p.Price,it.InvntryUom as um_prod
-      FROM  OIBT i inner join  OBTN o on i.ItemCode = o.ItemCode and  o.DistNumber = i.BatchNum   and i.BaseNum = $DocEntry  $filtro_faltantes  $filtro_design $filtro_mar $filtro_color_desc
-      inner join OITM it  on i.ItemCode = it.ItemCode $filtro_articulo
-      inner join PDN1 p on i.BaseNum = p.DocEntry and i.BaseLinNum = p.LineNum $left_or_inner JOIN  [@EXX_COLOR_COMERCIAL] c ON i.U_color_comercial = c.Code and i.WhsCode = '$deposito' $filtro_color_com  "
-      . "order by it.U_NOMBRE_COM asc, i.U_design asc, U_prov_mar asc , ColorDescription asc ,i.U_color_comercial asc  <br>";
-     */
-
-
-    // OIBT Y OBTN Lote, PDN1 Detalle Entrada de Mercaderias
-    /*
-      $descarga = getResultArrayMSSQL("SELECT o.AbsEntry, i.ItemCode, it.U_NOMBRE_COM as ItemName, i.U_design ,SUBSTRING(master.dbo.fn_varbintohexstr(HashBytes('MD5',i.ItemCode+i.U_design+i.U_prov_mar)), 3, 32)  as DesignHash, i.BatchNum, i.U_quty_c_um,i.U_notas,i.U_prov_mar,i.U_bag,i.U_quty_ticket,i.U_gramaje,i.U_printed, i.U_ancho,i.U_img,
-      i.U_tara,i.U_kg_desc,c.Name as U_color_comercial,i.U_umc ,i.U_color_cod_fabric as ColorDescription, p.Price,it.InvntryUom as um_prod
-      FROM  OIBT i inner join  OBTN o on i.ItemCode = o.ItemCode and  o.DistNumber = i.BatchNum   and i.BaseNum = $DocEntry and i.BaseType < 21  $filtro_faltantes  $filtro_design $filtro_mar $filtro_color_desc
-      inner join OITM it  on i.ItemCode = it.ItemCode $filtro_articulo
-      inner join PDN1 p on i.BaseNum = p.DocEntry and i.BaseLinNum = p.LineNum $left_or_inner JOIN  [@EXX_COLOR_COMERCIAL] c ON i.U_color_comercial = c.Code and i.WhsCode = '$deposito' $filtro_color_com  "
-      . "order by it.U_NOMBRE_COM asc, i.U_design asc, U_prov_mar asc , ColorDescription asc ,i.U_color_comercial asc ");
-     */
-    $descarga = getResultArrayMSSQL("SELECT o.AbsEntry, o.ItemCode, it.U_NOMBRE_COM as ItemName, o.U_design ,SUBSTRING(master.dbo.fn_varbintohexstr(HashBytes('MD5',o.ItemCode+o.U_design+o.U_prov_mar)), 3, 32)  as DesignHash, o.DistNumber as BatchNum, o.U_quty_c_um, o.U_notas,o.U_prov_mar,o.U_bag,o.U_quty_ticket,o.U_gramaje,o.U_printed, o.U_ancho,o.U_img,
-    o.U_tara,o.U_kg_desc,c.Name as U_color_comercial,o.U_umc ,o.U_color_cod_fabric as ColorDescription, p.Price,it.InvntryUom as um_prod FROM OBTN o inner join OITM it  on o.ItemCode = it.ItemCode inner join OBTW w on o.SysNumber=w.SysNumber and o.ItemCode=w.ItemCode INNER JOIN  ixvITL_Min n ON o.ItemCode = n.ItemCode AND o.SysNumber = n.SysNumber INNER JOIN	OITL l ON l.LogEntry = n.LogEntry AND l.ItemCode = n.ItemCode and  l.DocType  < 21 inner join PDN1 p on p.DocEntry = l.DocEntry and l.DocLine = p.LineNum 
-	$left_or_inner JOIN  [@EXX_COLOR_COMERCIAL] c ON o.U_color_comercial = c.Code where  w.WhsCode = '$deposito' and l.DocNum=$DocEntry  $filtro_articulo $filtro_design $filtro_mar $filtro_color_desc  $filtro_color_com $filtro_faltantes order by it.U_NOMBRE_COM asc, o.U_design asc, U_prov_mar asc , ColorDescription asc ,o.U_color_comercial asc");
-
-    if (sizeof($descarga) == 0) {
-        /*
-          $descarga = getResultArrayMSSQL("SELECT o.AbsEntry, i.ItemCode, it.U_NOMBRE_COM as ItemName, i.U_design ,SUBSTRING(master.dbo.fn_varbintohexstr(HashBytes('MD5',i.ItemCode+i.U_design+i.U_prov_mar)), 3, 32)  as DesignHash, i.BatchNum, i.U_quty_c_um,i.U_notas,i.U_prov_mar,i.U_bag,i.U_quty_ticket,i.U_gramaje,i.U_printed, i.U_ancho,i.U_img,
-          i.U_tara,i.U_kg_desc,c.Name as U_color_comercial,i.U_umc ,i.U_color_cod_fabric as ColorDescription, p.Price,it.InvntryUom as um_prod
-          FROM  OIBT i inner join  OBTN o on i.ItemCode = o.ItemCode and  o.DistNumber = i.BatchNum   and i.BaseNum = $DocEntry and i.BaseType < 21 $filtro_faltantes  $filtro_design $filtro_mar $filtro_color_desc
-          inner join OITM it  on i.ItemCode = it.ItemCode $filtro_articulo
-          inner join PCH1 p on i.BaseNum = p.DocEntry and i.BaseLinNum = p.LineNum $left_or_inner JOIN  [@EXX_COLOR_COMERCIAL] c ON i.U_color_comercial = c.Code and i.WhsCode = '$deposito' $filtro_color_com  "
-          . "order by it.U_NOMBRE_COM asc, i.U_design asc, U_prov_mar asc , ColorDescription asc ,i.U_color_comercial asc ");
-         */
-
-        $descarga = getResultArrayMSSQL("SELECT o.AbsEntry, o.ItemCode, it.U_NOMBRE_COM as ItemName, o.U_design ,SUBSTRING(master.dbo.fn_varbintohexstr(HashBytes('MD5',o.ItemCode+o.U_design+o.U_prov_mar)), 3, 32)  as DesignHash, o.DistNumber as BatchNum, o.U_quty_c_um, o.U_notas,o.U_prov_mar,o.U_bag,o.U_quty_ticket,o.U_gramaje,o.U_printed, o.U_ancho,o.U_img,
-    o.U_tara,o.U_kg_desc,c.Name as U_color_comercial,o.U_umc ,o.U_color_cod_fabric as ColorDescription, p.Price,it.InvntryUom as um_prod FROM OBTN o inner join OITM it  on o.ItemCode = it.ItemCode inner join OBTW w on o.SysNumber=w.SysNumber and o.ItemCode=w.ItemCode INNER JOIN  ixvITL_Min n ON o.ItemCode = n.ItemCode AND o.SysNumber = n.SysNumber INNER JOIN	OITL l ON l.LogEntry = n.LogEntry AND l.ItemCode = n.ItemCode and  l.DocType  < 21 inner join PCH1 p on p.DocEntry = l.DocEntry and l.DocLine = p.LineNum $left_or_inner JOIN  [@EXX_COLOR_COMERCIAL] c ON o.U_color_comercial = c.Code where w.WhsCode = '$deposito' and l.DocNum=$DocEntry  $filtro_articulo $filtro_design $filtro_mar $filtro_color_desc  $filtro_color_com  $filtro_faltantes order by it.U_NOMBRE_COM asc, o.U_design asc, U_prov_mar asc , ColorDescription asc ,o.U_color_comercial asc");
-    }
-
-
-    //print_r($descarga);
-    echo json_encode($descarga);
-}
-
-/*
- * @Deprecated ya no se utiliza esta funcion
- * Actualiza lote generalmente en descarga de contenedores
- */
-/*
-function actualizarLote() {
-
-    require_once("ConfigSAP.class.php");
-    $c = new ConfigSAP();
-
-    try {
-        $oCnn = $c->connectToSAP();
-
-        $oCompanyService = $oCnn->GetCompanyService();
-        //data: {"action": "actualizarLote", usuario: getNick(), suc: getSuc(),AbsEntry:AbsEntry,qty_ticket:qty_ticket,ancho:ancho,gramaje:gramaje,obs:obs},
-        $AbsEntry = $_POST['AbsEntry'];
-        $qty_ticket = $_POST['qty_ticket'];
-        $kg_desc = $_POST['kg_desc'];
-        $ancho = $_POST['ancho'];
-        $gramaje = $_POST['gramaje'];
-        $obs = $_POST['obs'];
-        $printed = $_POST['printed'];
-        $um_prod = $_REQUEST['um_prod'];
-        $umc = $_REQUEST['umc'];
-        $codigo = $_REQUEST['codigo'];
-        $lote = $_REQUEST['lote'];
-        $suc = $_REQUEST['suc'];
-        $usuario = $_REQUEST['usuario'];
-        $recibido = $_REQUEST['recibido'];
-
-
-        $cant_calc = $qty_ticket;
-        if ($um_prod == $umc && ($umc == 'Unid' || $umc == 'Mts')) {
-            $cant_calc = $qty_ticket;
-        } else if ($um_prod == 'Mts' && $umc == 'Yds') {
-            $cant_calc = $qty_ticket * 0.9144;
-        } else if ($um_prod == 'Mts' && $umc == 'Kg') {
-            $cant_calc = ($kg_desc * 1000) / ($gramaje * $ancho);
-        }
-        if (is_infinite($cant_calc) || $recibido == "No") {
-            $cant_calc = 0;
-            $gramaje = 0;
-            $ancho = 0;
-            $kg_desc = 0;
-            $qty_ticket = 0;
-        }
-
-        $oBatchNumberService = $oCompanyService->GetBusinessService(10000044);
-        $oBatchNumberDetailParams = $oBatchNumberService->GetDataInterface(1);
-        $oBatchNumberDetailParams->DocEntry = $AbsEntry;
-        $oBatchNumberDetail = $oBatchNumberService->Get($oBatchNumberDetailParams);
-
-        $oBatchNumberDetail->Status = 0; //0 Liberado 1 Acceso denegado 2 Bloqueado
-        $oBatchNumberDetail->UserFields->Item("U_quty_ticket")->Value = $qty_ticket;
-        $oBatchNumberDetail->UserFields->Item("U_kg_desc")->Value = $kg_desc;
-        $oBatchNumberDetail->UserFields->Item("U_ancho")->Value = $ancho;
-        $oBatchNumberDetail->UserFields->Item("U_gramaje_m")->Value = $gramaje;
-        $oBatchNumberDetail->UserFields->Item("U_printed")->Value = $printed;
-        $oBatchNumberDetail->UserFields->Item("U_notas")->Value = $obs;
-        $oBatchNumberDetail->UserFields->Item("U_equiv")->Value = $cant_calc;
-        $oBatchNumberDetail->UserFields->Item("U_rec")->Value = $recibido;
-
-         
-        $err = $oBatchNumberService->Update($oBatchNumberDetail);
-
-        if ($err > 0) {
-
-            $lErrCode = 0;
-            $sErrMsg = "";
-            $vCmp->GetLastError($lErrCode, $sErrMsg);
-
-            require_once("Log.class.php");
-            $l = new Log();
-            $l->error("Error al Registrar datos ErrCode: $lErrCode   ErrMsg: $sErrMsg");
-            //$oCnn->Close();
-            //echo "false";
-        } else {
-            /**
-             * Todo se paso al Fotografo
-              // Ajustar
-              if($umc != "Kg"){
-              require_once("Y_DB_MSSQL.class.php");
-              $ms = new MS();
-
-
-              $ms->Query("SELECT  AvgPrice  FROM PDN1 a INNER JOIN OITM b on a.ItemCode = b.ItemCode and a.ItemCode = '$codigo' ");
-
-              $ms->NextRecord();
-              $precio_costo = $ms->Record['AvgPrice'];
-
-              $ms->Query("select Quantity from OIBT i where i.BatchNum = '$lote'"); // No debe haber mas que uno Lote
-              $ms->NextRecord();
-              $stock = $ms->Record['Quantity'];
-              $ajuste = $cant_calc - $stock;
-              $signo = '+';
-              $tipo = 'Aumento en Descarga';
-              $final = 0;
-              if($ajuste < 0){
-              $ajuste = $ajuste * -1;
-              $tipo = 'Disminucion en Descarga';
-              $signo = '-';
-              }else{
-              $signo = '+';
-              $tipo = 'Aumento en Descarga';
-              }
-              $final = $cant_calc;
-              $valor_ajuste = $ajuste * $precio_costo;
-
-              $motivo = 'Correccion en descarga';
-
-              $db = new My();
-              $db->Query("DELETE FROM  ajustes WHERE codigo = '$codigo' and lote = '$lote' and e_sap = 0");
-
-              $db->Query("INSERT INTO ajustes( usuario,f_nro, codigo, lote, tipo,signo, inicial, ajuste, final, motivo, fecha, hora, um, estado,suc,p_costo,valor_ajuste, e_sap)
-              VALUES ('$usuario',0, '$codigo', '$lote', '$tipo','$signo',$stock,$ajuste, $final, '$motivo', CURRENT_DATE, CURRENT_TIME, '$um_prod', 'Pendiente','$suc',$precio_costo,$valor_ajuste,0);");
-              makeLog("$usuario", "Ajuste$signo", "$tipo | $motivo",'Ajuste',0);
-              }
-             
-            $array = Array('estado' => 'Ok');
-        }
-    } catch (Exception $e) {
-        echo $e->getMessage();
-    }
-}
  
-*/
  
 
 function Thumbnail($url, $filename, $width = 150, $height = true) {
@@ -6916,20 +5039,7 @@ function controlarEntradaMercaderiasNoDescargadas() {
     echo json_encode(getResultArrayMSSQL($sql));
 }
 
-function cerrarEntradaMercaderiasMS() {
-    $DocEntry = $_REQUEST['DocEntry'];
-    $tipo_doc = $_REQUEST['tipo_doc'];
-    try {
-
-        require_once("Y_DB_MSSQL.class.php");
-        $ms = new MS();
-        $ms->Query("update $tipo_doc set U_Estado = 'En Proceso'  where  DocNum = $DocEntry;");
-
-        echo "Ok";
-    } catch (Exception $e) {
-        echo $e->getMessage();
-    }
-}
+ 
 
 function actualizarEstadoPedido() {
     $pedido_nro = $_POST['ped_nro'];
@@ -6990,23 +5100,7 @@ function obtenerDatosCheque() {
     }
     echo json_encode($respuesta);
 }
-
-/**
- *  Obtiene colores por articulo
- */
-function coloresXArticulo() {
-    require_once("Y_DB_MSSQL.class.php");
-    $link = new MS();
-    $ItemCode = $_POST['ItemCode'];
-    $colores = array();
-    $link->Query("select distinct c.Name,c.Code, (cast(round(q.Quantity - ISNULL(q.CommitQty,0),2) as numeric(20,2))) as cant from [@EXX_COLOR_COMERCIAL] c inner join OBTN o on c.Code=o.U_color_comercial LEFT JOIN	OBTQ q ON o.ItemCode = q.ItemCode AND o.SysNumber = q.SysNumber where o.ItemCode='$ItemCode'");
-    while ($link->NextRecord()) {
-        $colores[$link->Record['Code']] = utf8_encode($link->Record['Name']);
-    }
-    $link->Close();
-
-    echo count($colores) > 0 ? json_encode($colores) : '{"msg":"No se obtuvo resultados"}';
-}
+ 
 
 /**
  *   Verifica la existencia y estado de un ticket segun suc y nro de ticket
@@ -7082,170 +5176,31 @@ function eliminarSeleccionados() {
     echo json_encode($respuesta);
 }
 
-/**
- * Cambiar color a productos Obsoleto reemplazados por cambiarValoresEntMercaderia
- */
-function cambiarColorProductos() {
-    $my_link = new My();
-    $Code = $_REQUEST['Code'];
-    $Name = $_REQUEST['Name'];
-    $id_ent = $_REQUEST['id_ent'];
-    $lotes = "";
-    $respuesta = array();
-
-    $ids = trim(implode(',', json_decode($_REQUEST['ids'])), ',');
-    $ms_update = "UPDATE OIBT set U_color_comercial = '$Code' WHERE ";
-    $my_update = "UPDATE entrada_det SET cod_pantone='$Code', color='$Name' WHERE id_ent=$id_ent AND id_det in ($ids)";
-    $ms_where = '';
-    $my_where = '';
-    //echo $my_update."\r\n";
-    $my_link->Query($my_update);
-    if ($my_link->AffectedRows() > 0) {
-        $respuesta['msj_det'] .= "Se actualizo el detelle de entrada";
-        $my_link->Query("SELECT lote FROM entrada_det WHERE id_ent=$id_ent AND id_det in ($ids) and trim(lote)<>''");
-
-        if ($my_link->NumRows() > 0) {
-            while ($my_link->NextRecord()) {
-                $lotes .= ( strlen($lotes) > 0 ) ? "," : "";
-                $lotes .= $my_link->Record['lote'];
-            }
-            $my_link->Close();
-
-            require_once("Y_DB_MSSQL.class.php");
-            $ms_link = new MS();
-            $ms_link->Query($ms_update . "BatchNum in ($lotes)");
-
-            if (count(explode(',', $lotes)) > 1) {
-                $respuesta['msj_OIBT'] .= "Se actualizaron los colores de los lotes $lotes a ($Code) $Name";
-            } else {
-                $respuesta['msj_OIBT'] .= "Se actualizo el color del lote $lotes a ($Code) $Name";
-            }
-            $ms_link->Close();
-        }
-    }
-    echo json_encode($respuesta);
-}
-
-function getSumaVentasDeClienteXArticuloDescripcion() {
-    $desde = $_POST['desde'];
-    $hasta = $_POST['hasta'];
-    $cod_cli = $_POST['cod_cli'];
-
-    $codigo = $_POST['codigo'];
-    $descrip = trim($_POST['descrip']);
-
-    require_once('Functions.class.php');
-    $fn = new Functions();
-    $desde = $fn->invertirFechaLat($desde);
-    $hasta = $fn->invertirFechaLat($hasta);
+function firmarArqueoCaja() {
+     
+    $usuario = $_REQUEST['usuario'];
+    $passw = $_REQUEST['passw'];
     $db = new My();
-    $sql = "SELECT  f.cod_cli, SUM( IF( d.cantidad IS NULL,0,d.cantidad)) AS Mts,   SUM(IF(  nd.cantidad IS NULL,0,nd.cantidad))  AS Devs FROM factura_venta f 
-    INNER JOIN  fact_vent_det d ON f.f_nro = d.f_nro LEFT JOIN nota_credito n ON f.f_nro = n.f_nro LEFT JOIN nota_credito_det nd ON n.n_nro = nd.n_nro AND   d.lote = nd.lote WHERE f.estado = 'Cerrada' 
-    AND f.fecha_cierre BETWEEN '$desde' AND '$hasta' AND f.cod_cli = '$cod_cli' AND d.codigo = '$codigo' AND d.descrip = '$descrip'  GROUP BY f.cod_cli";
+    $crypt_pass = sha1($passw);
 
-    // echo $sql."<br>";
-
-    echo json_encode(getResultArray($sql));
-}
-
-/**
- * Cambiar Valores en Entrada de Mercaderias
- */
-function cambiarValoresEntMercaderia() {
-
-    $my_link = new My();
-    $set_My = '';
-    $set_MS = '';
-    $verif_MS = '';
-
-    $entMercUpdate = json_decode($_REQUEST['entMercUpdate']);
-    foreach ($entMercUpdate as $key => $value) {
-        $set_My .= "$key = '$value', ";
-    }
-    $set_My = trim($set_My, ', ');
-    $id_ent = $_REQUEST['id_ent'];
-    $lotes = "";
-    $respuesta = array();
-
-    $ids = trim(implode(',', json_decode($_REQUEST['ids'])), ',');
-    $ms_update = "UPDATE OIBT set U_color_comercial = '$Code' WHERE ";
-    $my_update = "UPDATE entrada_det SET $set_My WHERE id_ent=$id_ent AND id_det in ($ids)";
-    $ms_where = '';
-    $my_where = '';
-    //echo $my_update."\r\n";
-    $my_link->Query($my_update);
-
-    //if ($my_link->AffectedRows() > 0) {
-        $respuesta['msj_det'] .= "Se actualizo el detelle de entrada";
-        $my_link->Query("SELECT lote, e.cod_pantone as U_color_comercial, e.color_comb as U_color_comb, CONCAT(e.cod_catalogo,'-',e.fab_color_cod) as U_color_cod_fabric, e.store_no as U_prov_mar, e.bale as U_bag, e.design as U_design FROM entrada_det e WHERE id_ent=$id_ent AND id_det in ($ids) and trim(lote)<>''");
-
-        if ($my_link->NumRows() > 0) {
-            $first = true;
-            while ($my_link->NextRecord()) {
-                foreach ($my_link->Record as $key => $value) {
-                    if ($first && $key != 'lote') {
-                        $set_MS .= "$key='$value', ";
-                        $verif_MS .= "$key<>'$value' AND ";
-                    } else if ($key == 'lote') {
-                        $lotes .= ( strlen($lotes) > 0 ) ? "," : "";
-                        $lotes .= $value;
-                    }
-                }
-                $first = false;
-            }
-            $my_link->Close();
-            $set_MS = trim($set_MS, ', ');
-            $verif_MS = trim($verif_MS, 'AND ');
-
-            $ms_update = "UPDATE OIBT set $set_MS WHERE BatchNum in ($lotes)"; //  echo $ms_update."<br>";
-            $ms_vef = "SELECT BatchNum as error FROM OIBT WHERE $verif_MS AND BatchNum in ($lotes)";
-
-            require_once("Y_DB_MSSQL.class.php");
-            $ms_link = new MS();
-            $ms_link->Query($ms_update);
-
-            $ms2_link = new MS();
-            $ms2_link->Query($ms_vef);
-            $lotes_error = '';
-            while ($ms2_link->NextRecord()) {
-                $lotes_error .= $ms2_link->Record['BatchNum'] . ', ';
-            }
-            $lotes_error = trim($lotes_error, ', ');
-            if (strlen($lotes_error > 0)) {
-                $respuesta['msj_OIBT'] .= "Error al actualizar lotes: $lotes_error";
-            } else {
-                if (count(explode(',', $lotes)) > 1) {
-                    $respuesta['msj_OIBT'] .= "Se actualizaron los colores de los lotes $lotes";
-                } else {
-                    $respuesta['msj_OIBT'] .= "Se actualizo el color del lote $lotes";
-                }
-            }
-            $ms_link->Close();
+    $db->Query("SELECT usuario,concat(nombre,' ',apellido) as nombre_cajero, limite_sesion,suc FROM usuarios WHERE BINARY usuario = '$usuario' AND passw = '$crypt_pass'");
+    if ($db->NumRows() > 0) { 
+        $db->NextRecord();
+        $nombre_cajero = $db->Get('nombre_cajero');
+        $firma = 'img/firmas_digitales/'.$usuario.'.jpg';
+     
+        if (file_exists($firma)) {
+           $firma = "$usuario";  
         } else {
-            $respuesta['msj_det'] .= "No se pudo actualizar el Detalle de entrada";
+            $firma = "sin_firma";  
         }
-    //}
-    echo json_encode($respuesta);
-}
-
-function existeLote($lote) {    
-    $ms_link = new My();
-    $ms_link->Query("SELECT count(*) AS existe FROM lotes WHERE lote='$lote'");
-    $ms_link->NextRecord();
-    return ((int) $ms_link->Record['existe'] > 0) ? true : false;
-}
-
-function debug($text, $file = "Ajax_debug.log") {
-    if (file_exists($file)) {
-        file_put_contents($file, '[' . date("y-m-d h:i:s", time()) . '] ' . $text . "\r\n", FILE_APPEND);
+        echo json_encode(array("mensaje"=>"Ok","nombre_cajero"=>$nombre_cajero,"firma"=>$firma));
     } else {
-        $log = fopen($file, 'w') or die("Can't create file");
-        if ($log) {
-            fclose($log);
-            file_put_contents($file, '[' . date("y-m-d h:i:s", time()) . '] ' . $text . "\r\n", FILE_APPEND);
-        }
+        echo json_encode(array("mensaje"=>"Contrase&ntilde;a incorrecta!!!"));  
     }
 }
+ 
+ 
 /**
  * Dado un valor devuelve otro en funcion del % 50 Ej.:  14521 --> 14500,  14532 --> 14550    
  * Resolucion 347 SEDECO

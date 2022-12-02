@@ -1,9 +1,7 @@
 <!-- begin: headers -->   
     <head>  
-        <link rel="stylesheet" type="text/css" href="productos/Articulos.css?_=5555555555555" />      
-        <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
-        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
-        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
+        <link rel="stylesheet" type="text/css" href="productos/Articulos.css?_=22222222222222222222222" />      
+        
     </head>  
 <!-- end:   headers -->
 
@@ -12,67 +10,93 @@
 <!-- end:   insert_edit_form -->
 
 <!-- begin: data_header -->
-<div class="list_container">      
-    <table id="articulos"  border="1" class="display responsive nowrap db_tablename"  >
-        <thead>
-            <tr>
-                <th>Codigo</th><th>Nombre</th><th>Sector</th><th>Clase</th><th>Um</th><th>Ancho</th><th></th>
-            </tr>
-        </thead>
-
+<div class="list_container">    
+    
+    <div style="height: 40px;">
+        <div style="width: 40%;float: left;padding-left: 20px" ><label class="lblinv">Inventario</label> </div> 
+    </div>
+    
+    <div style="width: 94%;text-align: center;margin: 10px auto;height: 45px;  ">
+        <div class="valores v_left" >
+            <label class="v_label">Costo total del inventario</label><br>{costo_mercaderias} Gs.
+        </div>
+        <div class="valores v_right"  >
+            <label class="v_label">Valor de Venta</label><br>{valor_venta} Gs.
+        </div>
+    </div>
+    
+   <div style="width: 94%;text-align: center;margin: 10px auto; height: 45px">
+        <div class="v_left" >
+            <label style="color:black; font-weight: bolder; font-size: 16px">Buscar:</label>
+            <input type="text" class="buscador" id="buscador" onkeyup="filtrarArticulos()" placeholder="Buscar producto"  >
+            <label style="color:black; font-weight: bolder; font-size: 16px">Stock >= a:</label>
+            <input type="number" min="0" max="9999" step="1" id="stock_min" onchange="filtrarArticulos()"  value="0" size="4" style="text-align: center"   >
+        </div>
+        <div class="v_right"  >
+            <input type="button" value="Agregar Productos" onclick="addUI()" class="buttonAddUI">
+        </div>
+    </div>
+    <div style="width: 94%;text-align: center;margin: 10px auto; height: 45px">
+        <div class="v_left" >
+            <label class="referencias"  >Total referencias:</label>&nbsp;&nbsp;<span class="referencias" id="total_referencias"></span>
+        </div>
+        <div class="v_right"  >
+             
+        </div>
+    </div>
+ 
+    
 <!-- end:   data_header -->
 
 
 <!-- begin: data_line -->     
-    <tr> <td>{codigo}</td> <td>{descrip}</td>  <td>{cod_sector}</td> <td>{clase}</td>  <td>{um}</td> <td>{ancho}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editUI("{codigo}") ></td>  </tr>
+<div class="art_container art_component product_code_{codigo}" onclick=editUI("{codigo}") data-search="{codigo} {descrip} {tags}" data-stock="{stock}" >
+    <div class="art_codigo">{codigo}</div>
+    <img src="{img}" class="art_component_image" alt="Sin foto">
+    <div class="art_precio">{precio} {um}</div>
+    <div class="art_descrip">{descrip}</div>
+    <div class="art_disponible {pos_neg}" >{stock} {disponible_s}</div>
+</div>  
 <!-- end:   data_line -->
 
 
-<!-- begin: data_foot -->     
-
-        <tfoot>
-             
-        </tfoot>
-    </table> 
-</div>
+<!-- begin: data_foot -->  
  
+</div> 
 <!-- end:   data_foot -->
 
 <!-- begin: script -->      
     <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
     <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js" ></script>
-    
-    <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
-    <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
+     
+ 
     <script type="text/javascript" src="js/functions.js?_=0000" ></script> 
-    <script type="text/javascript" src="productos/Articulos.js?_=66666666666666" ></script>
+    <script type="text/javascript" src="js/Chart.min.js" ></script>
+    <script type="text/javascript" src="productos/Articulos.js?_=66666666666666666" ></script>
+    
     
 <!-- end:   script -->
 
 
 <!-- begin: edit_form_cab -->  
 <table border="0" class="form_table" id="edit_articulos" style="width: auto">
-    <tr> <th colspan="4" class="form_title" > Actualizar Articulos  </th> </tr> 
+    <tr> <th colspan="4" class="form_title" > Datos del Producto  </th> </tr> 
 <!-- end:   edit_form_cab -->
 
 
 <!-- begin: edit_form_data -->     
 <tr>
-    <td class="form_label">Codigo:</td> <td><input class="form_text PRI" type="text" id="form_codigo"  readonly="readonly" required="required" size="30"  value="{value_of_codigo}" >*</td>  
-    <td class="form_label">Art. Venta:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_venta"  readonly="readonly"   {value_of_art_venta}  ></td>
+    <td class="form_label">Codigo:</td> <td><input class="form_text PRI" type="text" id="form_codigo"  readonly="readonly" required="required" size="30"  value="{value_of_codigo}" >* <img id="clone" class="clone" title="Clonar este Articulo" style="display:none;cursor: pointer" src="img/clone.png" width="16"></td>  
+    <td id="art_image"   rowspan="5" style="width: 20%;text-align: center;vertical-align: middle">  </td>  
   </tr>
 <tr> <td class="form_label">Clase:</td> <td>
-<select class="form_select" id="form_clase"  >
-<option value="Articulo">Articulo</option>
-<option value="Trabajo">Trabajo</option>
-<option value="Viaje">Viaje</option>
-</select>
+<select class="form_select" id="form_clase"  >{value_of_clase}</select>
 *</td>  
-<td class="form_label">Art. Inventario:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_inv"  readonly="readonly"     {value_of_art_inv}  ></td>
+
 </tr>
 <tr>
-    <td class="form_label">Descrip:</td> <td><input class="form_text" type="text" id="form_descrip"   required="required" size="100"  value="{value_of_descrip}" >*</td>
-    <td class="form_label">Art. Compra:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_compra"   readonly="readonly"   {value_of_art_compra}  ></td>
+    <td class="form_label">Descrip:</td> <td><input class="form_text" type="text" id="form_descrip"   required="required" size="60"  value="{value_of_descrip}" >*</td>
+    
 </tr>
 <tr> <td class="form_label">Cod Sector:</td> <td>
 <select class="form_db_select MUL" id="form_cod_sector"   >{value_of_cod_sector}</select>
@@ -80,49 +104,83 @@
 
 <tr>
     <td class="form_label">Costo Promedio:</td> <td><input class="form_number" type="text" id="form_costo_prom"  readonly="readonly" style="width:100px"  size="16"   value="{value_of_costo_prom}" ><label class="form_label">Gs.</label>&nbsp;&nbsp;&nbsp;
-        <label class="form_label">Costo CIF:</label><input class="form_number" type="text" id="form_costo_cif"  readonly="readonly" style="width:100px"  size="16"   value="{value_of_costo_cif}" ><label class="form_label">Gs.</label> </td> 
-    <td class="form_label">Estado:</td> <td><select class="form_select" id="form_estado"  >{value_of_estado}</select></td> 
+        <label style="margin-left: 60px" class="form_label">Estado:</label><select class="form_select" id="form_estado"  >{value_of_estado}</select>
+        <img style="cursor:pointer;border:solid gray 1px;margin:0 0 -6px  12px" onclick="historial()" src="img/historial.png" height="24px" >
+        <label class="form_label" style="display:none">Costo CIF:</label>
+        <input class="form_number" type="text" id="form_costo_cif"  readonly="readonly" style="width:100px;display:none"  size="16"   value="{value_of_costo_cif}" >
+        <label class="form_label"  style="display:none">Gs.</label> 
+        
+    </td> 
+     
 </tr>
 
 <tr>
     <td colspan="4">
-        <div id="tabs" style="height: 340px;min-width: 900px">
+        <div id="tabs" style="height: 340px;min-width: 340px">
           <ul>
             <li><a href="#tabs-general" class="modif">General</a></li>
-            <li><a href="#tabs-inventario" class="modif" onclick="getDatosInventario()">Datos de Inventario</a></li>
-            <li><a href="#tabs-produccion" class="modif" onclick="getListaMateriales()">Datos de Produccion</a></li>
+            <li><a href="#tabs-inventario" class="modif" onclick="getDatosInventario()">Datos de Inventario</a></li>            
             <li><a href="#tabs-propiedades" class="nomodif" onclick="getPropiedades()">Propiedades</a></li>
             <li><a href="#tabs-usos" class="nomodif" onclick="getUsos()">Usos</a></li>
             <li><a href="#tabs-lista_precios" class="nomodif" onclick=getFiltrosListaPrecios()>Lista de Precios</a></li>
             <li><a href="#tabs-codigo_barras" class="nomodif" onclick=getCodigoBarras()>Codigos de Barras</a></li>
+            <li style="display:{display_costos}"><a href="#tabs-historial_costos" class="nomodif" onclick=getHistorialCostos()>Historial Costos</a></li>
+            <li><a href="#tabs-galeria" class="nomodif"  >Galeria</a></li>
           </ul>
           <div id="tabs-general">
-              <table border="0">
-                  <tr style="display: none"> 
-                        <td class="form_label" >Img:</td> <td><input class="form_text" type="text" id="form_img"    size="100"  value="{value_of_img}"  ></td>  </tr>
-                    <tr> <td class="form_label">Estado Venta:</td> <td>
-                    <select class="form_select" id="form_estado_venta"  >
-                    <option value="Normal">Normal</option>
-                    <option value="Oferta">Oferta</option>
-                    <option value="Retazo">Retazo</option>
-                    <option value="Promocion">Promocion</option>
-                    <option value="Arribos">Arribos</option>
-                    </select>
-                    </td>  </tr>
-                    <tr> <td class="form_label">Composicion:</td> <td><input class="form_text upper" type="text" id="form_composicion"    size="30"  value="{value_of_composicion}" ></td>  </tr>
-                    <tr> <td class="form_label">Temporada:</td> <td>
-                    <select class="form_select" id="form_temporada"  >{value_of_temporada}</select>
-                    </td>  </tr>
-                    <tr> <td class="form_label">Ligamento:</td> <td><input class="form_text upper" type="text" id="form_ligamento"    size="30"  value="{value_of_ligamento}" ></td>  </tr>
-                    <tr> <td class="form_label">Combinacion:</td> <td><input class="form_text upper" type="text" id="form_combinacion"    size="30"  value="{value_of_combinacion}" ></td>  </tr>
-                    <tr> <td class="form_label">Especificaciones:</td> <td><textarea class="form_textarea" id="form_especificaciones" cols="60" rows="3"   >{value_of_especificaciones}</textarea></td>  </tr>
-                    <tr> <td class="form_label">Acabado:</td> <td>
+              <table border="0" style="width: 96%">
+                   
+                    <tr> 
+                        <td class="form_label">Estado Venta:</td> 
+                        <td>
+                            <select class="form_select" id="form_estado_venta"  >
+                                <option value="Normal">Normal</option>
+                                <option value="Oferta">Oferta</option>
+                                <option value="Retazo">Retazo</option>
+                                <option value="Promocion">Promocion</option>
+                                <option value="Arribos">Arribos</option>
+                            </select>
+                        </td>
+                        <td rowspan="3" style="text-align: center">
+                            <table style="width: 100%;margin-left: 14px">
+                                <tr><td class="form_label">Art. Compra:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_compra"   readonly="readonly"   {value_of_art_compra}  ></td>                 </tr>
+                                <tr><td class="form_label">Art. Venta:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_venta"  readonly="readonly"   {value_of_art_venta}  ></td></tr>
+                                <tr><td class="form_label">Art. Inventario:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_inv"  readonly="readonly"     {value_of_art_inv}  ></td></tr>
+                                <tr><td class="form_label">Art. Venta Online:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_visible_web"  readonly="readonly"     {value_of_visible_web}  ></td></tr>
+                            </table>
+                        </td>
+                         
+                    </tr>
+                    <tr  class="datos_tejido"> 
+                        <td class="form_label">Composicion:</td> <td><input class="form_text upper" type="text" id="form_composicion"    size="30"  value="{value_of_composicion}" ></td>                          
+                    </tr>
+                    <tr  class="datos_tejido">
+                        <td class="form_label">Temporada:</td> 
+                        <td>
+                           <select class="form_select" id="form_temporada"  >{value_of_temporada}</select>
+                        </td>
+                        
+                    </tr>
+                    <tr  class="datos_tejido"> <td class="form_label">Ligamento:</td> <td><input class="form_text upper" type="text" id="form_ligamento"    size="30"  value="{value_of_ligamento}" ></td>  </tr>
+                    <tr  class="datos_tejido"> <td class="form_label">Combinacion:</td> <td><input class="form_text upper" type="text" id="form_combinacion"    size="30"  value="{value_of_combinacion}" ></td>  </tr>
+                    <tr> 
+                        <td class="form_label">Especificaciones:</td>
+                        <td>
+                            <textarea class="form_textarea" id="form_especificaciones" cols="40" rows="12"   >{value_of_especificaciones}</textarea>
+                        </td>                      
+                    </tr>
+                      <tr class=""> <td class="form_label">Tags:</td> 
+                          <td>
+                              <input class="form_text" type="text" id="form_tags" placeholder="tag1,tag2,tag3" size="46" value="{value_of_tags}">
+                          </td>  
+                    </tr>
+                    <tr class="datos_tejido"> <td class="form_label">Acabado:</td> <td>
                     <select class="form_select" id="form_acabado"  >{value_of_acabado}</select>
                     </td>  </tr>
-                    <tr> <td class="form_label">Tipo:</td> <td>
+                    <tr  class="datos_tejido"> <td class="form_label">Tipo:</td> <td>
                     <select class="form_select" id="form_tipo"  >{value_of_tipo}</select>
                     </td>  </tr>
-                    <tr> <td class="form_label">Estetica:</td> <td>
+                    <tr  class="datos_tejido"> <td class="form_label">Estetica:</td> <td>
                     <select class="form_select" id="form_estetica"  >{value_of_estetica}</select>
                     </td>  
                     </tr>                  
@@ -134,19 +192,19 @@
                       <td style="width: 30%;vertical-align: top">
                         <table border="0">
                             <tr> <td class="form_label">Um:</td> <td><select class="form_db_select MUL" id="form_um" style="pointer-events: none;"  >{value_of_um}</select></td>  </tr>
-                           <tr> <td class="form_label">Ancho:</td> <td><input class="form_number" type="number" id="form_ancho"  style="width: 80px" step="any"   size="30" onkeypress="return onlyNumbers(event)" value="{value_of_ancho}" ></td>  </tr>
-                               <tr> <td class="form_label">Espesor (mm):</td> <td><input class="form_number" type="number" style="width: 80px" id="form_espesor" step="any" required="required"   size="10" onkeypress="return onlyNumbers(event)" value="{value_of_espesor}" ></td>  </tr>
-                               <tr> <td class="form_label">Gramaje Promedio:</td> <td><input class="form_number" type="number" style="width: 100px" id="form_gramaje_prom"    size="30" onkeypress="return onlyNumbers(event)" value="{value_of_gramaje_prom}" ></td>  </tr>
-                               <tr> <td class="form_label">Rendimiento (Mts x 1Kg):</td> <td><input class="form_number" type="number"  id="form_rendimiento" style="width: 80px" step="any"  size="30" onkeypress="return onlyNumbers(event)" value="{value_of_rendimiento}" ></td>  </tr>                  
-                               <tr> <td class="form_label">Manejado Por Lotes:</td> <td>
-                                  <select class="form_select" id="form_mnj_x_lotes"  >{value_of_mnj_x_lotes}</select>
+                            <tr class="datos_tejido"> <td class="form_label">Ancho:</td> <td><input class="form_number" type="text" id="form_ancho"  style="width: 80px" step="any"   size="30" onkeypress="return onlyNumbers(event)" value="{value_of_ancho}" ></td>  </tr>
+                               <tr class="datos_tejido"> <td class="form_label">Espesor (mm):</td> <td><input class="form_number" type="text" style="width: 80px" id="form_espesor"  required="required"   size="10" onkeypress="return onlyNumbers(event)" value="{value_of_espesor}" ></td>  </tr>
+                               <tr class="datos_tejido"> <td class="form_label">Gramaje Promedio:</td> <td><input class="form_number" type="text" style="width: 100px" id="form_gramaje_prom"    size="30" onkeypress="return onlyNumbers(event)" value="{value_of_gramaje_prom}" ></td>  </tr>
+                               <tr class="datos_tejido"> <td class="form_label">Rendimiento (Mts x 1Kg):</td> <td><input class="form_number" type="text"  id="form_rendimiento" style="width: 80px" step="any"  size="30" onkeypress="return onlyNumbers(event)" value="{value_of_rendimiento}" ></td>  </tr>                  
+                               <tr style="display: none"> <td class="form_label">Manejado Por Lotes:</td> <td>
+                                  <select class="form_select" id="form_mnj_x_lotes"  style="pointer-events: none;" >{value_of_mnj_x_lotes}</select>
                                </td> 
-                           </tr>
+                            </tr>
                          </table>   
                       </td>
                       <td style="width: 70%;height: 100%;vertical-align: top;border:solid gray 1px;overflow-y: scroll" >
                           <table id="stock_x_suc" border="1" style="border-collapse: collapse;width: 100%">
-                              <tr class="titulo"><th>Suc</th><th>Nombre</th><th>Stock <span id="um_inv_art"></span></th><th>Estado Venta</th></tr>
+                              <tr class="titulo"><th>Suc</th><th>Nombre</th><th>Stock <span id="um_inv_art"></span></th><th>Estado Venta</th><th></th></tr>
                               
                           </table>
                       </td>
@@ -154,32 +212,7 @@
               </table> 
                     
           </div>
-          <div id="tabs-produccion">
-              <table border="0" style="width: 100%;height: 50%">
-                  <tr>
-                      <td style="width: 20%;vertical-align: top">
-                          <table >
-                            <tr> <td class="form_label">Ancho Produccion:</td> <td><input class="form_number" type="number" step="any" id="form_produc_ancho" style="width: 80px"   size="10" onkeypress="return onlyNumbers(event)" value="{value_of_produc_ancho}" ></td>  </tr>
-                            <tr> <td class="form_label">Largo  Produccion:</td> <td><input class="form_number" type="number" step="any" id="form_produc_largo"  style="width: 80px"  size="10" onkeypress="return onlyNumbers(event)" value="{value_of_produc_largo}" ></td>  </tr>
-                            <tr> <td class="form_label">Alto  Produccion:</td> <td><input class="form_number" type="number" step="any" id="form_produc_alto"  style="width: 80px"  size="10" onkeypress="return onlyNumbers(event)" value="{value_of_produc_alto}" ></td>  </tr>                  
-                          </table> 
-                      </td>
-                      <td style="width: 80%;height: 100%;vertical-align: top;border:solid gray 1px;overflow-y: scroll" >
-                          <table id="lista_materiales" style="width: 100%; border-collapse: collapse" border="1">
-                              <tr>
-                                  <th class="titulo" colspan="9">Lista de Materiales</th>
-                              </tr>
-                              <tr style="background: white;font-weight: bolder">
-                                  <th>N&deg;</th><th>Descripci&oacute;n</th><th>Cantidad</th><th>Um</th><th>Mat.Pri.Ref.</th><th>Rendimiento</th><th>Precio Unit.</th><th>SubTotal</th> <th>*</th>
-                              </tr>
-                          </table>
-                          
-                          <div style="text-align: center"> <img style="cursor:pointer" src="img/button-add_blue.png" width="24px" onclick="buscarArticulos()" > </div>
-                      </td>
-                  </tr>  
-              </table> 
-              <div id="lista_articulos"></div>
-          </div>
+           
           <div id="tabs-propiedades">
               <table id="art_propiedades" border="1" style="border-collapse: collapse;width: 60%">
                    <tr class="titulo" ><th>ID</th><th>Nombre de la Propiedad</th><th>Valor</th></tr>                              
@@ -216,12 +249,23 @@
           </div>
             <div id="tabs-lista_precios">
                 <div id="art_lista_precios">
-                    <label><b>Mostrar lista de precios de: </b>&nbsp;&nbsp;     </label>
-                    <label>Moneda:</label>
-                    <select id="lp_moneda"></select>
-                    <label>Unidad de Medida:</label>
-                    <select id="lp_um" onchange="getListaPrecios()"></select>
-                    <br><br><label for="apply_factor"><b>Al Modificar un precio aplicar factor precio para las sgtes. listas</b></label> <input type="checkbox" checked="checked" name="apply_factor" id="apply_factor">
+                    <table style="width: 100%">
+                        <tr>
+                            <td style="width: 90%">
+                                <label><b>Mostrar lista de precios de: </b>&nbsp;&nbsp;     </label>
+                                <label>Moneda:</label>
+                                <select id="lp_moneda"></select>
+                                <label>Unidad de Medida:</label>
+                                <select id="lp_um" onchange="getListaPrecios()"></select>
+                                <br><br><label for="apply_factor"><b>Al Modificar un precio aplicar factor precio para las sgtes. listas</b></label> <input type="checkbox" checked="checked" name="apply_factor" id="apply_factor">
+                            </td>
+                            <td class="datos_tejido">
+                                <label title="Cantidad para que entre como Retazo" >Cant Retazo:  </label> <input title="Cantidad para que entre como Retazo" class="form_number modif" type="number" id="form_cant_retazo"  size="4" onkeypress="return onlyNumbers(event)" value="{value_of_cant_retazo}" ><br>
+                                <label>Precio Retazo:</label> <input class="form_number modif" type="text" id="form_precio_retazo"  size="12" onkeypress="return onlyNumbers(event)" value="{value_of_precio_retazo}" >  
+                            </td>
+                        </tr>
+                    </table> 
+                     
                 </div>
                 <div style="height: 220px;overflow-y: scroll;border:solid gray 1px;margin-top: 10px">
                     <div style="width: 80%;float: left;border:solid gold 0px">
@@ -255,6 +299,67 @@
                   </tr>
               </table>
             </div>
+            
+            <div id="tabs-historial_costos">
+ 
+                <div style="height: 220px;overflow-y: scroll;border:solid gray 1px;margin-top: 10px">
+                    
+                    <table id="historial_costos" style="width: 100%;border-collapse: collapse;" border="1">
+                        <tr class="titulo"><th>Usuario</th><th>Fecha</th> <th>Costo PPP</th><th>Costo CIF</th><th>Notas</th> </tr>
+                    </table> 
+                    <div id="nuevo_costo_ppp" style="display:none;text-align: center;width: 92%;border: 1px solid gray;margin: 4px">
+                        <table style="width: 100%;border-collapse: collapse;margin: 4px auto;min-width: 60%" border="0">
+                            <tr>
+                                <td><b>Cuenta a Aumentar:</b></td>
+                                <td>
+                                    <input  list="cta_aum" name="cta_aum" style="width:200px">
+                                    <datalist id="cta_aum" class="cuentas_contab"></datalist>                                   
+                                     
+                                </td>
+                                <td><b>Cuenta a Disminuir:</b></td>
+                                <td>
+                                    <input  list="cta_dism" name="cta_dism" style="width:200px">
+                                    <datalist id="cta_dism" class="cuentas_contab"></datalist>                             
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Nuevo Costo PPP:</b></td><td><input type="text" id="new_costo_ppp" class="num" size="10" onkeypress="return onlyNumbers(event)">  </td>
+                                <td><b>Nuevo Costo CIF:</b></td><td><input type="text" id="new_costo_cif" class="num" size="10" onkeypress="return onlyNumbers(event)">  </td>
+                            </tr>
+                            <tr>
+                                <td><b>Notas:</b></td>
+                                <td colspan="3">
+                                    <textarea id="rev_notas" rows="4" style="width: 100%"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="text-align: center">
+                                    <input type="button" value="Aplicar" onclick="aplicarPPP()">
+                                </td>
+                            </tr>
+                        </table>
+                    </div> 
+                </div>
+                <div style="width: 94%" >                   
+                    <div id="div_nuevo_costo" style="float: right;width: 50px">   
+                        <input type="button" value="Nuevo Costo" onclick="nuevoPPP()">                    
+                    </div>
+                </div>
+                
+            </div>
+            <div id="tabs-galeria">                
+                <div id="galeria" style="width: 100%; height: 76% ;background-color: #EAEAEA" >   
+                    
+                </div>
+                 
+                <div style="text-align: center;margin:0 auto;width:60%">    
+                    <label  >Seleccionar multiples archivos:</label>   <input  type="file" class="inputfilemult" id="image-picker-mult" accept="image/*" multiple  onchange="loadImageFileAsURLMultiple()" >    
+                    <input   id="levantar-mult" type="button" disabled="disabled" value="Subir" onclick="levantarDocumentoMult()" >
+                </div>  
+                
+            </div> 
+            <input type="hidden" id="textAreaFileContents" value="">
+            <span id="tmpimg"></span>
         </div>        
     </td>
 </tr>
@@ -280,13 +385,13 @@
 
 <!-- begin: add_form_cab -->  
 <table border="0" class="form_table" id="add_articulos">
-    <tr> <th colspan="4" class="form_title" > (Nuevo Registro) Articulos  </th> </tr> 
+    <tr> <th colspan="4" class="form_title" > (Nuevo Registro) Producto  </th> </tr> 
 <!-- end:   add_form_cab -->
 
 
 <!-- begin: add_form_data -->     
 <tr> <td class="form_label">Codigo:</td> <td><input class="form_text PRI" type="text" id="form_codigo"  readonly="readonly"  required="required"  size="30"  value="" >*<span title="El codigo se va a generar al momento de Insertar puede que alguien mas inserte antes que Ud. haciendo que este numero cambie." id="msg_codigo"></span></td> 
-<td class="form_label">Art. Venta:</td> <td  class="itemc"><input class="form_checkbox" type="checkbox" id="form_art_venta"        ></td>
+
 </tr>
 <tr> <td class="form_label">Clase:</td> <td>
 <select class="form_select" id="form_clase"  >
@@ -295,16 +400,18 @@
 <option value="Viaje">Viaje</option>
 </select>
 *</td>  
-    <td class="form_label">Art. Inventario:</td> <td class="itemc"><input class="form_checkbox" type="checkbox" id="form_art_inv"    ></td>
-
+     
 </tr>
-<tr> <td class="form_label">Descrip:</td> <td><input class="form_text" type="text" id="form_descrip"    required="required"  size="100"  value="" >*</td> 
-<td class="form_label">Art. Compra:</td> <td  class="itemc"><input class="form_checkbox" type="checkbox" id="form_art_compra"    ></td></tr>
+<tr> <td class="form_label">Descrip:</td> <td><input class="form_text" type="text" id="form_descrip"    required="required"  size="60"  value="" >*</td> 
+</tr>
 <tr> <td class="form_label">Cod Sector:</td> <td>
 <select class="form_db_select MUL" id="form_cod_sector"  >{value_of_cod_sector}</select>
 </td>  </tr>
  
-<tr> <td class="form_label">Costo Promedio:</td> <td><input class="form_number" type="number" id="form_costo_prom"  size="16" onkeypress="return onlyNumbers(event)" value="" ><label class="form_label">Gs.</label></td> 
+<tr>
+    <td class="form_label">Costo Promedio:</td> <td><input class="form_number" type="number" id="form_costo_prom"  size="16" onkeypress="return onlyNumbers(event)" value="" >
+        <label class="form_label">Gs.</label>    
+    </td> 
  <td class="form_label">Estado:</td> <td>
 <select class="form_select" id="form_estado"  >
 <option value="Activo">Activo</option>
@@ -314,14 +421,14 @@
 </tr>
 <tr>
   <td colspan="4">
-        <div id="tabs" style="height: 340px;min-width: 900px">
+        <div id="tabs" style="height: 340px;min-width: 340px">
           <ul>
             <li><a href="#tabs-general">General</a></li>
             <li><a href="#tabs-inventario">Datos de Inventario</a></li>
-            <li><a href="#tabs-produccion">Datos de Produccion</a></li>             
+                 
           </ul>
           <div id="tabs-general">
-              <table border="0">
+              <table border="0" style="width: 100%" >
                   <tr style="display: none"> 
                         <td class="form_label" >Img:</td> <td><input class="form_text" type="text" id="form_img"    size="100"  value="{value_of_img}"  ></td>  </tr>
                     <tr> <td class="form_label">Estado Venta:</td> <td>
@@ -332,19 +439,34 @@
                     <option value="Promocion">Promocion</option>
                     <option value="Arribos">Arribos</option>
                     </select>
-                    </td>  </tr>
-                    <tr> <td class="form_label">Composicion:</td> <td><input class="form_text upper" type="text" id="form_composicion"    size="30"  value="{value_of_composicion}" ></td>  </tr>
-                    <tr> <td class="form_label">Temporada:</td> <td>
+                    </td> 
+                        <td rowspan="3" style="text-align: center;width: 25%">
+                            <table style="width: 100%;margin-left: 1px">
+                                <tr><td class="form_label">Art. Compra:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_compra"   checked="checked"  ></td>                 </tr>
+                                <tr><td class="form_label">Art. Venta:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_venta"  checked="checked" ></td></tr>
+                                <tr><td class="form_label">Art. Inventario:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_art_inv"  checked="checked"  ></td></tr>
+                                <tr><td class="form_label">Art. Venta Online:</td> <td style="text-align: center"><input class="form_checkbox" type="checkbox" id="form_visible_web" checked="checked"  ></td></tr>
+                            </table>
+                        </td>
+                         
+                    </tr>
+                    <tr class="datos_tejido"> 
+                        <td class="form_label">Composicion:</td> <td><input class="form_text upper" type="text" id="form_composicion"    size="30"  value="{value_of_composicion}" ></td> 
+                       
+                    </tr>
+                    <tr  class="datos_tejido"> <td class="form_label">Temporada:</td> <td>
                     <select class="form_select" id="form_temporada"  >
                         <option value="Oto-Inv">Oto&ntilde;o-Invierno</option>
                         <option value="Pri-Ver">Primavera-Verano</option>
                         <option value="Perm">Permanente</option>
                     </select>
-                    </td>  </tr>
-                    <tr> <td class="form_label">Ligamento:</td> <td><input class="form_text upper" type="text" id="form_ligamento"    size="30"  value="{value_of_ligamento}" ></td>  </tr>
-                    <tr> <td class="form_label">Combinacion:</td> <td><input class="form_text upper" type="text" id="form_combinacion"    size="30"  value="{value_of_combinacion}" ></td>  </tr>
-                    <tr> <td class="form_label">Especificaciones:</td> <td><textarea class="form_textarea" id="form_especificaciones" cols="60" rows="3"   ></textarea></td>  </tr>
-                    <tr> <td class="form_label">Acabado:</td> <td>
+                    </td>                     
+                    
+                    </tr>
+                    <tr class="datos_tejido"> <td class="form_label">Ligamento:</td> <td><input class="form_text upper" type="text" id="form_ligamento"    size="30"  value="{value_of_ligamento}" ></td>  </tr>
+                    <tr class="datos_tejido"> <td class="form_label">Combinacion:</td> <td><input class="form_text upper" type="text" id="form_combinacion"    size="30"  value="{value_of_combinacion}" ></td>  </tr>
+                    <tr> <td class="form_label">Especificaciones:</td> <td><textarea class="form_textarea" id="form_especificaciones" cols="30" rows="12"   ></textarea></td>  </tr>
+                    <tr  class="datos_tejido"> <td class="form_label">Acabado:</td> <td>
                     <select class="form_select" id="form_acabado"  >
                         <option value="Mate">Mate</option>
                         <option value="Brilloso">Brilloso</option>
@@ -352,14 +474,14 @@
                         <option value="Semi Aspero">Semi Aspero</option>
                     </select>
                     </td>  </tr>
-                    <tr> <td class="form_label">Tipo:</td> <td>
+                    <tr  class="datos_tejido"> <td class="form_label">Tipo:</td> <td>
                     <select class="form_select" id="form_tipo"  >
                         <option value="Punto">Punto</option>
                         <option value="Plano">Plano</option>
                         <option value="No Tejido">No Tejido</option>
                     </select>
                     </td>  </tr>
-                    <tr> <td class="form_label">Estetica:</td> <td>
+                    <tr  class="datos_tejido"> <td class="form_label">Estetica:</td> <td>
                     <select class="form_select" id="form_estetica"  >
                         <option value="Liso">Liso</option>
                         <option value="Labrado">Labrado</option>
@@ -375,34 +497,29 @@
                   <tr>
                       <td style="width: 30%;vertical-align: top">
                         <table border="0">
-                           <tr> <td class="form_label">Um:</td> <td><select class="form_db_select MUL" id="form_um"    >{value_of_um}</select></td>  </tr>
-                           <tr> <td class="form_label">Ancho:</td> <td><input class="form_number" type="number"  id="form_ancho"  style="width: 80px" step="any"   size="30" onkeypress="return onlyNumbers(event)" value="{value_of_ancho}" ></td>  </tr>
-                           <tr> <td class="form_label">Espesor (mm):</td> <td><input class="form_number" type="number" oninvalid="" style="width: 80px" id="form_espesor" step="any"  size="10" onkeypress="return onlyNumbers(event)" value="{value_of_espesor}" ></td>  </tr>
-                               <tr> <td class="form_label">Gramaje Promedio:</td> <td><input class="form_number" type="number" style="width: 80px" id="form_gramaje_prom"    size="30" onkeypress="return onlyNumbers(event)" value="{value_of_gramaje_prom}" ></td>  </tr>
-                               <tr> <td class="form_label">Rendimiento (Mts x 1Kg):</td> <td><input class="form_number" type="number"  id="form_rendimiento" style="width: 80px" step="any"  size="30" onkeypress="return onlyNumbers(event)" value="{value_of_rendimiento}" ></td>  </tr>                  
-                               <tr> <td class="form_label">Manejado Por Lotes:</td> <td>
-                                  <select class="form_select" id="form_mnj_x_lotes"  >
-								      <option value="No">No</option>
-                                      <option value="Si">Si</option>                                      
-                                  </select>
-                               </td> 
-                           </tr>
+                           <tr > <td class="form_label">Um:</td> <td><select class="form_db_select MUL" id="form_um"    >{value_of_um}</select></td>  </tr>
+                           <tr  class="datos_tejido"> <td class="form_label">Ancho:</td> <td><input class="form_number" type="number"  id="form_ancho"  style="width: 80px" step="any"   size="30" onkeypress="return onlyNumbers(event)" value="0" ></td>  </tr>
+                           <tr  class="datos_tejido"> <td class="form_label">Espesor (mm):</td> <td><input class="form_number" type="number" oninvalid="" style="width: 80px" id="form_espesor" step="any"  size="10" onkeypress="return onlyNumbers(event)" value="0" ></td>  </tr>
+                               <tr class="datos_tejido"> <td class="form_label">Gramaje Promedio:</td> <td><input class="form_number" type="number" style="width: 80px" id="form_gramaje_prom"    size="30" onkeypress="return onlyNumbers(event)" value="0" ></td>  </tr>
+                               <tr class="datos_tejido"> <td class="form_label">Rendimiento (Mts x 1Kg):</td> <td><input class="form_number" type="number"  id="form_rendimiento" style="width: 80px" step="any"  size="30" onkeypress="return onlyNumbers(event)" value="0" ></td>  </tr>                  
+                               <tr style="display: none"> <td class="form_label" >Manejado Por Lotes:</td> 
+                                   <td>
+                                    <select class="form_select" id="form_mnj_x_lotes"  >
+                                        <option value="No">No</option>
+                                        <option value="Si">Si</option>                                      
+                                    </select>
+                                   </td> 
+                               </tr>
                          </table>   
                       </td>
-                      <td style="width: 70%;height: 100%;vertical-align: top;border:solid gray 0px;overflow-y: scroll" >
+                      <td style="width: 30%;height: 100%;vertical-align: top;border:solid gray 0px;overflow-y: scroll" >
                           
                       </td>
                   </tr>
               </table> 
                     
           </div>
-          <div id="tabs-produccion">
-             <table border="0">
-                <tr> <td class="form_label">Ancho Produccion:</td> <td><input class="form_number" type="number" step="any" id="form_produc_ancho" style="width: 80px"   size="10" onkeypress="return onlyNumbers(event)" value="{value_of_produc_ancho}" ></td>  </tr>
-                <tr> <td class="form_label">Largo  Produccion:</td> <td><input class="form_number" type="number" step="any" id="form_produc_largo"  style="width: 80px"  size="10" onkeypress="return onlyNumbers(event)" value="{value_of_produc_largo}" ></td>  </tr>
-                <tr> <td class="form_label">Alto  Produccion:</td> <td><input class="form_number" type="number" step="any" id="form_produc_alto"  style="width: 80px"  size="10" onkeypress="return onlyNumbers(event)" value="{value_of_produc_alto}" ></td>  </tr>                  
-              </table> 
-          </div>
+           
             
         </div>        
     </td>  
@@ -452,3 +569,50 @@
         </tfoot>
     </table>  
 <!-- end:   search_ui_foot -->
+
+
+
+
+<!-- begin: chart_header -->
+
+<input type="hidden" id="chart_label" value="{chart_label}">
+<input type="hidden" id="labels" value="{labels}">
+<input type="hidden" id="data" value="{data}">
+ 
+
+<div class="chart-container" style="position: absolute; height:96%; width: 96%; display: block ">
+    <canvas id="chartjs"  class="chartjs"  ></canvas>
+</div>
+
+<link rel="stylesheet" type="text/css" href="../css/reportes.css" /> 
+<script type="text/javascript" src="../js/jquery-1.11.2.min.js" ></script>
+<script type="text/javascript" src="../js/jquery-ui/jquery-ui.min.js" ></script>      
+<script type="text/javascript" src="../js/functions.js" ></script>
+<script type="text/javascript" src="../js/Chart.min.js" ></script>
+<!-- end:   chart_header  -->
+
+<!-- begin: draw_chart noeval -->
+       
+    <script>
+        //$(document).ready(function(){
+          
+           var  chart_label = $("#chart_label").val();
+           var  labels = JSON.parse($("#labels").val().replace(/'/g, '"'));
+           var  data_val =  JSON.parse($("#data").val()); 
+            
+           var graph = new Chart($("#chartjs"),{
+            "type":"line",
+            "data":{"labels":labels,
+            "datasets":[
+                {"label":chart_label,
+                 "data":data_val,
+                 "fill":false,
+                 "responsive":true,
+                 "maintainAspectRatio":false,
+                 "borderColor":"rgb(237, 28, 36)",
+                 "lineTension":0.1}]},
+             "options":{}
+         });
+    // });
+    </script>  
+<!-- end:   draw_chart  -->

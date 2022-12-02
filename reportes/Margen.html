@@ -1,0 +1,48 @@
+<!-- begin: header noeval -->
+<head>
+   <link rel="stylesheet" type="text/css" href="../css/reportes.css" />     
+</head>
+ 
+<!-- end:   header -->
+ 
+
+<!-- begin: head -->
+ 
+ 
+<table class="report_cab" border="1" cellspacing="0" cellpadding="0" > 
+    <tr>
+        <th style="width: 15%" rowspan="2"><img src="../img/logo.png" style="width:40px"></th> 
+        <th style="width: 70%;">Reporte de Margen de Ganancias</th>
+        <th style="font-size: 8px;width: 15%" rowspan="2">{user}-{time}</th> 
+    </tr> 
+    <tr>
+        <td style="font-size: 12px;font-family: cambria;text-align: center">
+            <label><b>Periodo:</b></label> {desde} <label><b>&DoubleLongLeftRightArrow;</b></label> {hasta}  &nbsp;&nbsp;
+            <label><b>Sucursal:</b></label> {suc}&nbsp;&nbsp; <label><b>Tipo:</b></label> {tipo} 
+        </td>
+    </tr>
+</table>
+ 
+    
+<!-- end:   head -->    
+
+<!-- begin: data_cab --> 
+
+<table border="1" cellspacing="0" cellpadding="0" class="report_data" style="width: 100%;border-collapse: collapse;"> 
+    <tr class="report_header"><th>N&deg;</th><th>Folio</th><th>Fecha</th><th>Cliente</th> <th>Valor Costo</th><th>Valor Venta</th><th>Margen</th></tr>
+
+<!-- end:   data_cab -->
+
+<!-- begin: data --> 
+<tr><td class="item">{f_nro}</td><td class="item">{folio}</td><td class="itemc">{fecha}</td> <td class="item">{cliente}</td><td class="num">{precio_costo}</td><td class="num">{subtotal}</td><td class="num">{margen}</td></tr>
+<!-- end:   data -->
+
+ 
+
+<!-- begin: footer -->   
+<tr>
+    <td colspan="6"></td>
+    <td class="num"><b>{total_margen}</b></td>
+</tr>
+</table>  
+<!-- end:   footer  -->

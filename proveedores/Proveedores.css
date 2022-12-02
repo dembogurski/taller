@@ -1,7 +1,4 @@
-body{
-    margin: 0;
-    padding: 0;
-}
+
 .form{
     z-index: 10;   
     background-color: rgb(80,80,80);
@@ -38,7 +35,7 @@ body{
 }
 
 .list_container { 
-   margin: 1cm auto;
+   margin: 1cm 10px;
    max-width: 1280px
 }
 

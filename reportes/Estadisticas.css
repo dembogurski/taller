@@ -1,0 +1,148 @@
+
+/* 
+    Created on : 18 ago. 2022, 17:44:24
+    Author     : Ing. Doglas A. Dembogurski Feix
+*/
+
+.fondo{
+    background-color: wheat;
+    height: 100%;
+    width:  100%;
+}
+.menu_filter_bar{
+    margin : 10px auto;
+    padding: 4px;
+    background-color: white;
+    background-color: white;    
+    text-align: center;
+    width: 30%;
+    border: solid gray 1px;
+    border-radius: 9px;
+    font-family: nunito;
+}
+.btn_menu :hover{
+    cursor: pointer;
+    background-color: white
+}
+
+.fecha{
+    text-align: center;
+}
+
+.stat_container{
+    border: solid gray 0.5px;
+    border-radius: 30px 30px 0 0;
+    background-color: whitesmoke;
+    height: auto;
+    text-align: center;
+}
+.activo{
+    background: black;
+    color: white;
+    font-weight: bold;
+}
+
+#indicador{
+    font-weight: bolder;
+    font-size: 20px;
+    font-family: cambria;
+}
+.div_grafico{
+    border: solid gray 1px;
+    border-radius: 9px;
+    background-color: white; 
+    margin: 0 auto;
+    height: auto;
+}
+
+#div_grafico_menu{
+    text-align: center;
+}
+
+#grafico_ventas_gastos{
+    height: 350px;
+}
+
+.nav_ventas{
+    background-color: white;
+    font-family: cambria;
+    width: 120px;
+    height: 34px;
+    font-size: 14px;
+    padding-top: 6px;
+    color:black;     
+    border-radius: 9px 0 0 9px;    
+    border-width: 1px 0 1px 1px;
+    border-style: solid;
+    border-color: gray;
+}
+.nav_gastos{
+    background-color: white;
+    font-family: cambria;    
+    width: 120px;
+    height: 34px;
+    font-size: 14px;
+    padding-top: 6px;
+    border-radius: 0 9px 9px 0;
+    border-width: 1px 1px 1px 0;
+    border-style: solid; 
+    border-color: gray;
+}
+
+.nav_ventas:hover, .nav_gastos:hover{
+    cursor: pointer;
+}
+
+.nav_ventas_active{
+    background-color: green;
+    font-weight: bolder; 
+    color:white;    
+}
+.nav_gastos_active{
+    background-color: #d00c54;
+    font-weight: bolder;
+    color:white;
+}
+.info_grafico{
+    font-family: cambria;
+    font-size: 15px;
+    font-weight: bolder;
+}
+
+.dona_rosa_claro{
+    background-color: #ffcccc;
+}
+.dona_rojo_fuerte{
+    background-color: #d00c54;
+}
+
+.clientes_deudores{
+   stroke: lightskyblue    
+}
+.clientes_cobrados{
+   stroke: goldenrod
+}
+.fila_producto{
+    border:solid gray 1px;
+    margin-bottom: 4px; 
+}
+
+ 
+.art_component_image{
+     
+    line-height: 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #f9f9f9;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;  
+    border-radius: 5px;        
+    border:solid gray 1px;
+    box-shadow: 0 0 25px rgb(232, 232, 232) inset, 0 1px 0 rgb(195, 195, 195), 0 2px 0 rgb(201, 201, 201), 0 2px 3px rgb(51, 51, 51);
+    height: 90px;
+    
+    padding: 0;
+    margin: 0;
+    text-align: center;    
+    cursor: pointer;
+}

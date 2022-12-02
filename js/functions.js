@@ -59,7 +59,7 @@ function getOS(){
     return OSName;
 }
 
-function load(url,parameters,callback){
+function load(url,parameters,callback){      
         var callback = callback||function(){};
         parameters.touch = touch;
          
@@ -101,6 +101,7 @@ function comprasEnProseso(link){
     load(link,{usuario:getNick(),session:(getCookie(getNick()).sesion),suc:getSuc(),estado:"En Proceso"});
 }
 
+ 
 function entradaMercaderias(link){   
     load(link,{usuario:getNick(),session:(getCookie(getNick()).sesion),suc:getSuc()},function(){ preconfigurar(); });
 }
@@ -348,6 +349,34 @@ function redondeo50(valor){
     var valor_redondeado =  parseInt(valor) + parseInt(valor_redondear);     
     return valor_redondeado; 
 }
+
+/**
+ * Dado un valor devuelve otro en funcion del % 50 Ej.:  14521 --> 14500,  14532 --> 14550    
+ * Resolucion 347 SEDECO
+ * @param {float} valor
+ * @param {string} moneda 
+ * @returns {redondear.valor_redondeado}  
+ */
+  
+function redondearMoneda(valor,moneda){
+    var multiplo =50;
+    var umbral = 25;
+    if(moneda !== "G$"){
+      multiplo = 0.05; 
+      umbral = 0.025;
+    }
+    
+    var resto = valor % multiplo;    
+    var valor_redondear = 0;
+    if(resto >= umbral ){
+        valor_redondear = parseFloat(multiplo - resto);          
+    }else{
+        valor_redondear = resto * -1;        
+    }  
+    var valor_redondeado =  parseFloat(valor) + parseFloat(valor_redondear);     
+    return valor_redondeado; 
+}
+
 
 /**
  * Ayuda a la Memoria del Programador

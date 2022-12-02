@@ -1,15 +1,16 @@
 /* 
     Created on : 13/02/2015, 10:39:40 AM
-    Author     : MarijoaTI
+    Author     : Doglas A. Dembogurski
 */
 @font-face {
     font-family: times;
     src: url(fonts/times.ttf);
 }
 @font-face {
-    font-family: marijoa;
-    src: url(fonts/marijoa.ttf);
+    font-family: qubit;
+    src: url(fonts/qubit.ttf);
 }
+ 
 *{margin: 0;
   padding: 0;
   font-family: times;
@@ -121,12 +122,12 @@ header{
 }
 header *:not(option){display: inline;}
 header .emp{       
-    font-family: marijoa;
+    font-family: qubit;
     font-size: 2vw;
     letter-spacing: 17px;
 }
 header .main_usuario{
-    font-family: marijoa;
+    font-family: qubit;
     font-size: 12px;
     position: absolute;
     right: 3px;
@@ -134,7 +135,7 @@ header .main_usuario{
     margin:-8px auto
 }
 header .sucursal{
-    font-family: marijoa;
+    font-family: qubit;
     font-size: 11px;
     position: absolute;
     left: 3px;
@@ -177,6 +178,7 @@ header .sucursal{
     width: 100%;
     overflow-x:scroll;
     z-index: -1;
+    background: white;
 }
 #loading{
     top: 40%;
@@ -234,7 +236,7 @@ header .sucursal{
 }
 @media only screen and (max-width: 720px) {
     header .emp {
-       font-family: marijoa;
+       font-family: qubit;
        font-size: 11px;
        letter-spacing: 7px;
        text-shadow: 0 0 3px #D3D3D3;

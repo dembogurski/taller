@@ -20,19 +20,24 @@ class CargarEntradaMercaderias {
         $nro_pedido = $_POST['nro_pedido']; 
          
         $t = new Y_Template("EntradaMercaderias.html");
+    
         $ms = new My();
-        $ms = new My();
+        
+        /* 
         $ms->Query("SELECT pantone,nombre_color AS COLOR FROM pantone WHERE estado = 'Activo' ORDER BY nombre_color ASC");
+        
         $colores = "";
         //array_map('utf8_encode', $ms->Record);
         while ($ms->NextRecord()) {    
-            $color = utf8_encode( $ms->Record['COLOR']);    
+            //$color = utf8_encode( $ms->Record['COLOR']);    
+            $color = $ms->Record['COLOR'];    
             $colores.="'$color',";
         }
         $colores = substr($colores, 0, -1);
-        $t->Set("colores", "[" . $colores . "]");
+        */
+        $t->Set("colores", "[]");
         
-         
+          
         
         $monedas = "[";
         
@@ -45,7 +50,7 @@ class CargarEntradaMercaderias {
        
         $t->Set("gmonedas", $monedas);
                 
-        
+        /*
         // Dise�os
         $ms->Query("SELECT design AS Carpeta,descrip AS Patron FROM designs WHERE  estado = 'Activo' order by design asc");
         $ms->NextRecord();
@@ -56,10 +61,11 @@ class CargarEntradaMercaderias {
         }
         $designs = substr($designs, 0, -1);
         $t->Set("designs", "[" . $designs . "]");
+        */
         
-        
-        $t->Set("nro_ped", $nro_pedido);
+        $t->Set("nro_ped", "0");
         $t->Show("headers");
+        $t->Show("script_entrada_merc");    
         $t->Show("titulo_entrada");
         
         $my = new My();
@@ -106,7 +112,7 @@ class CargarEntradaMercaderias {
         $ruc = $ms->Record['RUC'];
         $t->Set("ruc_proveedor", $ruc);    
             
-        $sql = "SELECT suc,nombre FROM sucursales WHERE estado  = 'Activo' AND suc <> '13'  ORDER BY suc ASC";
+        $sql = "SELECT suc,nombre FROM sucursales WHERE tipo != 'Sub-Deposito' and estado = 'Activo' and suc <> '50'  ORDER BY suc ASC";
         $my->Query($sql);
         $sucs = "";
         while ($my->NextRecord()) {
@@ -143,7 +149,10 @@ class CargarEntradaMercaderias {
             $paises .="<option value='$Code'>$Name</option>";
         }
         $t->Set("paises", $paises);
-         
+        
+        if($estado != "Abierta"){
+           $t->Set("disabled",'disabled="disabled"');
+        }         
         
         $t->Show("cabecera_entrada_existente");
          
@@ -157,11 +166,11 @@ class CargarEntradaMercaderias {
     }
     private function getColores(){
         $link = new My();
-        $link->Query("SELECT pantone ,nombre_color AS COLOR FROM pantone where  estado = 'Activo' ORDER BY nombre_color ASC");
+        $link->Query("SELECT pantone ,nombre_color   FROM pantone where  estado = 'Activo' ORDER BY nombre_color ASC");
         $colores = array();
         while($link->NextRecord()){
             $Code = $link->Record['pantone'];
-            $Name = utf8_encode($link->Record['Name']);
+            $Name =  $link->Record['nombre_color'] ;
             $colores[$Code] = $Name;
             //$colores .= "<option value='$Code'>$Name</option>";
         }

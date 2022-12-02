@@ -1,32 +1,80 @@
 {
-    "Servicios":{        
+    
+    "Clientes":{        
+        "id":"6.1",
+        "help":"Datos de Clientes",
+        "url":"clientes/ABMClientes.class.php",    
+        "function":"genericLoad",
+        "icon":"img/menu/clients.png"
+    },
+    "Vehiculos":{        
+        "id":"6.1",
+        "help":"Datos de Vehiculos",
+        "url":"clientes/Moviles.class.php",    
+        "function":"genericLoad",
+        "icon":"img/menu/hyundai.png"
+    },
+    "Recepcion":{            
+        "id":"11",
+        "help":"Recepcion",
+        "url":"recepcion/Recepcion.class.php",
+        "function":"genericLoad",
+        "icon":"img/menu/recepcion.png"
+     },
+     "Diagnosticos":{            
+        "id":"12",
+        "help":"Diagnosticos",
+        "url":"diagnosticos/Diagnosticos.class.php",
+        "function":"genericLoad",
+        "icon":"img/menu/diagnostic-tool.png"
+     },
+     "Ordenes de Trabajo":{            
+        "id":"12.1",
+        "help":"Ordenes de Trabajo",
+        "url":"diagnosticos/OrdenesTrabajo.class.php",
+        "function":"genericLoad",
+        "icon":"img/menu/orders.png"
+     },
+    "Facturacion":{        
         "id":1,
-        "help":"Acceder a Servicios",
+        "help":"Acceder a Facturacion",
         "width":"480",
-        "Diagnosticos":{            
-            "id":"11",
-            "help":"Diagnosticos",
-            "url":"diagnosticos/Diagnosticos.class.php",
-            "function":"genericLoad"
-         },
-        "Nuevo Servicio":{            
+        "icon":"img/menu/servicio-al-cliente.png",        
+        "Nuevo Presupuesto":{            
             "id":"1.1",
-            "help":"Abrir Nueva Factura de Servicios",
-            "url":"ventas/NuevaVenta.class.php",
-            "function":"genericLoad"
+            "help":"Abrir Nueva Factura de Productos/Servicios",
+            "url":"ventas/NuevaVenta.class.php?estado=Presupuesto",
+            "function":"genericLoad",
+            "icon":"img/menu/budget.png"      
          },
-        "Servicios Abiertos":{            
+        "Presupuestos Abiertos":{            
             "id":"1.2",
-            "help":"Listado de Servicios Abiertos",
+            "help":"Listado de Presupuestos Abiertos",
+            "url":"ventas/VentasAbiertas.class.php?estado=Presupuesto",
+            "function":"genericLoad",
+            "icon":"img/menu/budget.png"      
+         },
+         "Nueva Venta":{            
+            "id":"1.1",
+            "help":"Abrir Nueva Factura de Productos/Servicios",
+            "url":"ventas/NuevaVenta.class.php",
+            "function":"genericLoad",
+            "icon":"img/menu/servicio-al-cliente.png"      
+         },
+        "Ventas Abiertas":{            
+            "id":"1.2",
+            "help":"Listado de Ventas Abiertas",
             "url":"ventas/VentasAbiertas.class.php",
-            "function":"genericLoad"
-         }, 
-         "Ventas Discriminadas":{            
-            "id":"1.6",
-            "help":"Ventas Discriminadas y/o Mayoristas",
-            "url":"ventas/VentasDiscriminadas.class.php",
-            "function":"genericLoad"
-         }, 
+            "function":"genericLoad",
+            "icon":"img/menu/servicio-al-cliente.png"      
+         },
+        "Ventas Cerradas":{            
+            "id":"1.7",
+            "help":"Listado de Ventas Cerradas",
+            "url":"ventas/VentasAbiertas.class.php?estado=Cerrada",
+            "function":"genericLoad",
+            "icon":"img/menu/servicio-al-cliente.png"      
+         },
          "Nueva Reserva":{            
             "id":"1.3",
             "help":"Genera una Nueva Reserva",
@@ -38,101 +86,13 @@
             "help":"Mis Reservas Abiertas",
             "url":"reservas/ReservasAbiertas.class.php",
             "function":"genericLoad"
-         },     
-         "Nota de Pedido":{            
-            "id":"1.5",
-            "help":"Notas de Pedido",
-            "Solicitudes de Traslado":{
-                "id":"1.5.1",
-                "help":"Pedidos de Traslados de Mercaderias",
-                "url":"pedidos/SolicitudTraslado.class.php",
-                "function":"genericLoad"  
-            },
-            "Solicitudes de Traslado (Mobile)":{
-                "id":"1.5.7",
-                "help":"Pedidos de Traslados de Mercaderias",
-                "url":"pedidos/SolicitudTrasladoMobile.class.php",
-                "function":"genericLoad"  
-            },
-            "Solicitudes de Tranlado Entrantes":{        
-            "id":"1.5.6",
-            "help":"Solicitudes de Traslado Entrantes",
-            "url":"produccion/SolicitudesTraslado.class.php",    
-            "function":"genericLoad"  
-            },
-            "Pedidos de Compra":{
-                "id":"1.5.2",
-                "help":"Pedidos de Compras de Mercaderias",
-                "url":"pedidos/NotasPedidoAbiertas.class.php",
-                "function":"notasPedidoAbiertas"  
-            },
-            "Tracking de Pedidos":{
-                "id":"1.5.4",
-                "help":"Tracking de Pedidos",
-                "url":"pedidos/TrackingPedidos.class.php",
-                "function":"genericLoad"  
-            },
-            "Orden de Fabricacion":{
-                "id":"1.5.8",
-                "help":"Orden de Fabricacion",
-                "url":"produccion/OrdenFabric.class.php",
-                "function":"genericLoad"  
-            }  
          } 
-         
     },
-    "Empaque":{        
-        "id":2,
-        "help":"Acceder a Empaque",
-        "Control de Mercaderias":{            
-            "id":"2.1",
-            "help":"Control de Mercaderias en Empaque",
-            "url":"empaque/VentasEnEmpaque.class.php",
-            "function":"genericLoad"
-         },
-         "Ajustes":{            
-            "id":"2.2",
-            "help":"Ajuste de Mercaderias",
-            "url":"productos/Ajustes.class.php",
-            "function":"genericLoad"
-         },
-         "Impresion Codigo Barras":{            
-            "id":"2.3",
-            "help":"Impresion Codigo Barras",
-            "url":"empaque/ImpresionCodigos.class.php",
-            "function":"genericLoad"
-         }
-         ,
-         "Entrada Mercaderias":{            
-            "id":"2.4",
-            "help":"Entrada Directa de Mercaderias",
-            "url":"empaque/EntradaDirecta.class.php",
-            "function":"genericLoad"
-         },        
-         "Notas de Credito":{            
-            "id":"3.10",
-            "help":"Notas de Credito Abiertas/Pendientes",
-            "url":"notas_credito/NotasCreditoAbiertas.class.php",
-            "function":"genericLoad"
-         }  
-         
-    },  
-    
-    "Caja":{        
+      
+    "Caja":{             
         "id":3,
-        "help":"Acceder a Caja",
-        "Ventas en Caja":{            
-            "id":"3.1",
-            "help":"Listado de Ventas En Caja",
-            "url":"caja/VentasEnCaja.class.php",
-            "function":"genericLoad"
-        },
-        "Reservas en Caja":{            
-            "id":"3.5",
-            "help":"Listado de Reservas En Caja",
-            "url":"caja/ReservasEnCaja.class.php",
-            "function":"genericLoad"
-         },
+        "help":"Acceder a Caja",  
+        "icon":"img/menu/ventas_caja.png", 
         "Cobro de Cuotas":{            
             "id":"3.6",
             "help":"Cobro de Cuotas a Clientes",
@@ -155,19 +115,22 @@
             "id":"3.8",
             "help":"Arqueo de Caja",
             "url":"caja/ArqueoCaja.class.php",
-            "function":"genericLoad"
+            "function":"genericLoad",
+            "icon":"img/menu/arqueo.png" 
          },
-         "Declaracion de Documentos":{            
+         "Conceptos":{            
             "id":"3.12",
-            "help":"Declaracion de Documentos",
-            "url":"caja/DeclaracionDocumentos.class.php",
+            "help":"Conceptos de Caja",
+            "url":"caja/Conceptos.class.php",
             "function":"genericLoad"
          },
+         
          "Documentos Contables":{            
             "id":"3.3",
             "help":"Cargar Facturas/Recibos Contables",
             "url":"caja/GenFacturas.class.php",
-            "function":"genericLoad"
+            "function":"genericLoad", 
+            "icon":"img/menu/facturas.png" 
          },
          "Cotizaciones":{            
             "id":"3.4",
@@ -179,7 +142,8 @@
             "id":"3.9",
             "help":"Ajustes de Caja Ingreso y Egreso",
             "url":"caja/IngresoEgreso.class.php",
-            "function":"genericLoad"
+            "function":"genericLoad", 
+            "icon":"img/menu/ingreso_egreso.png" 
          },
          "Notas de Credito":{            
             "id":"3.10",
@@ -191,7 +155,8 @@
     },
     "Compras":{
         "id":7,
-        "help":"Acceder a Compras",
+        "help":"Acceder a Compras", 
+        "icon":"img/menu/compras.png",  
         "Pedidos de Compra Pendientes":{
             "id":"7.4",
             "help":"Solicitudes de Compra de Mercaderias Pendientes de Revision",
@@ -218,7 +183,9 @@
             "help":"Compras Abiertas",
             "width":"580",
             "url":"compras/EntradaMercaderias.class.php",    
-            "function":"entradaMercaderias"  
+            "function":"entradaMercaderias", 
+            "icon":"img/menu/compras.png"   
+            
         },
         "Fraccionamiento Logico y Distribucion":{
             "id":"7.3",
@@ -279,81 +246,58 @@
             "function":"genericLoad"  
         } 
     },     
-    "Articulos":{
+    "Inventario":{
         "id":9,
-        "help":"Articulos",
-        "Maestro de Articulos":{        
+        "help":"Inventario",
+        "icon":"img/menu/products.png" , 
+        "Maestro de Productos":{        
             "id":"9.11",
             "help":"Tabla Maestra de Articulos",
-            "url":"productos/Articulos.class.php",    
+            "url":"productos/Articulos.class.php",   
+            "icon":"img/menu/products.png" , 
+            "function":"genericLoad"  
+        },
+        "Unidades de Medida":{        
+            "id":"9.2",
+            "help":"Tabla de Unidades de Medida",
+            "icon":"img/menu/um.png",
+            "url":"productos/UM.class.php",    
             "function":"genericLoad"  
         },
         "Maestro de Lista de Precios":{        
             "id":"9.12",
             "help":"Tabla Maestra de Lista de Precios",
+            "icon":"img/menu/lista_precios.png",
             "url":"productos/ListaPrecios.class.php",    
             "function":"genericLoad"  
         },
-        "Historial de Lotes":{        
+        "Historial de Productos":{        
             "id":"9.1",
             "help":"Historial de Articulos y Lotes",
+            "icon":"img/menu/historial.png",
             "url":"productos/HistorialLote.class.php",    
             "function":"genericLoad"  
         },
-        "Manejo de Lotes":{        
-            "id":"9.2",
-            "help":"Manejo de Lotes y Descuentos",
-            "url":"productos/ManejoLotes.class.php",    
+        "Ajustes de Stock":{        
+            "id":"9.9",
+            "help":"Correccion de Stock",
+            "icon":"img/menu/update_stock.png",
+            "url":"productos/Ajustes.class.php",    
             "function":"genericLoad"  
-        },
-        "Consultar Precios":{        
-            "id":"9.8",
-            "help":"Consultar Precios",
-            "url":"productos/ConsultaPrecios.class.php",    
-            "function":"genericLoad"    
-        },
-        "Politica de Cortes":{        
-            "id":"9.3",
-            "help":"Politica de Cortes",
-            "url":"productos/PoliticaCortes.class.php",    
-            "function":"genericLoad"  
-        },
-        "Fraccionar":{        
-            "id":"9.4",
-            "help":"Fraccionar",
-            "url":"compras/Fraccionar.class.php",    
-            "function":"genericLoad"  
-        },
-        "Actualizacion de Lotes":{        
-            "id":"9.7",
-            "help":"Actualizacion de Lotes",
-            "url":"productos/ActualizarLotes.class.php",    
-            "function":"genericLoad"  
-        },
-        "Ubicar Lotes":{        
-            "id":"9.5",
-            "help":"Ubicacion de Lotes",
-            "url":"productos/Ubicar.class.php",    
-            "function":"genericLoad"  
-        },
-        "Galeria de Imagenes":{            
-            "id":"9.6",
-            "help":"Galeria de Imagenes",
-            "url":"productos/GaleriaImagenes.class.php",
-            "function":"genericLoad"
-         } ,
-        "Impresion Codigo Barras":{            
-            "id":"2.3",
-            "help":"Impresion Codigo Barras",
-            "url":"empaque/ImpresionCodigos.class.php",
-            "function":"genericLoad"
-         },
-        "Inventario":{            
-            "id":"9.10",
-            "help":"Inventario de Productos",
-            "url":"productos/InventarioProducto.class.php",
-            "function":"genericLoad"
-         }
+        }
+          
+    },
+    "Bancos":{        
+        "id":"6.4",
+        "help":"Bancos",       
+        "icon":"img/menu/bancos.png"
+        ,"Depositos y y Extracciones en C.C.":{            
+            "id":"3.2",
+            "help":"Area para Depositos y Extracciones en Cuenta Corriente",
+            "url":"bancos/Depositos.class.php",
+            "function":"genericLoad",
+            "icon":"img/menu/depositos.png" 
+         } 
     }, 
     "Produccion":{
         "id":4,
@@ -420,6 +364,7 @@
     "Administracion":{
         "id":6,
         "help":"Acceder a Administracion",
+        "icon":"img/menu/administracion.png",
         "Finanzas":{        
             "id":"6.7",
             "help":"Finanzas",
@@ -448,26 +393,31 @@
         "Clientes":{        
             "id":"6.1",
             "help":"Datos de Clientes",
-            "url":"clientes/BuscarClientes.class.php",    
-            "function":"genericLoad"  
+            "url":"clientes/ABMClientes.class.php",    
+            "function":"genericLoad" ,
+            "icon":"img/menu/clients.png"
         },
-        "Autorizados de Clientes":{        
-            "id":"6.4",
-            "help":"Datos de autorizados de Clientes",
-            "url":"clientes/Autorizados.class.php",    
-            "function":"genericLoad"  
-        },
+        
         "Extracto de Cuentas Clientes":{        
             "id":"6.2",
             "help":"Extracto de Cuenta de Clientes",
             "url":"clientes/Extractos.class.php",    
-            "function":"genericLoad"  
+            "function":"genericLoad",
+            "icon":"img/menu/extractos.png"
         },
         "Proveedores":{        
             "id":"6.8",
             "help":"Datos de Proveedores",
             "url":"proveedores/Proveedores.class.php",    
-            "function":"genericLoad"  
+            "function":"genericLoad",
+            "icon":"img/menu/proveedores.png" 
+        },
+        "Bancos":{        
+            "id":"6.4",
+            "help":"Bancos",
+            "url":"bancos/Bancos.class.php",    
+            "function":"genericLoad",
+            "icon":"img/menu/bancos.png"
         },
         "Levantar Extractos Bancarios":{        
             "id":"6.3",
@@ -486,40 +436,69 @@
     "Configuracion":{
         "id":5,
         "help":"Acceder a Configuraciones Generales",
+        "icon":"img/menu/config.png",     
         "Usuarios de Sistema":{
             "id":"5.1",
             "help":"Administraci&oacute;n de Usuarios",
             "url":"usuarios/UsersManager.php",
-            "function":"genericLoad"        
+            "function":"genericLoad",
+            "icon":"img/menu/users.png"     
         },
         "Credenciales":{
             "id":"5.2",
             "help":"Impresi&oacute;n de Credenciales de Usuarios",
             "url":"usuarios/Credencial.class.php",
-            "function":"credencial"        
+            "function":"credencial", 
+            "icon":"img/menu/credential.png" 
+            
         },
         "Perfil y Password":{
             "id":"5.4",
             "help":"Perfil de Usuario y Password",
             "url":"usuarios/UsersManager.php",
-            "function":"perfilAndPassword"        
+            "function":"perfilAndPassword", 
+            "icon":"img/menu/perfil_password.png"         
         },
         "Sistema":{
             "id":"5.3",
             "help":"Acceder a Configuraciones del Sistema",
+            "icon":"img/menu/computer-system.png",     
             "Permisos x Grupo":{
                 "id":"5.3.1",
                 "help":"Permisos por Grupo de Usuarios",
-                "url":"permisos/Permisos.class.php",
-                "function":"genericLoad"  
+                "url":"permisos/PermisosXGrupo.class.php",
+                "function":"genericLoad", 
+                "icon":"img/menu/permisos_grupo.png"     
+            },
+            "Sucursales":{
+                "id":"5.3.2",
+                "help":"Sucursales",
+                "url":"sucursales/Sucursales.class.php",
+                "function":"genericLoad", 
+                "icon":"img/menu/sucursales.png"     
             }      
-        }       
+        },
+        "Partes y Acc. de Vehiculos":{
+            "id":"5.5",
+            "help":"Partes y Accesorios de Vehiculos",
+            "url":"recepcion/AuxRecep.class.php",
+            "function":"genericLoad", 
+            "icon":"img/menu/car_parts.png"        
+        }  
+    },
+    "Estadisticas":{
+        "id":10,
+        "help":"Estadisticas",
+        "url":"reportes/Estadisticas.class.php",
+        "function":"genericLoad",
+        "icon":"img/menu/estadisticas.png"        
     },
     "Reportes":{
         "id":10,
         "help":"Reportes Varios",
         "url":"reportes/ReportesUI.class.php",
-        "function":"genericLoad"        
+        "function":"genericLoad",
+        "icon":"img/menu/reports.png"        
     }
 
 }

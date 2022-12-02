@@ -6,7 +6,7 @@ require_once("../barcodegen/RadPlusBarcodeNoFont.php");
 
 class Credencial {
 
-    function Credencial() {
+    function __construct() {
         $t = new Y_Template("Credencial.html");
         $usuario = $_REQUEST['usuario'];
         $action = $_REQUEST['action'];

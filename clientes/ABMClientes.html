@@ -1,0 +1,205 @@
+<!-- begin: headers -->   
+    <head>  
+        <link rel="stylesheet" type="text/css" href="clientes/ABMClientes.css?_=ddddddddddddddddd" /> 
+        <link rel="stylesheet" type="text/css" href="clientes/Moviles.css?_=66666666666" />   
+        <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
+        <link rel="stylesheet" type="text/css" href="recepciones/Recepciones.css?_=ttttttttttttttttttttttttttttt" /> 
+    </head>  
+<!-- end:   headers -->
+
+<!-- begin: insert_edit_form -->     
+<div class="form" id="form_clientes"></div>
+<!-- end:   insert_edit_form -->
+
+<!-- begin: data_header -->
+<div class="list_container">      
+    <table id="clientes"  border="1" class="display responsive nowrap db_tablename"  >
+        <thead>
+            <tr>
+                <th class="col_cod_cli">Cod Cli:</th><th>Nombre</th><th>CI RUC: </th> 
+            </tr>
+        </thead>
+
+<!-- end:   data_header -->
+
+
+<!-- begin: data_line -->     
+<tr> <td class="col_cod_cli">{cod_cli}</td>  <td  class="edit" onclick=editUI("{cod_cli}") >{nombre}</td> <td class="edit" onclick=editUI("{cod_cli}")>{ci_ruc}</td></tr>
+<!-- end:   data_line -->
+
+
+<!-- begin: data_foot -->     
+
+        <tfoot>
+             
+        </tfoot>
+    </table> 
+</div>
+ 
+<!-- end:   data_foot -->
+
+<!-- begin: script -->      
+    <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+    <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js" ></script>
+    <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
+    <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="js/functions.js" ></script>    
+    <script type="text/javascript" src="clientes/ABMClientes.js?_=sssssssssssssssssss" ></script>
+    <script type="text/javascript" src="clientes/Moviles.js?_=sssssssssssssssssss" ></script>
+    <script type="text/javascript" src="recepcion/Recepcion.js" ></script>
+    <script>
+       configurarClientes();    
+    </script>
+<!-- end:   script -->
+
+
+<!-- begin: edit_form_cab -->  
+<table border="0" class="form_table" id="edit_clientes" style="width: auto">
+    <tr> <th colspan="2" class="form_title" > Actualizar Clientes  </th> </tr> 
+<!-- end:   edit_form_cab -->
+
+
+<!-- begin: edit_form_data -->     
+<tr> <td class="form_label">Cod Cli:</td> <td><input class="form_text PRI" type="text" id="form_cod_cli"  readonly="readonly" required="required" size="30"  value="{value_of_cod_cli}" >*</td>  </tr>
+<tr> <td class="form_label">Tipo Doc:</td> <td>
+<select class="form_select" id="form_tipo_doc"   >{value_of_tipo_doc}</select>
+*
+<label>Categoria</label>
+<select class="form_select" id="form_cat"   >{value_of_cat}</select>
+</td>  
+</tr>
+<tr> 
+    <td class="form_label">CI RUC: </td> 
+    <td>
+        <input class="form_text" type="text" id="form_ci_ruc"   onchange="checkRUC($(this))"  size="30"  value="{value_of_ci_ruc}" >
+        <div id="msg_ruc"></div>
+    </td>  
+</tr>
+<tr> <td class="form_label">Nombre:</td> <td><input class="form_text uppercase" type="text" id="form_nombre"   required="required" size="40"  value="{value_of_nombre}" >*</td>  </tr>
+<tr> <td class="form_label">Tel:</td> <td><input class="form_text" type="text" id="form_tel"    size="30"  value="{value_of_tel}" ></td>  </tr>
+<tr> <td class="form_label">Email:</td> <td><input class="form_text" type="text" id="form_email"    size="40"  value="{value_of_email}" ></td>  </tr>
+<tr> <td class="form_label">Fecha Nac:</td> <td><input class="form_date" type="date" id="form_fecha_nac"      value="{value_of_fecha_nac}" ></td>  </tr>
+<tr> <td class="form_label">Pais:</td> <td>
+<select class="form_db_select" id="form_pais"   >{value_of_pais}</select>
+</td>  </tr>
+<tr> <td class="form_label">Ciudad:</td> <td><input class="form_text" type="text" id="form_ciudad"    size="30"  value="{value_of_ciudad}" ></td>  </tr>
+<tr> <td class="form_label">Dir:</td> <td><textarea class="form_textarea" id="form_dir" cols="40" rows="2"   >{value_of_dir}</textarea></td>  </tr>
+<tr>
+    <td id="msg"></td>
+</tr>
+<tr>
+    <td colspan="2">
+        <div id="tabs" style="height: 58%">
+            <ul>
+              <li><a href="#tab_vehiculos"  >Vehiculos</a></li>
+              <li><a href="#tab_presupuestos" onclick=getFacturas("presupuestos") >Presupuestos</a></li>
+              <li><a href="#tab_ventas" onclick=getFacturas("facturas") >Ventas</a></li>
+              <li><a href="#tab_puntos" onclick="getPuntos()" >Puntos</a></li>
+            </ul>
+            <div id="tab_vehiculos" style="text-align: left;min-height: 190px">
+                  <table border="1" style="width: 100%" id="moviles" > 
+                      <tr>
+                          <th>Marca</th><th>Modelo</th><th>Chapa</th><th></th>
+                      </tr>
+                  </table>
+            </div> 
+            <div id="tab_presupuestos"   >
+                 <table border="1" style="width: 100%" id="presupuestos" > 
+                      <tr>
+                          <th>N&deg;</th><th>Fecha</th><th>Total</th><th>Estado</th>
+                      </tr>
+                  </table>
+            </div>
+            <div id="tab_ventas"  >
+                <table border="1" style="width: 100%" id="facturas" > 
+                      <tr>
+                          <th>N&deg;</th><th>Fecha</th><th>Total</th><th>Estado</th>
+                      </tr>
+                  </table>
+            </div>
+            <div id="tab_puntos"  >
+                <table border="1" style="width: 100%" id="puntos" > 
+                      <tr>
+                          <th>Fecha</th><th>Puntos</th><th>Motivo</th><th>Fecha Canje</th><th>Estado</th>
+                      </tr>
+                </table>
+            </div>
+        </div>  
+    </td>
+</tr>
+<!-- end:   edit_form_data -->
+
+
+<!-- begin: edit_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_clientes" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeForm()">
+            <input type="button" value="Modificar Datos" onclick=updateData("edit_clientes") id="clientes_update_button">
+            <input type="button" value=" Cerrar " onclick="closeForm()" id="clientes_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   edit_form_foot -->
+
+
+
+
+
+
+<!-- begin: add_form_cab -->  
+<table border="0" class="form_table" id="add_clientes">
+    <tr> <th colspan="2" class="form_title" > (Nuevo Registro) Clientes  </th> </tr> 
+<!-- end:   add_form_cab -->
+
+
+<!-- begin: add_form_data -->     
+<tr> <td class="form_label">Cod Cli:</td> <td><input class="form_text PRI" type="text" id="form_cod_cli"    disabled="disabled"  size="30"  value="{posible_cod}" >*</td>  </tr>
+<tr> <td class="form_label">Tipo Doc:</td> <td>
+<select class="form_select" id="form_tipo_doc"  >
+<option value="C.I.">RUC</option>
+<option value="D.N.I.">DNI Arg.</option>
+<option value="R.G.">RG Brasil</option>
+<option value="Otro">Otro</option>
+</select>
+*</td>  </tr>
+<tr> 
+    <td class="form_label">CI RUC: </td> 
+    <td>
+        <input class="form_text" type="text" id="form_ci_ruc"  size="30" onchange="checkRUC($(this))"  value="" >
+        <div id="msg_ruc"></div>
+    </td>  
+</tr>
+<tr> <td class="form_label">Nombre:</td> <td><input class="form_text uppercase" type="text" id="form_nombre"    required="required"  size="40"  value="" >*</td>  </tr>
+<tr> <td class="form_label">Tel:</td> <td><input class="form_text" type="text" id="form_tel"      size="30"  value="" ></td>  </tr>
+<tr> <td class="form_label">Email:</td> <td><input class="form_text" type="text" id="form_email"      size="40"  value="" ></td>  </tr>
+<tr> <td class="form_label">Fecha Nac:</td> <td><input class="form_date" type="date" id="form_fecha_nac"        value="" ></td>  </tr>
+<tr> <td class="form_label">Pais:</td> <td>
+<select class="form_db_select" id="form_pais"  >{value_of_pais}</select>
+</td>  </tr>
+<tr> <td class="form_label">Ciudad:</td> <td><input class="form_text" type="text" id="form_ciudad"      size="30"  value="" ></td>  </tr>
+<tr> <td class="form_label">Dir:</td> <td><textarea class="form_textarea" id="form_dir" cols="28" rows="3"   ></textarea></td>  </tr>
+<tr>
+    <td id="msg"></td>
+</tr>
+<!-- end:   add_form_data -->
+
+
+<!-- begin: add_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_clientes" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeForm()">
+            <input type="button" value=" Grabar " onclick=addData("add_clientes") id="clientes_save_button">
+            <input type="button" value=" Cerrar " onclick="closeForm()" id="clientes_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   add_form_foot -->
+
+
+<!-- begin: no_result -->     
+<div style="text-align: center;margin: 2cm auto"> Ningun registro para Clientes <button type="button" id="add_button_proveedores" onclick="addUI()">Agregar un nuevo registro para (Clientes)</button></div> 
+<!-- end:   no_result -->

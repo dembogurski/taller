@@ -22,7 +22,10 @@ function configurar(){
 }
 
 function showKeyPad(){
-    showNumpad("lote",buscarDatos,false);
+    //showNumpad("lote",buscarDatos,false);
+    showRelative("lote",buscarDatos,false);
+    var position = $("#lote").offset();   
+    $('#n_keypad').css({ 'top'  : position.top -50 ,'left' : position.left -2});
 }
 
 function buscarDatos(){
@@ -35,12 +38,20 @@ function buscarDatos(){
     $("#img").fadeOut("fast");
     $("#codigo, #h_precio1, #um, #suc, #ancho, #gramaje, #descrip, #stock, #padre, #fab_color_cod").val(""); 
     $(".fracciones").fadeOut();
+    
+    var suc = getSuc();
+    if($("#only_suc").is(":checked")){
+        suc = "%";
+    }
+    
     var sData = {
       "action":"buscarDatosDeCodigo",
       "lote":$("#lote").val(),
       "categoria":1,
-      "suc":getSuc()
+      "suc":suc,
+      "usuario":getNick()
     };
+    var ult_precio = 0;
     $.post("Ajax.class.php",sData,function(data){
       $("#msg").html("<img src='img/ok.png'>");
       if(data.existe)  {
@@ -49,10 +60,16 @@ function buscarDatos(){
           var valor = val;
           switch(key){
             case 'stock':
-            case 'ancho':
+            case 'ancho':    
             case 'gramaje':
+            case 'precio':  
+              ult_precio  = parseFloat(val);
               valor = parseFloat(val).format(2, 3, '.', ',');
+            case 'descuento':
+               var preciox = parseFloat( ult_precio - valor ).format(2, 3, '.', ',');
+               $("#precio").val(preciox);
               break;
+             
           }
           if(sData.suc != data.suc){
             $("#msg").addClass("error");
@@ -64,9 +81,12 @@ function buscarDatos(){
           }
           
         });
-        if(data.Img != "" && data.Img != undefined){
+        $("#estado_venta").removeAttr("class");
+        $("#estado_venta").addClass($("#estado_venta").val());
+        
+        if(data.img != "" && data.img != undefined){
             var images_url = $("#images_url").val();
-            $("#img").attr("src",images_url+"/"+data.Img+".thum.jpg");
+            $("#img").attr("src",data.img);
             /* $("#img").click(function(){
                 verImagen();
             }); */
@@ -77,11 +97,13 @@ function buscarDatos(){
             $("#img").fadeIn(2500);
         }
         $("#h_precio1").val((parseFloat(data.Precio) - ((parseFloat(data.Precio)*parseFloat(data.Descuento))/100)).format(2, 3, '.', ','));
-        $("#imprimir, #fracciones").removeAttr("disabled");
+        $("#imprimir, #fracciones, #stock_comp").removeAttr("disabled");
+        
          
         $("input#ordenProcesamiento").removeAttr("disabled");
         if($("#mnj_x_lotes")==="Si"){
            getFallas();
+           
         }
       }else{
         $("#msg").addClass("error");
@@ -91,6 +113,23 @@ function buscarDatos(){
         $("input#ordenProcesamiento").attr("disabled",true);
       }
     },"json");
+}
+
+function historialUbicaciones(){
+    var codigo = $("#codigo").val();
+    var lote = $("#lote").val(); 
+    if(codigo != "" && lote != ""){
+        var url = "productos/HistorialUbicaciones.class.php?codigo="+codigo+"&lote="+lote+"";
+        var title = "Historial de Ubicaciones de Lote";
+        var params = "width=980,height=480,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no";
+
+        if(!ventana){        
+            ventana = window.open(url,title,params);
+        }else{
+            ventana.close();
+            ventana = window.open(url,title,params);
+        }     
+    }
 }
 
 function  historial(){
@@ -191,9 +230,11 @@ function verOrdenProcesamiento(){
         $("input#ordenProcesamiento").css("color","green");
     }else{       
         $("div#extraInfo").empty();
-        var sendParam = { "action": "enReservaJSON", "args": $("input#lote").val() };
+        var codigo = $("#codigo").val();
+        var lote = $("input#lote").val();
+        var sendParam = { "action": "enReservaJSON",codigo:codigo, "lote": lote };
         var tabla = $("<table/>",{"class":"ordenProc"});
-        var ths = ['Destino','Cliente','Cantidad','Fecha','Usuario', 'Estado'];
+        var ths = ['Destino','Cliente','Cantidad','Fecha','Usuario', 'Estado', 'Obs'];
         var trh = $("<tr/>");
         for(th in ths){
             $("<th/>",{"text":ths[th]}).appendTo(trh);
@@ -315,4 +356,55 @@ function falla(bool,cod_falla){
    $(".falla").css("visibility",visible);  
    $("#cod_falla").text(cod_falla);
    $("#cm_falla").val("");
+}
+
+function buscarStockComprometido(){
+    var lote = $("#lote").val();
+    $.ajax({
+        type: "POST",
+        url: "Ajax.class.php",
+        data: {"action": "buscarStockComprometido", lote: lote,suc:getSuc(),"incluir_reservas":"Si","incluir_pedidos":"Si"},
+        async: true,
+        dataType: "json",
+        beforeSend: function () {
+            $("#msg").html("Buscando stock comprometido!<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+            $("#stock_comprometido").html("");
+            $("#stock_compr").html("");
+        },
+        success: function (data) {   
+            var comprometido = 0;
+            var st_comp = "<table class='stock_comprometido' border='1'>";
+            st_comp+="";
+            if(data.length > 0){
+                var st_comp = "<table class='tabla_stock_comprometido' border='1'>";
+                st_comp+="<tr><th colspan='6' style='background:orange;'>Stock Comprometido</th><th style='text-align:center;background:white' onclick='closeStockComp()'>X</th></tr>";
+                st_comp+="<tr class='titulo' style='font-size:10px'><th>Doc</th><th>N�</th><th>Usuario</th><th>Fecha</th><th>Suc</th><th>Estado</th><th>Cantidad</th><tr>";
+                for (var i in data) {
+                    var tipodoc = data[i].TipoDocumento;
+                    var nro = data[i].Nro;
+                    var usuario_ = data[i].usuario;
+                    var fecha = data[i].fecha;
+                    var suc = data[i].suc;
+                    var estado = data[i].estado;
+                    var cantidad = data[i].cantidad;
+                    comprometido += parseFloat(cantidad);
+                    st_comp+="<tr style='background:white'><td>"+tipodoc+"</td><td>"+nro+"</td><td>"+usuario_+"</td><td>"+fecha+"</td><td class='itemc'>"+suc+"</td><td>"+estado+"</td><td class='num'>"+cantidad+"</td></tr>";
+                }   
+                
+                $("#stock_comprometido").html(st_comp);
+                $("#area_trab").fadeOut();
+                $("#stock_comprometido").fadeIn();
+                $("#msg").html("No se puede fraccionar, vea tabla de Stock Comprometido"); 
+            }else{
+                $("#msg").html(""); 
+                $("#area_trab").fadeIn();
+            }
+            
+        }
+    });     
+} 
+
+function closeStockComp(){
+    $("#stock_comprometido").html("");
+    $("#stock_comprometido").fadeOut();
 }

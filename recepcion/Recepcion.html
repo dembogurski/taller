@@ -1,6 +1,7 @@
 <!-- begin: headers -->   
     <head>  
-        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=2228888888888888" />      
+        <link rel="stylesheet" type="text/css" href="recepcion/Recepcion.css?_=2228888888888888" />  
+        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=2228888888888888" />   
         <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
         <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
@@ -8,16 +9,16 @@
 <!-- end:   headers -->
 
 <!-- begin: insert_edit_form -->     
-<div class="form" id="form_diagnosticos"></div>
+<div class="form" id="form_recepcion"></div>
 <!-- end:   insert_edit_form -->
 
 <!-- begin: data_header -->
 <input type="hidden" id="filter" value="{filter}">
 <div class="list_container">      
-    <table id="diagnosticos"  border="1" class="display responsive nowrap db_tablename"  >
+    <table id="recepcion"  border="1" class="display responsive nowrap db_tablename"  >
         <thead>
             <tr>
-                <th style="display:none">ID</th> <th>Chapa</th><th>Cliente</th><th>Marca</th> 
+                <th style="display:none">ID</th> <th>Chapa</th><th>Propietario</th><th>Marca</th> 
             </tr>
         </thead>
 
@@ -25,7 +26,7 @@
 
 
 <!-- begin: data_line -->     
-<tr> <td style="width: 15px; display: none">{id_diag}</td>  <td onclick=editUI("{id_diag}")>{chapa}</td><td class="cliente" onclick=editUI("{id_diag}")>{cod_cli}</td> <td>{marca}</td>  </tr>
+<tr> <td style="width: 15px; display: none">{id_diag}</td>  <td onclick=editRecepcionUI("{id_diag}")>{chapa}</td><td class="cliente" onclick=editRecepcionUI("{id_diag}")>{cod_cli}</td> <td>{marca}</td>  </tr>
 <!-- end:   data_line -->
 
 
@@ -44,38 +45,69 @@
     <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
     <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
     <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="js/jquery.maskedinput.min.js" ></script>
     <script type="text/javascript" src="js/functions.js" ></script>  
     <script type="text/javascript" src="js/jquery.autocomplete.js" ></script>
     <script type="text/javascript" src="clientes/clientes.js?_=4564545" ></script> 
+    <script type="text/javascript" src="recepcion/Recepcion.js?_=6666666666666666" ></script>
     <script type="text/javascript" src="diagnosticos/Diagnosticos.js?_=6666666666666666" ></script>
     
-     
+    <script>
+       configurarRecepcion();    
+    </script> 
     
 <!-- end:   script -->
 
 
 <!-- begin: edit_form_cab -->  
-<table border="0" class="form_table" id="edit_diagnosticos" style="width: auto">
-    <tr> <th colspan="2" class="form_title" > Actualizar Diagnosticos  </th> </tr> 
+<table border="0" class="form_table" id="edit_recepcion" style="width: auto">
+    <tr> <th colspan="4" class="form_title" > Recepci&oacute;n </th> </tr> 
 <!-- end:   edit_form_cab -->
 
 
 <!-- begin: edit_form_data -->     
 <tr style="display: none" > <td class="form_label">Id Diag:</td> <td><input class="form_number PRI" type="number" id="form_id_diag"  readonly="readonly" required="required" size="10" onkeypress="return onlyNumbers(event)" value="{value_of_id_diag}" >*</td>  </tr>
 
-<tr> <td class="form_label">Chapa:</td> <td><input class="form_text MUL" type="text" id="form_chapa"  readonly="readonly"  required="required"  size="30"  value="{value_of_chapa}" ></td>  </tr>
-<tr> <td class="form_label">Marca:</td> <td>
-<select class="form_db_select MUL" id="form_marca" onchange="buscarLogo()"  >{value_of_marca}</select>
-<img id="logo" src="img/car_logos/no_logo.png" class="car_logo" width="40">
-</td>   </tr>
-<tr> <td class="form_label">Cliente:</td> <td>
-<select class="form_db_select MUL" id="form_cod_cli"   >{value_of_cod_cli}</select>
-</td>  </tr>
-<tr > <td class="form_label">Fecha</td> <td><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
-<tr> <td class="form_label">Descrip Gral:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   >{value_of_descrip}</textarea></td>  </tr>
- 
 <tr> 
-    <td colspan="3">
+    <td class="form_label" style="height: 40px"><img id="logo" style="margin-bottom: 0px" src="img/car_logos/{value_of_marca}.png" class="car_logo" width="40"></td>
+    <td colspan="3"> <span class="modelo">{value_of_modelo}</span>
+        <div class="chapa">
+            <div class="top_chapa">--&nbsp;&nbsp;&nbsp;&nbsp;MERCOSUR&nbsp;&nbsp;&nbsp;&nbsp;--</div>
+            <div class="nro_chapa">{value_of_chapa}</div>
+        </div>  
+      <input type="hidden" class="form_db_select MUL" id="form_marca" value="{value_of_marca}"  >
+</td>  
+</tr>
+<tr> <td class="form_label">Propietario:</td> <td  colspan="3">
+        <input type="hidden"  id="form_cod_cli"  value="{value_of_cod_cli}" >
+        <input type="text" class="form_text MUL" id="cliente" size="40" readonly="readonly"  value="{value_of_cliente}" >
+</td>  </tr>
+<tr > <td class="form_label">Fecha</td> <td  colspan="3"><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
+<tr> <td class="form_label">Sintomas:</td> <td  colspan="3"><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   >{value_of_descrip}</textarea></td>  </tr>
+<tr>
+    <td colspan="3" style="color:brown;font-weight: bolder" class="titulo">Recepci&oacute;n del Veh&iacute;culo</td>
+    <td class="titulo itemc"> <a href="javascript:datosRecepcion({value_of_id_diag})" id="mas_datos" style="text-decoration: none; ">Mas datos</a> </td>
+</tr>
+<tr>
+    <td class="form_label">Km recibido:</td>
+    <td><input type="number" class="form_number MUL" size="6"   value="{value_of_km_actual}" readonly="readonly" ></td>
+    <td class="form_label"><img src="img/fuel_tank.png"  style="height: 36px"></td>
+    <td>
+        <table style="border-collapse: collapse;width: 100%">
+            <tr><td style="font-family: cambria">0------------1/2------------1</td></tr>
+            <tr><td><input type="range" id="form_porc_combustible"  disabled="disabled" style="width: 124px" value="{value_of_porc_combustible}" min="0" max="100" step="5" ></td></tr>
+        </table> 
+    </td>
+</tr> 
+
+<tr id="datos_recepcion" style="display: none">
+    <td colspan="4">
+        <table border="0" style="width: 100%;margin: 0 auto;border-collapse: collapse;background-color: whitesmoke" id="tabla_recepcion" ></table>
+    </td>
+</tr>
+
+<tr> 
+    <td colspan="4">
         <table id="photo_container" border="0" style="margin: 0;padding: 0;width: 100%;border-collapse: collapse"></table> 
     </td> 
      
@@ -84,13 +116,22 @@
 
 
 <!-- begin: edit_form_foot -->     
-<tr><td colspan="2" style="text-align: center" id="msg_diagnosticos" ></td></tr>
+<tr><td colspan="4" style="text-align: center" id="msg_recepcion" ></td></tr>
+
+<tr>
+    <td colspan="4" style="text-align: center">
+        <img src="img/printer-02_32x32.png" class="diag_print" onclick="imprimirRecepcion()" > 
+        <input type="button" value="Crear Diagnostico" onclick="crearDiagnostico()">
+        <input type="button" value="Crear Presupuesto" onclick="crearPresupuesto()">
+    </td>
+</tr>
+
     <tr>
-        <td colspan="2" style="text-align: center">
+        <td colspan="4" style="text-align: center">
             <input type="button" value="Cancelar" onclick="closeForm()">
-            <input type="button" value="Modificar Datos" onclick=updateData("edit_diagnosticos") id="diagnosticos_update_button">
-            <input type="button" value=" Cerrar " onclick="closeForm()" id="diagnosticos_close_button" style="display:none">
-        </td>
+            <input type="button" value="Modificar Datos" onclick=updateRecepData("edit_recepcion") id="recepcion_update_button">
+            <input type="button" value=" Cerrar " onclick="closeForm()" id="recepcion_close_button" style="display:none">
+        </td> 
     </tr>
 </table> 
 <!-- end:   edit_form_foot -->
@@ -98,41 +139,68 @@
  
 
 
-<!-- begin: add_form_cab -->  
-<table border="0" class="form_table" id="add_diagnosticos">
-    <tr> <th colspan="2" class="form_title" > (Nuevo Registro) Diagnosticos  </th> </tr> 
+<!-- begin: add_form_cab --> 
+<input type="hidden" id="form_id_diag" value="">
+<table border="0" class="form_table" id="add_recepcion">
+    <tr> <th colspan="4" class="form_title" > (Nuevo Registro) Recepcion  </th> </tr> 
 <!-- end:   add_form_cab -->
 
 
 <!-- begin: add_form_data -->     
 
 <tr style="display:none"> <td class="form_label">Usuario:</td> <td><input class="form_text MUL" type="text" id="form_usuario"      size="30"  value="" ></td>  </tr>
-<tr> <td class="form_label">Chapa:</td> <td><input class="form_text MUL" type="text" id="form_chapa"   required="required"  size="30"  value="" >*</td>  </tr>
-<tr> <td class="form_label">Marca:</td> <td>
-        <select class="form_db_select MUL" id="form_marca" onchange="buscarLogo()"  >{value_of_marca}</select>
-<img id="logo" src="img/car_logos/no_logo.png" class="car_logo" width="40">
-</td>  </tr>
-<tr> <td class="form_label">Cliente:</td> <td>
-        <input class="form_text MUL" id="form_cod_cli" value="" data-cod_cli="" size="30"  >  
-        <input type="button" value="Nuevo" onclick="nuevoCliente()">
+<tr> <td class="form_label">Chapa:</td> <td colspan="3" ><input class="form_text MUL" type="text" id="form_chapa"   required="required"  size="18"  value="" >*
+        <img id="logo" src="img/car_logos/no_logo.png" class="car_logo" width="40">
+        <input type="hidden" class="form_db_select MUL" id="form_marca" value="{value_of_marca} "  >
+    </td>
+</tr>
+<tr> 
+    <td style="height: 28px" class="form_label">Modelo:</td>
+    <td id="modelo" class="modelo" colspan="3" ></td>  
+</tr>
+<tr> <td class="form_label">Propietario:</td> <td  colspan="3" > 
+        <input type="hidden"  id="form_cod_cli" value="" data-cod_cli=""    value="{value_of_cod_cli}" >
+        <input type="text" class="form_text MUL" id="cliente" size="40" readonly="readonly"  value="{value_of_cliente}"
         <div id="suggesstion-box"></div>
 </td>  </tr>
 <tr style="display:none"> <td class="form_label">Fecha</td> <td><input class="form_date" type="date" id="form_fecha"  value="{value_of_fecha}" ></td>  </tr>
-<tr> <td class="form_label">Descrip. Gral. :</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
-     <tr>
-         <td colspan="2" style="text-align: left;padding: 2px 2px 2px 4px">
-             <label class="modo">Modo de captura:</label> &nbsp;&nbsp;&nbsp;&nbsp;
-             <label for="explorer" class="modo">Explorador</label><input type="radio" name="modo" class="explorer" id="explorer" value="explorer">
-             <label for="camera"  class="modo">Camara</label><input type="radio" name="modo" class="explorer" id="camera" value="camera" checked="checked" >
-         </td>
-     </tr>
+<tr> <td class="form_label">Sintomas:</td> <td  colspan="3" ><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr>
+    <td colspan="3" style="color:brown;font-weight: bolder" class="titulo">Recepci&oacute;n del Veh&iacute;culo</td>
+    <td class="titulo itemc" > <a href="javascript:datosRecepcion(-1)"  id="mas_datos" style="text-decoration: none;">Mas datos</a> </td>
+</tr>
+<tr>
+    <td class="form_label">Km actual:</td>
+    <td><input type="number" class="form_number MUL" id="form_km_actual" size="6"   value="{value_of_km_actual}" ></td>
+    <td class="form_label"><img src="img/fuel_tank.png"  style="height: 36px"></td>
+    <td>
+        <table style="border-collapse: collapse;width: 100%">
+            <tr><td style="font-family: cambria">0------------1/2------------1</td></tr>
+            <tr><td><input type="range" id="form_porc_combustible"   style="width: 124px" min="0" max="100" step="5"  ></td></tr>
+        </table> 
+    </td>
+</tr>
+
+<tr id="datos_recepcion" style="display: none">
+    <td colspan="4">
+        <table border="0" style="width: 100%;margin: 0 auto;border-collapse: collapse;background-color: whitesmoke" id="tabla_recepcion" ></table>
+    </td>
+</tr>
+
+<tr>
+    <td colspan="4" style="text-align: left;padding: 2px 2px 2px 4px">
+        <label class="modo">Modo de captura:</label> &nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="explorer" class="modo">Explorador</label><input type="radio" name="modo" class="explorer" id="explorer" value="explorer">
+        <label for="camera"  class="modo">Camara</label><input type="radio" name="modo" class="explorer" id="camera" value="camera" checked="checked" >
+    </td>
+</tr>
 <tr> 
-    <td colspan="3">
+    <td colspan="4">
         <table id="photo_container" border="0" style="margin: 0;padding: 0;width: 100%;border-collapse: collapse">
             <tr>
                 <td class="fila_img">Diag 1:</td> 
                 <td>
-                    <textarea class="form_textarea" id="form_img_descrip_0" cols="40" rows="3" style="height: auto"   ></textarea>
+                    <textarea class="form_textarea" id="form_img_descrip_0" cols="30" rows="3" style="height: auto"   ></textarea>
                 </td> 
                 <td>
                     <img src="img/no_img.png" id="preview_0" width="46" class="img_preview"> 
@@ -151,18 +219,21 @@
 
 
 <!-- begin: add_form_foot -->     
-<tr><td colspan="2" style="text-align: center" id="msg_diagnosticos" ></td></tr>
-    <tr>
-        <td colspan="2" style="text-align: center">
-            <input type="button" value="Cancelar" onclick="closeForm()">
-            <input type="button" value=" Guardar " onclick=addData("add_diagnosticos") id="diagnosticos_save_button">
-            <input type="button" value=" Cerrar " onclick="closeForm()" id="diagnosticos_close_button" style="display:none">
-        </td>
-    </tr>
+<tr><td colspan="4" style="text-align: center" id="msg_recepcion" ></td></tr>
+<tr>
+    <td colspan="3" style="text-align: center">
+        <input type="button" value="Cancelar" onclick="closeForm()">
+        <input type="button" value=" Guardar " onclick=addRecepData("add_recepcion") id="recepcion_save_button">
+        <input type="button" value=" Cerrar " onclick="closeForm()" id="recepcion_close_button" style="display:none">
+    </td>
+    <td style="text-align: center">
+        <img src="img/printer-02_32x32.png" class="diag_print" onclick="imprimirRecepcion()" >  
+    </td>
+</tr>
 </table> 
 <!-- end:   add_form_foot -->
 
 
 <!-- begin: no_result -->     
-<div style="text-align: center;margin: 2cm auto"> Ningun registro para Diagnosticos <button type="button" id="add_button_diagnosticos" onclick="addUI()">Agregar un nuevo registro para (Diagnosticos)</button></div> 
+<div style="text-align: center;margin: 2cm auto"> Ningun registro para Recepcion <button type="button" id="add_button_recepcion" onclick="addRecepcionUI()">Agregar un nuevo registro para (Recepcion)</button></div> 
 <!-- end:   no_result -->

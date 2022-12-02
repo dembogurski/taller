@@ -1,0 +1,284 @@
+
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.form{
+    z-index: 10;   
+    background-color: rgb(80,80,80);
+    position: absolute;
+}
+
+.form_table{
+    margin: 1cm auto;
+    background-color: white;
+    width: auto;
+    border-radius: 4px;
+    padding: 4px;
+}
+.form_title{
+    background-color: #DDDACD;
+    border-radius: 2px
+}
+.form_label{
+    font-weight: bolder;
+}
+.form_text .form_password .form_tel .form_email .form_checkbox {
+    text-align: left;
+    margin-left: 2px;
+}
+.form_number{
+    text-align: right;
+    margin-right: 2px;        
+}
+.form_date .form_hora .form_select .form_db_select{
+    text-align: center;
+}
+.form_textarea {
+    width: 100%;
+}
+
+.list_container { 
+   margin: 10px auto;
+   max-width: 1280px
+}
+
+.db_tablename{
+	width:100%;
+	border-collapse:collapse
+}
+
+#moviles tr th {
+    height: 10px;
+    font-size: 14px;
+} 
+
+#moviles tr td {
+    height: 10px;
+	font-size: 14px;
+}
+ 
+.edit{
+   	cursor:pointer;
+	width:16px
+}
+.itemc{
+	text-align:center
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+.form_table input:not([disabled]):not([type="button"]):focus, textarea:focus  {
+    background-color: #fffccc;
+}
+.form_table option:nth-child(even) {
+  background-color: white;
+}
+
+.form_table option:nth-child(odd) {
+  background-color: #dfe6e9;
+}
+
+.PRI{
+    color: orangered
+}
+.toolbar {
+   float: right;
+   padding-left: 40px;
+}
+.error{
+    color:red
+}
+.technical_info{
+    border:solid gray 1px;
+    color:green;    
+    font-size: 12px;
+    background: aliceblue;
+    display: none;
+}
+
+.required{
+    border:solid red 1px;
+} 
+
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: relative;
+	z-index: -1;
+}
+.inputfile + label {
+    font-size: 1.25em;
+    font-weight: 700; 
+}
+.capturar{
+    height: 47px;
+    width: 47px;
+    background-image: url(../img/android_camera.jpg);
+    background-repeat: no-repeat;
+    cursor: pointer; /* "hand" cursor */
+    border: solid gray 0px;
+    border-radius: 3px;
+    margin-top: -2px;
+    margin-left: 30px;
+    padding: 2px;
+    display: inline-block;
+    color: white;
+    background-color: white; 
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: red;
+}
+.img_preview{
+    margin-bottom: 0px
+}
+.fila_img{
+    height: 60px
+}
+.modo{
+    font-size: 12px;
+} 
+
+
+#all_photos{
+    overflow-y: auto;
+    max-width: 400px
+}
+
+.design_div{    
+    float:left;
+    border: solid gray 1px;
+    margin: 4px;
+    padding:4px;
+    background:whitesmoke;
+    cursor: pointer
+}
+.design_div:hover{
+    background-color: #d2dae2
+}
+
+.img_label{
+    font-weight: bolder;
+    font-size: 11px;
+}
+
+.imagen_design{
+    height: 110px;     
+    line-height: 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #f9f9f9;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0 0 25px rgb(232, 232, 232) inset, 0 1px 0 rgb(195, 195, 195), 0 2px 0 rgb(201, 201, 201), 0 2px 3px rgb(51, 51, 51); 
+}
+ 
+.imagen_design:hover { 
+    border: solid #e5e5e5 1px; 
+}
+.collage_div{    
+    float:left;
+    border: solid gray 1px;
+    margin: 4px;
+    padding:4px;
+    background:whitesmoke;
+    cursor: pointer;
+    max-width: 124px;
+    border-radius: 3px;
+}
+.collage_div:hover{
+    background-color: #d2dae2
+}
+.titulo_collage{
+    background-color: skyblue;
+    border-radius: 3px;
+    text-align: center;
+    border: solid gray 1px;
+}
+.imagen_collage{
+    width: 60px;     
+    line-height: 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #f9f9f9;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0 0 25px rgb(232, 232, 232) inset, 0 1px 0 rgb(195, 195, 195), 0 2px 0 rgb(201, 201, 201), 0 2px 3px rgb(51, 51, 51); 
+}
+.imagen_collage:hover { 
+    border: solid #e5e5e5 1px; 
+}
+
+#img_design, .img_linea{
+    border-radius: 3px;
+    box-shadow: 0 0 25px rgb(232, 232, 232) inset, 0 1px 0 rgb(195, 195, 195), 0 2px 0 rgb(201, 201, 201), 0 2px 3px rgb(51, 51, 51);
+}
+.mov_image{
+    max-width: 160px;     
+    max-height: 140px;
+    line-height: 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #f9f9f9;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0 0 25px rgb(232, 232, 232) inset, 0 1px 0 rgb(195, 195, 195), 0 2px 0 rgb(201, 201, 201), 0 2px 3px rgb(51, 51, 51); 
+}
+.top_chapa{
+    background-color: blue;
+    color: white;
+    font-size: 4px;
+}
+.chapa{    
+    border-radius: 3px;
+    border:solid black 2px;
+    text-align: center;
+    color:black;
+    font-weight: bolder;
+    width: 74px;
+    min-width: 70px;
+    margin: 0 auto;        
+}
+
+.chapa > .nro_chapa{
+    font-family: helvetica;
+}
+.modelo{
+    font-weight: cambria;
+    font-size: 16px;
+    font-weight: bolder;
+    border: solid white 0px;
+}
+
+#lista_clientes{
+    float:left;
+    list-style:none;
+    margin-top:-3px;
+    padding:0;
+    width:190px;
+    position: absolute;
+}
+#lista_clientes li{
+    padding: 10px; 
+    background: #f0f0f0; 
+    border-bottom: #bbb9b9 1px solid;
+}
+#lista_clientes li:hover{
+    background:#ece3d2;
+    cursor: pointer;
+}

@@ -17,7 +17,7 @@
     <table id="proveedores"  border="1" class="display responsive nowrap db_tablename"  >
         <thead>
             <tr>
-                <th>Cod Prov</th> <th>Tipo Doc</th><th>Ci Ruc</th><th>Nombre</th><th>Tel</th><th>Email</th><th>Fecha Nac</th><th>Fecha Reg</th><th>Estado</th><th></th>
+                <th>Cod.Prov.</th>  <th>CI/RUC</th><th>Nombre</th><th>Tel</th><th></th>
             </tr>
         </thead>
 
@@ -25,7 +25,7 @@
 
 
 <!-- begin: data_line -->     
-    <tr> <td>{cod_prov}</td>   <td>{tipo_doc}</td> <td>{ci_ruc}</td> <td>{nombre}</td> <td>{tel}</td> <td>{email}</td> <td>{fecha_nac}</td> <td>{fecha_reg}</td> <td>{estado}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editUI("{cod_prov}") ></td>  </tr>
+    <tr> <td onclick=editUI("{cod_prov}")>{cod_prov}</td> <td onclick=editUI("{cod_prov}")>{ci_ruc}</td> <td onclick=editUI("{cod_prov}")>{nombre}</td> <td>{tel}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editUI("{cod_prov}") ></td>  </tr>
 <!-- end:   data_line -->
 
 

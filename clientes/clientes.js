@@ -36,7 +36,7 @@ function checkRUC(Obj) {
     var respuesta = '';
     var errorStatus = true;
     $("#" + msg_id).html("");
-    if (!validRUC(ruc) && tipo_doc == "C.I." && !isNaN(ruc)) {
+    if (!validRUC(ruc) && tipo_doc == "R.U.C." && !isNaN(ruc)) {
         $.ajax({
             type: "POST",
             url: "Ajax.class.php",
@@ -64,13 +64,13 @@ function checkRUC(Obj) {
             }
         });
     } else {
-        if ( tipo_doc == "C.I." && validRUC(ruc) ) {
-            checkearRUC(Obj,ruc, tipo_doc, msg_id);
-        }else if(tipo_doc !== "C.I."){
-            Obj.attr("data-error", "No");
+        if ( tipo_doc === "R.U.C." && validRUC(ruc) ) {
+            checkearRUC(Obj,ruc, tipo_doc);
+        }else if(tipo_doc !== "R.U.C."){
+            Obj.removeClass("required");
         }else{
-            Obj.attr("data-error", "Si");
-            $("#" + msg_id).html("Caracteres invalidos ...");
+            Obj.addClass("required");
+            $("#msg_ruc").html("Caracteres invalidos ...");
         }
     }
     verifData();
@@ -336,7 +336,7 @@ function registrarCliente(callback) {
     var tipo_doc = $.trim($("#tipo_doc").val());
 
 
-    if ((validRUC(ruc) && (tipo_doc == "C.I.") || (tipo_doc != "C.I.")) && validString(nombre, 3) && validPhone(tel, 6)) {
+    if ( ((validRUC(ruc) && (tipo_doc == "R.U.C.")) && validString(nombre, 3)) || ( (tipo_doc !== "R.U.C.") && validString(nombre, 3)) ) {
         $("#registrar").attr("disabled", true);
         $("#msg_cliente").removeClass("error");
         $("#msg_cliente").html("");
@@ -374,11 +374,9 @@ function registrarCliente(callback) {
 
         });
     } else {
-        $("#msg_cliente").html("Los campos RUC, Nombre y Telefono son requeridos o contenen errores");
+        $("#msg_cliente").html("Los campos RUC o Nombre contenen errores");
         $("#msg_cliente").addClass("error");
     }
-
-
     //console.log(usuario+"  "+ruc+"  "+nombre+"  "+tel+"  "+fecha_nac+"  "+pais+"  "+ciudad+"  "+dir);
 }
 

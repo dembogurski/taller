@@ -9,9 +9,9 @@ require_once("../Clientes/Clientes.class.php");
  *
  * @author Doglas
  */
-class Diagnosticos {
+class Recepcion {
 
-    private $table = 'diagnosticos';
+    private $table = 'recepcion';
     private $items = [
         array("column_name" => "id_diag", "nullable" => "NO", "data_type" => "int", "max_length" => "", "numeric_pres" => "10", "dec" => "0", "titulo_campo" => "Id Diag=>", "titulo_listado" => "Id Diag", "type" => "number", "required" => "required", "inline" => "false", "editable" => "readonly", "insert" => "Auto", "default" => "", "pk" => "PRI", "extra" => "auto_increment"),
         array("column_name" => "cod_cli", "nullable" => "YES", "data_type" => "varchar", "max_length" => "30", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Cod Cli=>", "titulo_listado" => "Cliente", "type" => "db_select", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "clientes=>cod_cli,nombre", "pk" => "MUL", "extra" => ""), 
@@ -19,7 +19,9 @@ class Diagnosticos {
         array("column_name" => "chapa", "nullable" => "YES", "data_type" => "varchar", "max_length" => "30", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Chapa=>", "titulo_listado" => "Chapa", "type" => "text", "required" => "required", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "MUL", "extra" => ""), 
         array("column_name" => "marca", "nullable" => "YES", "data_type" => "varchar", "max_length" => "100", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Marca=>", "titulo_listado" => "Marca", "type" => "db_select", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "marcas=>marca,marca", "pk" => "MUL", "extra" => ""), 
         array("column_name" => "fecha", "nullable" => "YES", "data_type" => "datetime", "max_length" => "", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Fecha", "titulo_listado" => "", "type" => "date", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Auto", "default" => "", "pk" => "", "extra" => ""), 
-        array("column_name" => "descrip", "nullable" => "YES", "data_type" => "varchar", "max_length" => "10000", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Descrip=>", "titulo_listado" => "", "type" => "textarea", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "", "extra" => "")];
+        array("column_name" => "descrip", "nullable" => "YES", "data_type" => "varchar", "max_length" => "10000", "numeric_pres" => "", "dec" => "", "titulo_campo" => "Descrip=>", "titulo_listado" => "", "type" => "textarea", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "", "extra" => ""),
+        array("column_name" => "km_actual", "nullable" => "YES", "data_type" => "int", "max_length" => "8", "numeric_pres" => "8", "dec" => "0", "titulo_campo" => "Km Actual=>", "titulo_listado" => "", "type" => "text", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "MUL", "extra" => ""),
+        array("column_name" => "porc_combustible", "nullable" => "YES", "data_type" => "decimal", "max_length" => "8", "numeric_pres" => "10", "dec" => "0", "titulo_campo" => "Combustible=>", "titulo_listado" => "", "type" => "range", "required" => "", "inline" => "false", "editable" => "Yes", "insert" => "Yes", "default" => "", "pk" => "MUL", "extra" => "") ];
     private $primary_key = 'id_diag';
     private $limit = 100;
 
@@ -54,15 +56,15 @@ class Diagnosticos {
         $columns = substr($columns, 0, -1);
 
 
-        $t = new Y_Template("Diagnosticos.html");
+        $t = new Y_Template("Recepcion.html");
         $t->Set("filter",$filter);
         $t->Show("headers");
         $t->Show("insert_edit_form"); // Empty div to load here  formulary for edit or new register 	  
         $db = new My();
         //$Qry = "SELECT  $columns FROM  $this->table LIMIT $this->limit"; 
-        $Qry = "SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM diagnosticos g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC";
+        $Qry = "SELECT id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca FROM recepcion g, clientes c WHERE g.cod_cli = c.cod_cli ORDER BY id_diag DESC";
         if(isset($_REQUEST['filter'])){
-            $Qry = "SELECT DISTINCT g.id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca   FROM diagnosticos g, clientes c, imagenes i WHERE g.cod_cli = c.cod_cli AND g.id_diag = i.id_diag   AND (g.descrip LIKE '%$filter%' OR i.descrip LIKE '%$filter%')   ORDER BY id_diag DESC";
+            $Qry = "SELECT DISTINCT g.id_diag,IF( LENGTH(c.nombre) > 20, CONCAT(LEFT(c.nombre,20),'..'),c.nombre)  AS cod_cli,chapa,marca   FROM recepcion g, clientes c, imagenes i WHERE g.cod_cli = c.cod_cli AND g.id_diag = i.id_diag   AND (g.descrip LIKE '%$filter%' OR i.descrip LIKE '%$filter%')   ORDER BY id_diag DESC";
         }
  
         $db->Query($Qry);
@@ -103,15 +105,15 @@ class Diagnosticos {
         require_once '../Functions.class.php';
         $f = new Functions();
         $chapa = trim($_REQUEST['chapa']);
-        $sql = "SELECT marca, c.cod_cli,nombre FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = '$chapa'";
-         
+        
+        $sql = "SELECT marca,m.modelo, c.cod_cli, nombre FROM  clientes c, moviles m WHERE c.cod_cli = codigo_entidad AND chapa = '$chapa'"; 
         $arr = $f->getResultArray($sql);
         echo json_encode($arr);
     }
 
     function addUI() {
         $tmp_con = new My();
-        $t = new Y_Template("Diagnosticos.html");
+        $t = new Y_Template("Recepcion.html");
         $t->Show("add_form_cab");
 
         foreach ($this->items as $array => $arr) {
@@ -123,7 +125,7 @@ class Diagnosticos {
 
             if ($insert === 'Yes') {
 
-                if ($type == "db_select") {
+                if ($type == "db_select" && $column_name != "marca" && $column_name != "cod_cli") {
                     $db_options = "\n";
                     $default = $arr['default'];
                     list($tablename, $columns) = explode("=>", $default);
@@ -170,37 +172,35 @@ class Diagnosticos {
      */
     function editUI() {
         $pk = $_REQUEST['pk'];
-
-        $columns = "";
-
-        foreach ($this->items as $array => $arr) {
-            $columns .= $arr['column_name'] . ",";
-        }
-        $columns = substr($columns, 0, -1);
-
+         
         $db = new My();
         $tmp_con = new My();
 
-        $t = new Y_Template("Diagnosticos.html");
-        //$t->Show("headers");        
-        $columns = str_replace("fecha", "date_format(fecha,'%Y-%m-%d') as fecha", $columns);
-        $Qry = "SELECT $columns FROM $this->table WHERE  $this->primary_key = '$pk'";
-
+        $t = new Y_Template("Recepcion.html");
+        
+        $Qry = "SELECT id_diag,d.cod_cli,c.nombre AS cliente,d.usuario,d.chapa,d.marca,modelo,DATE_FORMAT(fecha,'%Y-%m-%d') AS fecha,descrip,round( km_actual ) AS km_actual,porc_combustible FROM $this->table d, clientes c, moviles m WHERE d.chapa = m.chapa and d.cod_cli = c.cod_cli AND $this->primary_key = '$pk'";
+         //echo $Qry;
+        
         $db->Query($Qry);
 
         $t->Show("edit_form_cab");
         while ($db->NextRecord()) {
+            $cliente = $db->Get('cliente');
+            $t->Set("value_of_cliente","$cliente");
+            $modelo = $db->Get('modelo');
+            $t->Set("value_of_modelo","$modelo");
+            
             foreach ($this->items as $array => $arr) {
                 $column_name = $arr['column_name'];
                 $editable = $arr['editable'];
                 $type = $arr['type'];
                 $dec = $arr['dec'];
                 //$sub_pk = $arr['pk'];
-
+                 
                 if ($editable !== 'No') {
                     $value = $db->Record[$column_name];
-
-                    if ($type == "db_select") {
+                    
+                    if ($type == "db_select" && $column_name != "cod_cli" && $column_name != "marca") {
                         $db_options = "\n";
                         $default = $arr['default'];
                         list($tablename, $columns) = explode("=>", $default);
@@ -257,7 +257,7 @@ class Diagnosticos {
         $t->Show("edit_form_data");
         $t->Show("edit_form_foot");
     }
-    function getImagesOfDiagnostics(){
+    function getImagesOfRecepcion(){
         $id_diag = $_REQUEST['id_diag'];
         require_once '../Functions.class.php';
         $f = new Functions();
@@ -301,10 +301,11 @@ class Diagnosticos {
 
         $my = new My();
         $my->Query($Qry);
+         
         if ($my->AffectedRows() > 0) {
             echo json_encode(array("mensaje" => "Ok"));
         } else {
-            echo json_encode(array("mensaje" => "Error", "query" => $Qry));
+            echo json_encode(array("mensaje" => "Si Modificaciones"));
         }
         $my->Close();
     }
@@ -312,7 +313,7 @@ class Diagnosticos {
     function addData() {
 
         $db = new My();
-        $db->Query("SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'sistema' AND TABLE_NAME = 'diagnosticos'");
+        $db->Query("SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'sistema' AND TABLE_NAME = 'recepcion'");
         $db->NextRecord();
         $next_id = $db->Record['AUTO_INCREMENT'];
 
@@ -320,10 +321,11 @@ class Diagnosticos {
         $table = $this->table;
 
         $data = $master['data'];
+        $datos_recepcion = $master['datos_recep'];
         $colnames = "";
         $insert_vlues = "";
         
-        $path = "../files/diagnosticos/$next_id";
+        $path = "../files/recepcion/$next_id";
         
         @mkdir($path);
 
@@ -381,12 +383,9 @@ class Diagnosticos {
 
 
         $Qry = "INSERT INTO $table ($colnames) VALUES($insert_vlues);";
-        $my->Query($Qry);
-           
-          
-        
+        $my->Query($Qry); 
         if ($my->AffectedRows() > 0) {
-          $my->Query("select id_diag from diagnosticos order by id_diag desc limit 1");  
+          $my->Query("select id_diag from recepcion order by id_diag desc limit 1");  
           $my->NextRecord();
           $id_diag = $my->Record['id_diag'];
           for($i = 0;$i < 20;$i++){
@@ -403,8 +402,12 @@ class Diagnosticos {
                 break;
             }
           }
-            
-            echo json_encode(array("mensaje" => "Ok"));
+          // Datos de Recepcion
+          foreach ($datos_recepcion as $id_part => $valor) {              
+              $my->Query("INSERT INTO movil_recep(id_diag, id_part, valor)VALUES ($id_diag, $id_part, '$valor');");
+          } 
+          
+          echo json_encode(array("mensaje" => "Ok","id_diag"=>$id_diag ));
         }
         $my->Close();
     }
@@ -432,8 +435,7 @@ class Diagnosticos {
         require_once '../Functions.class.php'; 
         $filter = $_REQUEST['filter'];
          
-        $sql = "SELECT cod_cli, nombre FROM clientes WHERE nombre LIKE '$filter%'";
-        
+        $sql = "SELECT cod_cli, nombre FROM clientes WHERE nombre LIKE '$filter%'"; 
         
         $f = new Functions();
         
@@ -441,9 +443,29 @@ class Diagnosticos {
         echo json_encode($arr);
          
     }
-     
+    
+    function getRecepcionesVehiculo(){
+        require_once '../Functions.class.php'; 
+        $chapa = $_REQUEST['chapa'];        
+        $sql = "SELECT d.id_diag,usuario, DATE_FORMAT(fecha,'%d-%m-%Y') AS fecha, GROUP_CONCAT(url) AS collage  FROM recepcion d LEFT JOIN imagenes i ON d.id_diag = i.id_diag WHERE chapa = '$chapa' GROUP BY chapa, d.id_diag";
+        $f = new Functions();        
+        $arr = $f->getResultArray($sql);
+        echo json_encode($arr);
+    }
+    
+    function getDatosRecepcion(){
+        require_once '../Functions.class.php'; 
+        $id_diag = $_REQUEST['id_diag'];  
+        $sql = "SELECT a.id_part,a.descrip,a.tipo_dato,a.opciones, r.valor FROM aux_recep a LEFT JOIN movil_recep r ON a.id_part = r.id_part AND r.id_diag = $id_diag";
+        $f = new Functions();        
+        $arr = $f->getResultArray($sql);
+        echo json_encode($arr);
+    } 
+        
 
 }
 
-new Diagnosticos();
+new Recepcion();
+
 ?>
+

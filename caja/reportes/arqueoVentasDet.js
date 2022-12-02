@@ -13,10 +13,10 @@ $(function(){
     });
     $("div#editor_container").draggable();
     
-    $(".si").click(function(){
+    /*$(".si").click(function(){
       var factura = $(this).parent().attr("data-fact");
       verDetalleAplicado(factura);
-    });
+    });*/
     
     $(".si").mouseover(function(){
         $(".cursor").remove(); // Se saco a todos los que tienen
@@ -24,71 +24,67 @@ $(function(){
    }).mouseleave(function(){
         $(this).children('.cursor').remove();
    });
-    
+    checkStock();
 });
 
-function verDetalleAplicado(factura){
-    $("#cab_pagos_aplic").html("<table class='pagos' border='1'><tr><th>N&deg;</th><th>Fecha</th><th>Efectivo</th><th>Tarjeta</th><th>Cheque</th><th>Deposito</th><th>Total</th><th>*</th></tr></table>");
-    
-    $.ajax({
-        type: "POST",
-        url: "../../Ajax.class.php",
-        data: {"action": "resumenPagosAplicados", factura: factura},
-        async: true,
-        dataType: "json",
-        beforeSend: function () {
-           $(".pagos_"+factura).html("<img src='../../img/loading_fast.gif' width='16px' height='16px' >"); 
-        },
-        success: function (data) {  
-            //o.DocNum,CONVERT(VARCHAR(10), o.DocDate, 103) DocDate,o.CashSum,o.CreditSum,o.CheckSum,o.TrsfrSum,o.DocTotal,SumApplied    
-            var pago_my = parseFloat($(".pagos_mysql_"+factura).html().replace(/\./g, '').replace(/\,/g, '.'));
-            
-            var pago_server = 0;
-            
-            var htmltable = "";
-                        
-            for (var i in data) {     
-                var DocNum = data[i].DocNum;
-                var DocDate = data[i].DocDate;  
-                var CashSum = parseFloat(data[i].CashSum); var CashSumf = CashSum.format(0, 3, '.', ',');
-                var CheckSum = parseFloat(data[i].CheckSum);    var CheckSumf = CheckSum.format(0, 3, '.', ',');            
-                var CreditSum = parseFloat(data[i].CreditSum); var CreditSumf = CreditSum.format(0, 3, '.', ',');    
-                var TrsfrSum = parseFloat(data[i].TrsfrSum); var TrsfrSumf = TrsfrSum.format(0, 3, '.', ',');    
-                var DocTotal = parseFloat(data[i].DocTotal); var DocTotalf = DocTotal.format(0, 3, '.', ',');    
-                //var SumApplied = parseFloat(data[i].SumApplied);
-                
-                pago_server += DocTotal; 
-                htmltable +="<table class='pagos' border='1'><tr><td class='itemc'>"+DocNum+"</td><td class='itemc'>"+DocDate+"</td><td class='num'>"+CashSumf+"</td><td class='num'>"+CreditSumf+"</td><td class='num'>"+CheckSumf+"</td><td class='num'>"+TrsfrSumf+"</td><td class='num'>"+DocTotalf+"</td><td class='itemc pago_"+factura+"' id='pago_"+DocNum+"' data-nro_pago='"+DocNum+"' data-factura='"+factura+"' ></td></tr></table>"; 
-            }
-            $(".pagos_"+factura).html(htmltable); 
-            var inf = "";
-            var clase = "";
-            if(pago_my == pago_server){                
-               inf = "<img src='../../img/ok.png' width='16px' height='16px' >"; 
-               clase = "correcto";
-            }else{
-               var cuota = parseFloat( $(".cuota_"+factura).html() ); 
-               if(cuota > 0){
-                    inf = "<img src='../../img/warning_yellow_16.png' width='16px' height='16px' title='Venta a Credito puede que los Pagos aun esten Pendientes o Pudo haberse pagado mas de una Factura en un Mismo Pago' >";
-                    clase = "";
-               } else{
-                   inf = "<img src='../../img/error.png' width='16px' height='16px' >";
-                   clase = "incorrecto";
-               }
-            }
-            $(".pago_"+factura).html(inf);  
-            $(".pago_"+factura).addClass(clase);
-        }
-    });
+
+function getUsuario(){
+    var user_ = "sistema";
+    if( $.isFunction(opener.getNick)){
+        user_ = opener.getNick();
+    }else{
+        user_ = opener.opener.getNick();
+    }
+    return user_;
 }
+ 
 
 function getPagos(){ 
+  alert("Esta seccion aun no se ha desarrollado");  
+/*
    $('.si').each(function(){
         var factura = $(this).parent().attr("data-fact");
         verDetalleAplicado(factura);
    });
    $(".cancelar_pagos").fadeIn();
-   
+   */
+}
+function checkStock(){
+    $('.no').each(function(){
+        var factura = $(this).parent().attr("data-fact");
+        chequearHistorial(factura);
+    });    
+}
+function chequearHistorial(factura){
+    $.ajax({
+        type: "POST",
+        
+        url: "ArqueoVentasDet.class.php",
+        data: {"action": "chequearHistorial",  "args": factura },
+         
+        async: true,
+        dataType: "json",
+        beforeSend: function () {
+            //$("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+        },
+        success: function (data) {   
+            if (data.mensaje === "Ok") {
+                 
+            } else {
+                $(".factura_"+factura).find(".no").html("Error stock!<br>").css("color","red");
+                var arr = data.array;
+                for(var i in arr){
+                    var codigo = arr[i].codigo;
+                    var lote = arr[i].lote;
+                    var cant = arr[i].cant;
+                    $(".factura_"+factura).find(".no").append("Codigo:"+codigo+ "  Lote: "+lote+"  Cant: "+cant+" <br>");  
+                }
+            }                
+        },
+        error: function (e) {                 
+            $("."+factura).find(".no").html("Error obtener historial de stock " );  
+        }
+    }); 
 }
 function cancelarTodos(){
    $(".agregar").each(function(){ 
@@ -110,7 +106,7 @@ function cancelarPagos(){
     
 }
 function cancelarPago(nro_pago,factura){
-    var usuario = opener.opener.getNick();
+    var usuario = getUsuario();
     
     $.ajax({
         type: "POST",
@@ -132,6 +128,7 @@ function cancelarPago(nro_pago,factura){
         }
     }); 
 }
+
 function verif() {
     if ($('#todos').is(':checked')) {
         $('.no .unitario').prop('checked', true);
@@ -238,13 +235,13 @@ function edit(Obj) {
                             break;
 
                         default:
-                            if (target === 'efectivo' && ((id_concepto == 1 && key === "entrada") || (id_concepto == 2 && key === "salida"))) {
+                            if (target === 'efectivo' && ( (id_concepto == 1 && key === "entrada") || (id_concepto == 2 && key === "salida"))  || (key == "fecha" && id_concepto < 3) ) {
                                 // Efectivo
                                 var td = $("<td/>");
                                 var input = $("<input/>", {
                                     "value": value,
                                     "data-row": key,
-                                    "class": "edit_data",
+                                    "class": "edit_data itemc",
                                     "data-changed": false,
                                     "readOnly": "true",
                                     "type":"text",
@@ -260,7 +257,7 @@ function edit(Obj) {
                                 var input = $("<input/>", {
                                     "value": value,
                                     "data-row": key,
-                                    "class": 'edit_data',
+                                    "class": 'edit_data num',
                                     "type":"text",
                                     "readOnly": "true",
                                     change: actualizarConvenio
@@ -287,36 +284,74 @@ function edit(Obj) {
                                 td.appendTo(tr);
 
                             } else {
+                                if((target === 'convenios' || target === 'efectivo' ) && key == 'eliminar'){
+                                    value = "<img src='../../img/trash.png' height='16' style='cursor:pointer' onclick=eliminarRegistro(this,'"+target+"')>"; 
+                                }
+                                 
                                 $("<td/>", {
-                                    "class": key,
-                                    "text": value,
+                                    "class": key+" itemc",
+                                    "html": value,
                                 }).appendTo(tr);
                             }
                             break;
                     }
-
+   
                     i++;
                 });
                 if (first) {
                     tr1.appendTo(table);
                     first = false;
                 }
+                
                 tr.appendTo(table);
             });
             table.appendTo("#editor");
             $("#editor_container").show(function(){
                 $("input[type='text']").each(function(){$(this).attr("size",$(this).val().length)});
-                $("div#editor_container").css({"width":"auto","height":"auto","left":0});
-                
+                $("div#editor_container").css({"width":"auto","height":"auto","left":20});                
             });
         }else{
-            cerrarEditor();
+            if(target === 'convenios'){                 
+                $("#editor").append('<input type="button" value="Agregar un Registro de Cobro con Tarjeta a la Factura:'+factura+'" onclick=agregarRegistro('+factura+',"convenios")>');
+                $("#editor_container").show();
+            }else if(target === 'efectivo'){                 
+                $("#editor").append('<input type="button" value="Agregar un Registro de Cobro en Efectivo a la Factura:'+factura+'" onclick=agregarRegistro('+factura+',"efectivo")>');
+                $("#editor_container").show();
+            }else{
+               cerrarEditor(); 
+            }
+            
         }
     }, 'json');
 }
+ 
+function eliminarRegistro(obj,tipo){ 
+    var id = parseInt($(obj).parent().parent().find(".ref").html());   
+    $.post("ArqueoVentasDet.class.php", { "action": "eliminarRegistro", "args": tipo + ',' + id }, function(data) {
+       var estado = data.estado;
+       if(estado == "Ok"){
+           alert(data.msg);
+           window.location.reload();
+       }else{
+           alert(data.msg);
+       }
+    }, "json");     
+}
+function agregarRegistro(factura,tipo){ 
+     
+    $.post("ArqueoVentasDet.class.php", { "action": "agregarRegistro", "args": factura + ',' +  tipo }, function(data) {
+       var estado = data.estado;
+       if(estado == "Ok"){
+           alert(data.msg);
+           window.location.reload();
+       }else{
+           alert(data.msg);
+       }
+    }, "json");     
+} 
 
 // Cotizacion
-function getCotizXFact(factura, selected, callback) {
+function getCotizXFact(factura, selected, callback) {  console.log(factura+"|"+selected+"|");
     var select = $("<select/>", { "class": "editable", "data-row": "m_cod", change: callback });
     $.post("ArqueoVentasDet.class.php", { "action": "getCotiz", "args": factura }, function(data) {
         cotizaciones = data;
@@ -479,7 +514,7 @@ function guardar() {
         var orgText = 'Guardar Cambios';
         $("button#editor_save").attr("disabled",true);
         $("button#editor_save").text(" Procesando ...").css("color","green");
-        $.post("ArqueoVentasDet.class.php", { "action": "actualizar", "datos": JSON.stringify(updates),"usuario":(window.opener).opener.getNick() }, function(data) {            
+        $.post("ArqueoVentasDet.class.php", { "action": "actualizar", "datos": JSON.stringify(updates),"usuario":getUsuario() }, function(data) {            
             $("button#editor_save").text("OK!").css({"color":"green","width":w});
             $("button#editor_save").fadeOut(1000,function(){
                 $("button#editor_save").text(orgText).css({color:"black"}).fadeIn("slow",function(){

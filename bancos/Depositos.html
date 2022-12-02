@@ -4,12 +4,16 @@
 <!-- end:   header -->
 
 <!-- begin: form -->
-<div style="text-align: center; width: 50%;min-width: 480px;border: solid 1px;margin: 20 auto ">
+<div style="text-align: center; width: 60%;min-width: 480px;border: solid 1px;margin: 20 auto ">
         
     <table id="deps" border="0"  cellspacing="6" cellpadding="0" style="margin:0 auto; width: 94%"   >
         <tr class="titulo" ><th colspan="4" style="text-align: center">Depositos en Cuenta Corriente o Caja de Ahorro</th></tr>
-        <td>Suc:</td><td><input type="text" value="" readonly="readonly" size="6" id="suc_actual" class="itemc" ></td>
-            <td>Caja de la Fecha:</td><td><input id="cj_fecha" type="text" size="10" value="{hoy}" class="fecha sencible itemc"></td>
+            <td>Suc:</td><td><input type="text" value="" readonly="readonly" size="6" id="suc_actual" class="itemc" ></td>
+            <td>Fecha:</td><td><input id="cj_fecha" type="text" size="10" value="{hoy}" class="itemc"></td>
+        </tr>
+        <tr class="depositar">
+            <td>Monto en Efectivo Existente:</td>
+            <td><input type="text" size="14" class="num" readonly="readonly" id="efectivo" ></td>
         </tr>
         <tr>
             <td>Banco:</td>
@@ -21,32 +25,59 @@
             <td><select id="cuenta" class="sencible">{cuentas}</select></td>
         </tr>
         <tr>
-            <td>Monto Existente:</td>
-            <td><input type="text" size="14" class="num" readonly="readonly" id="efectivo" ></td>
-            <td>N&deg; de Deposito:</td>
+            <td>Saldo de Cuenta Bancaria:</td>
+            <td><input type="text" size="14" class="num" readonly="readonly" id="saldo_cuenta" ></td>
+            <td>Tipo Movimiento:</td>
+            <td>
+                <select id="tipo_mov" onchange="cambiarTipoMov()">
+                    <option value="Deposito">Deposito</option>
+                    <option value="Extraccion">Extraccion</option>
+                </select>
+            </td> 
+        </tr>
+        <tr class="depositar">
+            <td  >N&deg; de Deposito:</td>
             <td><input type="text" class="num  modificable" size="14"  id="nro_dep" ></td> 
         </tr>
+        <tr class="extraer">
+            <td colspan="1">Concepto:</td>
+            <td colspan="2">  
+                <select id="concepto">
+                    {conceptos}					
+                </select> 
+            </td>
+        </tr>
         <tr>
-            <td>Monto a Depositar:</td>
+            <td id="label_tipo_mov">Monto a Depositar:</td>
             <td><input id="monto_dep" class="num  modificable" type="text" onkeypress="return onlyNumbers(event)" size="14" value=""></td>
             <td>Cotizacion:</td>
             <td><input id="cotiz" class="itemc modificable" type="text" onkeypress="return onlyNumbers(event)" size="8" value=""></td>
         </tr>
         
         <tr>
-            <td>Fecha Deposito:</td>
-            <td><input id="fecha_dep" class="fecha itemc" type="text" size="10" value="{hoy}"></td>
-            <td></td>
+            <td>Obs:</td>
+            <td colspan="2">
+                <input id="obs" type="text" size="60" value="" placeholder="Observacion, notas documentos..."  >
+            </td>             
             <td><input type="button" id="aceptar" value="Depositar" disabled="disabled" style="width:50%" onclick="registrarDeposito()"></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="border-bottom: solid 1px orange;font-style: italic;font-weight: bolder;font-size: 11px">Filtros</td>
+        </tr>
+        <tr>
+            <td>Desde:</td>
+            <td><input id="desde" class="fecha itemc desde_hasta" type="text" size="10" value="{hoy}"></td>
+            <td>Hasta:</td>
+            <td><input id="hasta" class="fecha itemc desde_hasta" type="text" size="10" value="{hoy}"></td>
         </tr>
     </table> 
 </div>
 <div style="text-align: center" id="msg"></div>
 <div style="text-align: center" id="div_depositos">
-    <table id="depositos" border="1" style="margin:0 auto;border-collapse: collapse;width: auto;min-width: 50%;">
+    <table id="depositos" border="1" style="margin:0 auto;border-collapse: collapse;width: 90%;min-width: 50%;">
         <tr><th colspan="10" style="background-color: #E1E8F7">Movimientos de la Fecha</th></tr>
         <tr class="titulo">
-            <th>ID</th><th>Banco</th><th>Cuenta</th><th>Moneda</th><th>Fecha</th><th>Hora</th><th>Concepto</th><th>Entrada</th><th>Salida</th><th>Estado</th>
+            <th>ID</th><th>Banco</th><th>Cuenta</th><th>Moneda</th><th>Fecha</th><th>Hora</th><th>Concepto</th><th>Entrada</th><th>Salida</th> 
         </tr>
     </table>
 </div>

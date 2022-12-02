@@ -23,32 +23,28 @@
 		letter-spacing: 5px;
 		text-align: center;
 		margin:-8px 0 7px;
-		padding: 5px;
-		background-color: lightgray;
-		-webkit-border-bottom-right-radius: 25px;
-		-webkit-border-bottom-left-radius: 25px;
-		-moz-border-radius-bottomright: 25px;
-		-moz-border-radius-bottomleft: 25px;
-		border-bottom-right-radius: 25px;
-		border-bottom-left-radius: 25px;
+		padding: 5px;  
+                background-color: #dddacd
 	  }
 	  .c_menu{
 		margin: 1px auto;
 		width: 1024px;
 	  }
 		.data{
-			display: none;
-			width: 920px;
+		    display: none;
+		    width: 920px;
+                    border-collapse: collapse;
 		}
 		.data th{
-			background-color: lightgrey
+			/*background-color: lightgrey*/
 		}
 		#cobros{
 			list-style: none;
-			width: 75px;
+			width: auto;
 			text-align: left;
 			padding: 0 3px;
 			height: 100%;
+                        position: absolute;
 		}
 		#c_ref{
 			float:left;
@@ -57,14 +53,21 @@
 			margin: 0 31px;
 		}
 		#cli_data{
-			padding: 1px 5px;
-			width: 720px;
+                    padding: 1px 5px;
+                    width: 720px;
+                    margin-left: 130px;
+                    border-radius: 5px;
+                    border: solid gray 1px;
+                    margin-bottom: 10px;
+                    background: aliceblue
 		}
 		.titulo{
-			text-align: right;
-			font-weight: 900;
-			border-right: dotted black 1px;
+			text-align: left;
+			font-weight: 900; 
 		}
+                .cabecera{
+                    background-color: #dddacd
+                }
 		.si{
 			background-color: lightgreen;
 			font-variant: small-caps;
@@ -104,7 +107,7 @@
                         width: 110px;
 		}
 		#cobros li:hover{
-			background-color: lightcoral;
+			background-color: #ffc048;
 			text-align: right;
 			cursor: pointer;
 		}
@@ -123,15 +126,16 @@
 		}
 		#det_pago{			
 			font-size: 12px;
-			border: 1px solid lightgray;
+			border: 1px solid gray;
 			width: 720px;
 			margin-bottom: 7px;
+                        border-collapse: collapse
 		}		
 		#det_pago [class^="fecha_"]{
 			text-align: center;
 		}
 		#det_pago td,#det_pago th{
-			border: 1px solid lightgray;
+			border: 1px solid gray;
 			padding: 1px 7px;
 		}
 		.mod{
@@ -142,11 +146,12 @@
 		div#msg{
 			position: fixed;
 			bottom: 0px;
-			right: 17px;
+	                left: 10px;		 
 			border: solid 1px gray;
 			border-radius: 5px 5px 0 0;
-			background-color: white;
+			background-color: yellow;
 			width: 30%;
+                        padding-left: 10px;
 		}
 		div#msg p{
 			margin: 0 1px 1px 3px;
@@ -170,10 +175,26 @@
 		}
 		[class^=float], [class^=int], [class^=num],[class$=num]{
 			text-align: right;
+                        font-size: 13px;
+                        font-family: cambria; 
+                        padding: 0 2px 0 2px; 
 		}
 		.suc, [class^=c_]{
 			text-align: center;
+                        font-size: 13px;
+                        font-family: cambria;
+                        padding: 0 2px 0 2px; 
 		}
+                #cheques_ter{
+                    width: auto;
+                }
+                .c_area {
+                    width: auto;
+                }
+                .revertir{
+                    font-size: 11px;
+                    display: none;
+                }
 	  </style>
 	  <style>
 	  .loader{
@@ -243,6 +264,7 @@
 			  }
 			});
                         setAnchorTitle();
+                        $("#cobros").draggable();
 		});
 		var editable = [];
 		function getCobroData(obj){
@@ -271,7 +293,7 @@
 									}
 									file.appendTo("#det_pago tbody");
 								}
-							}else{
+							}else{   
 								// Datos de Cliente y Pago
 								$("#"+s_index).text(formatter(s_index,s_value));
 							}
@@ -310,9 +332,13 @@
 				
 				if(estado){
 					$(".boton_accion").removeAttr("disabled");
+                                        $(".revertir").fadeOut();
+                                        $("#verif").html("<img src=\"../../img/ok.png\" alt=\"Ok\">Marcar como Verificado");
 					if($("span#fecha").attr("onclick") == undefined)$("span#fecha").attr("onclick","modificarFechaPago()");
 				}else{
 					$(".boton_accion").attr("disabled","disabled");
+                                        $(".revertir").fadeIn();
+                                        $("#verif").html("<img src=\"../../img/ok.png\" alt=\"Ok\"> Verificado");
 					$("span#fecha").removeAttr("onclick");
 				}
 			},"json");
@@ -484,6 +510,7 @@
 		}
 		// Verif
 		function verificado(){
+                    $("#verif").attr("disabled",true);
 			var idPago = $("#id_pago").text();
 			if(confirm("Marcar cobro "+idPago+" como Verificado?")){
 				$.post("ArqueoCobrosDet.class.php",{"action":"verificado", "args":idPago} , function(data){
@@ -627,7 +654,32 @@ function setAnchorTitle() {
 
  function hideAnchorTitle() {
      $('#anchorTitle').hide();
- }                
+ }  
+ 
+ function revertirCobro(){
+     var c = confirm("Confirma que desea Revertir este cobro?");
+     if(c){
+        /*var id_pago = $("#id_pago").text();
+            $.post("ArqueoCobrosDet.class.php",{"action":"revertirCobro", "args":id_pago+','+id_pago} , function(data){
+                    if(data.msg == "Ok"){	
+                        $("#"+id_pago).removeClass("si");
+                        $("#"+id_pago).addClass("no");
+                        $("#"+id_pago).click();
+                    }else{
+                        mostrarMsg("No se pudo revertir el cobro!");
+                    }   
+            },"json");*/
+            
+            for(var i = 0;i<5;i++){
+              var edit = ['r'+i+'nro_cheque','r'+i+'id_banco','r'+i+'cuenta','l'+i+'benef','c'+i+'fecha_emis','c'+i+'fecha_pago','c'+i+'tipo','c'+i+'fecha'];
+              edit.forEach(function(e){
+                  $("."+e).attr("onclick","modificar($(this))");
+              }); 
+            }            
+            
+        }   
+     
+ }
 	  </script>
 	  </head>
           
@@ -660,19 +712,20 @@ function setAnchorTitle() {
 
 <!-- begin: c_are -->
 <div class="c_area">
-<table id="cli_data">
-<tr><td class="titulo">id:</td><td class="cliente_datos"><span id="id_pago" class="selected"></span></td><td rowspan="6">
+<table id="cli_data" border="0">
+    <tr><td class="titulo">ID:</td><td class="cliente_datos"><span id="id_pago" class="selected"></span></td><td rowspan="5" style="text-align:center">
 	<button class="boton_accion" id="verif" disabled="disabled" onclick="verificado()"><img src="../../img/ok.png" alt="Ok">Marcar como Verificado</button><br>
-	<button class="boton_accion" id="eliminar" disabled="disabled" onclick="eliminar()"><img src="../../img/delete.png" alt="Spr"> Eliminar</button></td></td></tr>
+	<button class="boton_accion" id="eliminar" disabled="disabled" onclick="eliminar()"><img src="../../img/delete.png" alt="Spr"> Eliminar</button></td></tr>
 <tr><td class="titulo">Cliente:</td><td class="cliente_datos"><span id="cliente"></span></td></tr>
 <tr><td class="titulo">Monto:</td><td class="cliente_datos"><span id="float0monto"></span></td></tr>
 <tr><td class="titulo">Interes:</td><td class="cliente_datos"><span id="float0interes"></span></td></tr>
 <tr><td class="titulo">Estado:</td><td class="cliente_datos"><span id="estado"></span></td></tr>
+<tr><td class="titulo">N&deg; Recibo:</td><td class="cliente_datos"><span id="recibo"></span></td><td style="text-align:center">{revertir}</td></tr>
 <tr><td class="titulo">Fecha:</td><td class="cliente_datos"><span id="fecha"></span></td><td><div style="visibility: hidden;" class="loader">Loading...</div></td></tr>
 </table>
 <table id="det_pago" cellspacing="0" cellpadding="0" border="1">
 	<thead>
-	<tr>
+            <tr class="cabecera">
 		<th>Ref</th>
                 <th>Cuota</th>	
 		<th>Factura</th>		
@@ -691,33 +744,33 @@ function setAnchorTitle() {
 
 	</tbody>
 </table>
-<table id="efectivo" class="data" border="1" cellspacing="0" cellpadding="0">
-<thead>
-<tr><th colspan="4">Efectivo</th></tr>
-<tr><th>Fecha</th><th>Moneda</th><th>Suc</th><th>Cantidad</th></tr>
-</thead>
-<tbody></tbody>
-</table>
+    <table id="efectivo" class="data" border="1" cellspacing="0" cellpadding="0" style="border-collpase:collapse">
+        <thead>
+            <tr><th colspan="4" class="cabecera">Efectivo</th></tr>
+            <tr><th>Fecha</th><th>Moneda</th><th>Suc</th><th>Cantidad</th></tr>
+        </thead>
+    <tbody></tbody>
+    </table>
 <table id="cheques_ter" class="data" border="1" cellspacing="0" cellpadding="0">
-<thead>
-<tr><th colspan="10">Cheques</th></tr>
-<tr><th>Nro.</th><th>Banco</th><th>Cuenta</th><th>Beneficiario</th><th>Fecha Emis</th><th>Fecha Pago</th><th>Tipo</th><th>Valor</th><th>Cotiz</th><th>ValRef</th></tr>
-</thead>
-<tbody></tbody>
+    <thead>
+        <tr><th colspan="11" class="cabecera">Cheques</th></tr>
+        <tr><th>Nro.</th><th>Cod.Banco</th><th>Banco</th><th>Cuenta</th><th>Beneficiario</th><th>Fecha Emis</th><th>Fecha Pago</th><th>Tipo</th><th>Valor</th><th>Cotiz</th><th>ValRef</th></tr>
+    </thead>
+    <tbody></tbody>
 </table>
 <table id="convenios" class="data" border="1" cellspacing="0" cellpadding="0">
-<thead>
-<tr><th colspan="5">Tarjetas</th></tr>
-<tr><th>Suc</th><th>Nombre</th><th>Voucher</th><th>Fecha</th><th>Monto</th></tr>
-</thead>
-<tbody></tbody>
+    <thead>
+        <tr><th colspan="5" class="cabecera">Tarjetas</th></tr>
+        <tr><th>Suc</th><th>Nombre</th><th>Voucher</th><th>Fecha</th><th>Monto</th></tr>
+    </thead>
+    <tbody></tbody>
 </table>
 <table id="bcos_ctas_mov" class="data" border="1" cellspacing="0" cellpadding="0">
-<thead>
-<tr><th colspan="5">Bancos</th></tr>
-<tr><th>Suc</th><th>Nombre</th><th>Nro. Deposito</th><th>Cuenta</th><th>Monto</th></tr>
-</thead>
-<tbody></tbody>
+    <thead>
+        <tr><th colspan="5" class="cabecera">Bancos</th></tr>
+        <tr><th>Suc</th><th>Nombre</th><th>Nro. Deposito</th><th>Cuenta</th><th>Monto</th></tr>
+    </thead>
+    <tbody></tbody>
 </table>
 </div>
 <!-- end:   c_are -->

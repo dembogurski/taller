@@ -1,0 +1,166 @@
+<!-- begin: headers -->   
+    <head>  
+        <link rel="stylesheet" type="text/css" href="diagnosticos/OrdenesTrabajo.css?_=0" />   
+        <link rel="stylesheet" type="text/css" href="diagnosticos/OrdenTrabDet.css?_=0" />      
+        <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
+    </head>  
+<!-- end:   headers -->
+
+<!-- begin: insert_edit_form -->     
+<div class="form" id="form_OrdenesTrabajo"></div>
+<!-- end:   insert_edit_form -->
+
+<!-- begin: data_header -->
+<div class="list_container">      
+    <table id="OrdenesTrabajo"  border="1" class="display responsive nowrap db_tablename"  >
+        <thead> 
+            <tr>
+                <th data-priority="5">N&deg;</th><th data-priority="1">Chapa</th><th data-priority="2">Tecnico</th><th data-priority="3">Fecha</th><th data-priority="4">Estado</th><th data-priority="6"></th>
+            </tr>
+        </thead>
+
+<!-- end:   data_header -->
+
+
+<!-- begin: data_line -->     
+    <tr> <td >{id_orden}</td><td onclick=editOrdenesTrabajoUI("{id_orden}")>{chapa}</td> <td onclick=editOrdenesTrabajoUI("{id_orden}")>{tecnico}</td> <td onclick=editOrdenesTrabajoUI("{id_orden}")>{fecha}</td> <td onclick=editOrdenesTrabajoUI("{id_orden}")>{estado}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editOrdenesTrabajoUI("{id_orden}") ></td>  </tr>
+<!-- end:   data_line -->
+
+
+<!-- begin: data_foot -->     
+
+        <tfoot>
+             
+        </tfoot>
+    </table> 
+</div>
+ 
+<!-- end:   data_foot -->
+
+<!-- begin: script -->      
+    <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+    <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
+    <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="js/functions.js" ></script>    
+    <script type="text/javascript" src="diagnosticos/OrdenesTrabajo.js" ></script>
+    
+    
+<!-- end:   script -->
+
+
+<!-- begin: edit_form_cab -->  
+
+<div class="form_orden_trab_det" id="form_orden_trab_det"></div>
+
+<table border="0" class="form_table" id="edit_OrdenesTrabajo" style="width: auto">
+    <tr> <th colspan="2" class="form_title" > Actualizar OrdenesTrabajo  </th> </tr> 
+<!-- end:   edit_form_cab -->
+
+
+<!-- begin: edit_form_data -->  
+<tr>
+    <td colspan="2">
+        <label><b>Diagnostico:</b></label>  <select class="form_db_select" id="form_id_diag"  disabled="disabled"  >{value_of_id_diag}</select>
+     
+       <div class="chapa">
+            <div class="top_chapa">--&nbsp;&nbsp;&nbsp;&nbsp;MERCOSUR&nbsp;&nbsp;&nbsp;&nbsp;--</div>
+            <div class="nro_chapa">{value_of_chapa}</div>
+        </div> 
+    </td>
+</tr>  
+<tr>
+    <td class="form_label">Propietario:</td><td>{propietario}</td>
+</tr>
+<tr> <td class="form_label">N&deg; Orden:</td> <td><input class="form_number PRI" type="number" id="form_id_orden"  readonly="readonly" requirOrdened="required" size="10" onkeypress="return onlyNumbers(event)" value="{value_of_id_orden}" >*</td>  </tr>
+<tr> <td class="form_label">Fecha:</td> <td><input class="form_date" type="date" id="form_fecha"      value="{value_of_fecha}" ></td>  </tr>
+<tr> <td class="form_label">Tecnico Autorizado:</td> <td>
+<select class="form_db_select" id="form_tecnico"   >{value_of_tecnico}</select>
+</td>  </tr>
+<tr> <td class="form_label">Fecha Ini:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_ini"      value="{value_of_fecha_ini}" ></td>  </tr>
+<tr> <td class="form_label">Fecha Fin:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_fin"      value="{value_of_fecha_fin}" ></td>  </tr>
+<tr> <td class="form_label">Obs:</td> <td><textarea class="form_textarea" id="form_obs" cols="40" rows="3"   >{value_of_obs}</textarea></td>  </tr>
+<tr> <td class="form_label">Estado:</td> <td>
+<select class="form_select" id="form_estado"   >{value_of_estado}</select>
+<img src="img/printer-02_32x32.png" class="diagnostico_print" style="cursor:pointer;margin-left: 30px" onclick="imprimirOrdenTrabajo()" >
+</td> 
+
+</tr>
+
+<tr>
+    <td colspan="2" id="orden_det">
+        
+    </td>
+</tr>
+
+<!-- end:   edit_form_data -->
+
+
+<!-- begin: edit_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_OrdenesTrabajo" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeForm()">
+            <input type="button" value="Modificar Datos" onclick=updateOrdenesTrabajoData("edit_OrdenesTrabajo") id="OrdenesTrabajo_update_button">
+            <input type="button" value=" Cerrar " onclick="closeForm()" id="OrdenesTrabajo_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   edit_form_foot -->
+
+
+
+
+
+
+<!-- begin: add_form_cab -->  
+<table border="0" class="form_table" id="add_OrdenesTrabajo">
+    <tr> <th colspan="2" class="form_title" > (Nuevo Registro) OrdenesTrabajo  </th> </tr> 
+<!-- end:   add_form_cab -->
+
+
+<!-- begin: add_form_data -->  
+<tr> 
+    <td class="form_label">N&deg; Diagnostico:</td> <td>
+        <select class="form_db_select" id="form_id_diag"  onchange="selectChapa()"  >{value_of_id_diag}</select>
+    </td>  
+</tr>
+<tr> <td class="form_label">Chapa:</td> <td><input class="form_text" type="text" id="form_chapa"      size="30"  value="" ></td>  </tr>
+
+<tr> <td class="form_label">Usuario:</td> <td><input class="form_text" type="text" id="form_usuario"  readonly="readonly"   required="required"  size="30"  value="{usuario}" >*</td>  </tr>
+<tr> <td class="form_label">Fecha:</td> <td><input class="form_date" type="date" id="form_fecha"        value="{fecha_hoy}" ></td>  </tr>
+<tr> <td class="form_label">Tecnico Autorizado:</td> <td>
+<select class="form_db_select" id="form_tecnico"  >{value_of_tecnico}</select>
+</td>  </tr>
+<tr> <td class="form_label">Fecha Inicio:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_ini"        value="{fecha_hora_hoy}" ></td>  </tr>
+<tr style="display:none" > <td class="form_label">Fecha Culminacion:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_fin"        value="{fecha_hora_hoy}" ></td>  </tr>
+<tr> <td class="form_label">Obs:</td> <td><textarea class="form_textarea" id="form_obs" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Estado:</td> <td>
+<select class="form_select" id="form_estado"  >
+<option value="Abierto">Abierto</option>
+<option value="Cerrado">Cerrado</option>
+</select>
+</td>  
+
+</tr>
+
+<!-- end:   add_form_data -->
+
+
+<!-- begin: add_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_OrdenesTrabajo" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeForm()">
+            <input type="button" value=" Crear Orden de Trabajo " onclick=addOrdenesTrabajoData("add_OrdenesTrabajo") id="OrdenesTrabajo_save_button">
+            <input type="button" value=" Cerrar " onclick="closeForm()" id="OrdenesTrabajo_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   add_form_foot -->
+
+
+<!-- begin: no_result -->     
+<div style="text-align: center;margin: 2cm auto"> Ningun registro para OrdenesTrabajo <button type="button" id="add_button_proveedores" onclick="addOrdenesTrabajoUI()">Agregar un nuevo registro para (OrdenesTrabajo)</button></div> 
+<!-- end:   no_result -->

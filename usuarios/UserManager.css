@@ -142,3 +142,39 @@ button#limpiar_filtros:hover{
 @-moz-keyframes spin { 100% { -moz-transform: rotate(-180deg); } }
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(-180deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(-180deg); transform:rotate(-180deg); } }
+
+.user_photo{    
+    height: 120px;
+    line-height: 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #f9f9f9;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0 0 25px rgb(232, 232, 232) inset, 0 1px 0 rgb(195, 195, 195), 0 2px 0 rgb(201, 201, 201), 0 2px 3px rgb(51, 51, 51);
+    border-radius: 3px;
+    margin-bottom: 4px
+}
+
+.select_image{
+    display: none;
+}
+
+.user_photo_mini{    
+    height:34px;
+    line-height: 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #f9f9f9;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0 0 25px rgb(232, 232, 232) inset, 0 1px 0 rgb(195, 195, 195), 0 2px 0 rgb(201, 201, 201), 0 2px 3px rgb(51, 51, 51);
+    border-radius: 3px;
+}
+ 
+.user_photo:hover { 
+    border: solid #e5e5e5 1px; 
+}
+.suc,.estado{
+    text-align: center;
+}

@@ -10,6 +10,8 @@ var sub = "";
 var first_menu = "";
 var nav = Array();
 var set_width = 0;
+var current_group = "";
+var open_manual;
 
 $(function() {
     cargarMenu(json);
@@ -39,31 +41,35 @@ function cargarMenu(menu, back) {
                 if (!isNaN(width)) {
                     set_width = width;
                 }
+                var icon = "img/menu/generic_folder.png";
+                if(value.icon !== undefined){
+                    icon = value.icon;
+                }
+                console.log( key +"   "+ value.icon);
                 if (typeof value.url === "undefined") {
-                    $("#menu").append("<button id='menu_" + local_id + "' class='menu'  data-info='" + value.help + "' title='" + value.help + "' onclick='cargarMenu(sub[" + '"' + key + '"' + "])'>" + key + "</button>");
+                    //$("#menu").append("<div id='menu_" + local_id + "' class='menu'  data-info='" + value.help + "' title='" + value.help + "' onclick='cargarMenu(sub[" + '"' + key + '"' + "])'>" + key + "</div>");
+                    createMenu(local_id,value.help,"cargarMenu(sub[" + '"' + key + '"' + "])",icon,key);
                 } else {
-                    $("#menu").append("<button id='menu_" + local_id + "' class='menu'  data-info='" + value.help + "' title='" + value.help + "' onclick='" + value.function+"(" + '"' + value.url + '"' + ")'>" + key + "</button>");
+                    //$("#menu").append("<div id='menu_" + local_id + "' class='menu'  data-info='" + value.help + "' title='" + value.help + "' onclick='" + value.function+"(" + '"' + value.url + '"' + ")' >" + key + "</div>");
+                    createMenu(local_id,value.help,"" + value.function+"(" + '"' + value.url + '"' + ")",icon,key);
                 }
                 i++;
             }
         });
 
         if (nav.length > 1) {
-            $("#menu").append("<button id='menu_volver' class='menu' data-info=' Volver ' title='Volver al menu anterior' onclick='back()'>Atras</button>");
+            $("#menu").append("<div><button id='menu_volver' class='menu' data-info=' Volver ' title='Volver al menu anterior' onclick='back()'>Atras</button></div>");
         }
-        /**
-                if(set_width > 480){
-                    $("#menu").css("width",""+set_width+"px");//Tomara el ultimo ancho establecido o el unico > 480px
-                    $(".menu").css("width",""+set_width+"px");
-                }else{ // Default 540px
-                    $("#menu").css("width","480px");
-                    $(".menu").css("width","480px");
-                }*/
+        
     });
     $("#menu").fadeIn(50);
     setTimeout("statusInfo()", 1000);
     setTimeout("activeArrows()", 1000);
-
+}
+function createMenu(local_id,help,click,icon,key){
+   $("#menu").append("<div id='menu_" + local_id + "' class='menu'  data-info='" + help + "' title='" + help + "' onclick='"+click+"'>\n\
+   <img src='"+icon+"' class='menu_icon' >\n\
+   <div class='icon_label'>" + key + "</div></div>"); 
 }
 
 function activeArrows() {

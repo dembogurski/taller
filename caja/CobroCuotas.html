@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!-- begin: header -->
-    <link rel="stylesheet" type="text/css" href="caja/CobroCuotas.css?_=1511286749790" />     
-    <script type="text/javascript" src="clientes/clientes.js?_=1511286749790" ></script>   
-    <script type="text/javascript" src="caja/CobroCuotas.js?_=222222222222" ></script>          
+    <link rel="stylesheet" type="text/css" href="caja/CobroCuotas.css?_=asdfasfasfasf" />     
+    <script type="text/javascript" src="clientes/Clientes.js?_=000000000" ></script>   
+    <script type="text/javascript" src="caja/CobroCuotas.js?_=66666666666666666666666666666666" ></script>          
     <script>
         var is_mobile = {is_mobile};
     </script>    
@@ -12,10 +12,7 @@
 
 <!-- begin: cotizaciones -->
 <div style="text-align: center; padding-top: 6px">
-    <label style="font-weight: bold">Cotizaciones:</label>&nbsp;&nbsp;
-    <label>Rs:</label><img src="img/rs.png" class="img_moneda" style="margin-bottom: -8px;"><input style="font-weight: bold;font-size: 14px;text-align: right;color:black" type="text" size="8"  readonly  id="cotiz_rs" value="{cotiz_rs}">&nbsp;&nbsp;
-    <label>Ps:</label><img src="img/ps.png" class="img_moneda" style="margin-bottom: -8px;"><input style="font-weight: bold;font-size: 14px;text-align: right;color:black" type="text" size="8"  readonly  id="cotiz_ps" value="{cotiz_ps}">&nbsp;&nbsp;
-    <label>Us:</label><img src="img/us.png" class="img_moneda" style="margin-bottom: -8px;"><input style="font-weight: bold;font-size: 14px;text-align: right;color:black" type="text" size="8"  readonly  id="cotiz_us" value="{cotiz_us}">&nbsp;&nbsp;
+    
     <img src="img/refresh-32.png" title="Recargar" data-info="Recargar" class="rotate" style="height: 26px;width: 26px; margin-bottom: -8px;cursor: pointer" onclick=genericLoad("caja/CobroCuotas.class.php")>    
 </div>
 <!-- end:   cotizaciones -->
@@ -30,40 +27,60 @@
 
 <div id="cabecera" style="padding-top: 10px;padding-left: 10px"> 
     <div id="cli_data"> 
-    <input type="hidden" id="codigo_cliente" value=""> <input type="hidden" id="moneda" value="G$">    
-    <label id="label_ruc">C.I./R.U.C.:</label> <input type="text" id="ruc_cliente" value="{ruc_cli}"  size="20" maxlength="34" onchange="buscarCliente(this)" placeholder="Buscar Cliente" data-next="nombre_cliente" >
-    <label>Cliente:</label>   <input type="text" id="nombre_cliente" size="46" onchange="buscarCliente(this)" placeholder="Busque agu&iacute; por el Nombre" data-next="boton_generar" >
-    <input type="button" value="Generar Cobro" style="font-size: 12;font-weight: bolder" onclick="generarCobro()" id="generar_cobro" disabled="disabled">
-    &nbsp;<img src="img/coins.png" style="cursor: pointer;display:none"   id="coin" height="22" width="22" onclick="cobroCuotasUI()">&nbsp;
-    <label class="cobro">N&deg;</label><input type="text" style="" size="6" readonly="readonly" class="cobro" id="nro_cobro">  <br>
-    <label>P/ Cheques Diferidos Ingrese la Fecha mas alta </label> 
-    <input type="text" class="fecha" value="{fecha_hoy}" size="10" id="fecha_cheque_diff" style='text-align:center'>
-    <label class="limite_credito" title="Limite de Credito">Lim.Cred.:</label> <input type="text" id="limite_credito" size="10" readonly class="num limite_credito" value="0"  >
-    &nbsp;<span id="msg"></span>
+        <input type="hidden" id="codigo_cliente" value=""> <input type="hidden" id="moneda" value="G$">    
+        <label id="label_ruc">C.I./R.U.C.:</label> <input type="text" id="ruc_cliente" value="{ruc_cli}"  size="20" maxlength="34" onchange="buscarCliente(this)" placeholder="Buscar Cliente" data-next="nombre_cliente" >
+        <label>Cliente:</label>   <input type="text" id="nombre_cliente" size="46" onchange="buscarCliente(this)" placeholder="Busque agu&iacute; por el Nombre" data-next="boton_generar" >
+        <input type="button" value="Generar Cobro" style="font-size: 12;font-weight: bolder" onclick="generarCobro()" id="generar_cobro" disabled="disabled">
+        &nbsp;<img src="img/coins.png" style="cursor: pointer;display:none"   id="coin" height="22" width="22" onclick="cobroCuotasUI()">&nbsp;
+        <label class="cobro">N&deg;</label><input type="text" style="" size="6"   class="cobro" id="nro_cobro" onchange="recuperarNroCobro()">  
+        <img id="icon_estado_linea_credito" style="display:none;cursor: pointer;margin-bottom:-7px" src="img/bill.png" onclick="mostrarEstadoLineaCredito()" >
+        <div style="width: 100%">
+            <table id="resumen_linea_credito"   border="1" >
+                <tr class="titulo"><th colspan="2">Resumen de Linea de Credito</th></tr>     
+            </table>
+        </div>    
+        <br>
+        <label>P/ Cheques Diferidos Ingrese la Fecha mas alta </label> 
+        <input type="text" class="fecha" value="{fecha_hoy}" size="10" id="fecha_cheque_diff" style='text-align:center'>
+        <label class="limite_credito" title="Limite de Credito">Lim.Cred.:</label> <input type="text" id="limite_credito" size="10" readonly class="num limite_credito" value="0"  >
+        &nbsp;<span id="msg"></span>
+    </div>
+    <span id="msg_intereses" >
+        Debe generar una Factura por los Intereses y cobrar antes de proceder al cobro de estas cuotas &nbsp;
+        <input type="button" value="Generar Factura por los Intereses" onclick="previewFacturaXIntereses()">
+    </span>
+    
+    <div id="detalle_intereses">        
+        <table id="table_detalle_intereses" border="1" style="width: 300px;border-collapse: collapse;margin: 4px">
+            <tr><th class="titulo" colspan="4">Detalle de Factura por Intereses</th></tr>
+            <tr><th>Ref.Ticket</th><th>Cuota</th><th>Interes</th></tr>
+        </table>
     </div>
     
     <div id="ui_clientes" title="Lista de Clientes" style="display:none; cursor: pointer"  >
-        <table id="lista_clientes" cellspacing="0" cellpadding ="0" border="1" style="width: 90%" >
+        <table id="lista_clientes" cellspacing="0" cellpadding ="0" border="1" style="width: 90%;border-collapse: collapse" >
         <tr><th colspan="5" class="titulo">Clientes</th></tr>
-        <tr style="background-color: lightgray;"> <th style="width: 15%">Codigo</th>   <th style="width: 20%">C.I./R.U.C.</th> <th style="width: 55%">Cliente</th> <th style="width: 10%">Telefono</th><th style="width: 10%">Categoria</th> </tr>
+        <tr style="background-color: lightgray;"> <th style="width: 15%">Codigo</th>   <th style="width: 20%">C.I./R.U.C.</th> <th style="width: 55%">Cliente</th>  <th style="width: 10%">Categoria</th> </tr>
      </table>       
     </div> 
  </div>   
 <div id="cuotas_content" style="padding:10 10 10 10">
+    <div class="tasa_interes_container" style="text-align: right">
+        <div class="tasa_interes"><label>Tasa Interes:</label><input type="text" id="cambiar_tasa_interes" onchange="cambiarTasaInteresPunitoria()" size="4" class="num" style="font-weight: bolder" value="27.6"><label>% anual</label></div>
+    </div>
     <table id="lista_cuotas" border="1"  cellspacing="0" cellpadding="0" >
-        <tr><th class="titulo_cuotas" colspan="13">Detalle de Cuenta</th></tr>
-        <tr class="titulo" > <th class="tSel" >Seleccionado</th> <th>Factura</th><th class="tMon" >Moneda</th><th>N&deg; Ref </th><th>N&deg; Cuota</th><th>Fecha</th><th>Vencimiento</th><th class="tDA">D&iacute;as de Atraso</th><th>Total Cuota</th> <th class="tPag">Monto Pagado</th><th>Interes</th> <th colspan="2">Monto a Pagar</th> </tr>
-    </table>
+        <tr><th class="titulo_cuotas" colspan="14">Detalle de Cuenta</th></tr>
+        <tr class="titulo" > <th class="tSel" >Marcar</th> <th>Factura</th><th class="tMon" >#</th><th>N&deg; Ref </th><th>Cuota</th><th>Fecha</th><th>Vencimiento</th><th>Ult.Pago</th><th class="tDA">D&iacute;as de Atraso</th><th>Valor Cuota</th> <th class="tPag">Pagado</th><th>Interes</th> <th colspan="2">Monto a Pagar</th> </tr>
     
-    <table id="pie" border="0"  cellspacing="0" cellpadding="0" >
-        <tr style="font-weight: bolder">
-            <td style="width: 46%" >&nbsp;</td>
-            <td id="total_deuda" class="num" style="width: 6%"></td>
-            <td  style="width: 9%"></td>
-            <td id="total_a_pagar" class="num" style="width: 11%">0</td>
-             
+        <tr id="pie" style="font-weight: bolder">
+            <td colspan="9">&nbsp;</td>
+            <td id="total_deuda" class="num"></td>
+            <td ></td>
+            <td id="suma_interes" class="num">0</td>
+            <td id="total_a_pagar" class="num">0</td>             
         </tr>
     </table>
+     
 </div>
 <!-- end:   body -->
 
@@ -84,7 +101,7 @@
          
       <tr>
         <td><label style="font-weight: bold;font-size: 14px">Cobro N&deg;: </label> </td><td><input style="font-weight: bold;font-size: 14px" type="text" size="7"  readonly class="factura" id="nro_cobro_popup" value=""> </td>   
-        <td> <label style="font-weight: bold;font-size: 14px">Total a Pagar <span id="moneda_cobro">Gs</span>: </label> </td>
+        <td> <label style="font-weight: bold;font-size: 14px">Total a Pagar <span id="moneda_cobro" class=".moneda_cobro">Gs</span>: </label> </td>
         <td><input style="font-weight: bold;font-size: 14px;text-align: right;color:green" type="text" size="16"  readonly  id="total_moneda" value=""> </td>
         <td><img src="img/gs.png" class="img_moneda" id="img_total_pagar_moneda"  ></td> 
      </tr>
@@ -101,10 +118,16 @@
           <div id="efectivo" style="text-align: left;min-height: 190px">
             <table border="0"  style="margin:0;border-spacing:6;">
                 <tr><th class="titulo" colspan="3">Entrega en Efectivo</th></tr>
-                <tr><td><img src="img/gs.png" class="img_moneda"  ></td><td><label>Gs.:</label> </td>  <td style="text-align: right">   <input class="num entrega efectivo" type="text" data-next="entrega_rs" size="14"  id="entrega_gs" value=""> </td><td></td>
-                <tr><td><img src="img/rs.png" class="img_moneda"  ></td><td><label>Rs.:</label> </td>  <td style="text-align: right">   <input class="num entrega efectivo" type="text" data-next="entrega_ps" size="14"  id="entrega_rs" value=""> </td><td><label id="mult_rs"></label></td>
-                <tr><td><img src="img/ps.png" class="img_moneda"  ></td><td><label>Ps.:</label> </td>  <td style="text-align: right">   <input class="num entrega efectivo" type="text" data-next="entrega_us" size="14"  id="entrega_ps" value=""> </td><td><label id="mult_ps"></label></td>
-                <tr><td><img src="img/us.png" class="img_moneda"  ></td><td><label>Us.:</label> </td>  <td style="text-align: right">   <input class="num entrega efectivo" type="text" data-next="factura_contable" size="14"  id="entrega_us" value=""> </td><td><label id="mult_us"></label></td>     
+                <tr><td><img src="img/gs.png" class="img_moneda"  ></td><td><label>Gs.:</label> </td>  <td style="text-align: left">   <input class="num entrega efectivo" type="text" data-next="entrega_us" size="14"  id="entrega_gs" value=""> </td>
+                    <td><label id="mult_gs"></label></td>        
+                <tr>
+                    <td>
+                        <img src="img/us.png" class="img_moneda" >
+                    </td><td><label>Us.:</label> </td>  
+                    <td style="text-align: left">   <input class="num entrega efectivo" type="text" data-next="factura_contable" size="14"  id="entrega_us" value="">
+                        <label>Cotiz:</label> <input style="font-weight: bold;font-size: 14px;text-align: right;color:black" type="text" size="8" class="cotizacion"  readonly  id="cotiz_us" value="{cotiz_us}"> 
+                    </td><td><label id="mult_us"></label></td> 
+                </tr>    
             </table>             
             <div id="msg_efectivo" style="text-align: center" class="info"></div> 
           </div>
@@ -146,14 +169,14 @@
             <label>Valor:</label><input type="text" id="valor_cheque" data-next="monedas_cheque" class="num entrega"  onchange="calcRefCheque()"  value="" size="14" >             
             <label>Moneda:</label><select id="monedas_cheque" data-next="cotiz_cheque" onchange="calcRefCheque()" > {monedas} </select>
             <label>Cotiz:</label><input type="text" id="cotiz_cheque" class="num entrega" data-next="add_cheque" onchange="calcRefCheque()" value="1,00" size="8" >  
-            <label>Valor Gs:</label><input type="text" style="color: black" id="valor_cheque_gs" class="num" value="" size="16" readonly="readonly" disabled="disabled" >  
+            <label>Valor </label><label class="moneda_ref">Gs:</label><input type="text" style="color: black" id="valor_cheque_ref" class="num" value="" size="16" readonly="readonly" disabled="disabled" >  
             
             <input type="button" id="add_cheque" value="Agregar Cheque" onclick="addCheque()" disabled >
             
             </div>
                 <table id="lista_cheques" border="1"  cellspacing="0" cellpadding="0" width="99%"   >
                    <tr><th colspan="11" class="titulo_factura">Cheques Recibidos</th></tr>  
-                   <tr class="titulo"><th>N&deg; Cheque</th><th>Banco</th><th>Cta</th><th>Beneficiario</th><th>Valor</th><th>Moneda</th><th>Cotiz.</th><th>Valor Gs</th><th>Emision</th><th>Fecha Pago</th><th>*</th></tr>  
+                   <tr class="titulo"><th>N&deg; Cheque</th><th>Banco</th><th>Cta</th><th>Beneficiario</th><th>Valor </th><th>Moneda</th><th>Cotiz.</th><th>Valor Gs</th><th>Emision</th><th>Fecha Pago</th><th>*</th></tr>  
                    <tr class="cheques_foot"><td colspan="7" > </td><td style="font-weight: bolder;font-size: 13px" class="total_cheques num">0</td><td></td> </tr>
                 </table> 
              <div id="msg_cheques" style="text-align: center" class="info"></div>
@@ -209,7 +232,7 @@
 
 <!-- begin: area_impresion -->
 
-<div style="width: 50%;border:solid gray 1px;margin-left: 15px;padding: 4px" class="area_impresion_recibos">    
+<div style="width: 70%;border:solid gray 1px;margin-left: 15px;padding: 4px" class="area_impresion_recibos">    
     <div class="cabecera" style="text-align: center;background:lightskyblue">Area de Impresion de Recibos</div>    
 <label> Buscar Cheque N&deg;:</label>
 <input type="text" value="" size="12" id="bcheque" onchange="recuperarNroCobro()">  

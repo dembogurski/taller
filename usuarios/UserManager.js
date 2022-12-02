@@ -86,7 +86,7 @@ function getUser(user) {
             var sl = $("<select/>", {
                 "id": "select_estado",
                 "change": function() {
-                    activeSabe();
+                    activeSave();
                     $("#estado").val($("#select_estado option:selected").text());
                     $("#estado").attr("data-changed", "yes");
                 }
@@ -109,7 +109,7 @@ function getUser(user) {
                     $(this).attr("data-err", "no");
                     $(this).next(".error").text("Ok").css("color", "green");
                 }
-                activeSabe();
+                activeSave();
             });
             $("#nombre, #apellido").mask("***?**********************", { placeholder: "" });
             $("#nombre, #apellido, #dir").change(function() {
@@ -120,7 +120,7 @@ function getUser(user) {
                     $(this).attr("data-err", "no");
                     $(this).next(".error").text("Ok").css("color", "green");
                 }
-                activeSabe();
+                activeSave();
             });
             $("#email").change(function() {
                 if (!validMail(this.value)) {
@@ -130,7 +130,7 @@ function getUser(user) {
                     $(this).attr("data-err", "no");
                     $(this).next(".error").text("Ok").css("color", "green");
                 }
-                activeSabe();
+                activeSave();
             });
             $("#tel").mask("dddddd?ddddddd", { placeholder: "" });
             $("#tel").change(function() {
@@ -141,7 +141,7 @@ function getUser(user) {
                     $(this).attr("data-err", "no");
                     $(this).next(".error").text("Ok").css("color", "green");
                 }
-                activeSabe();
+                activeSave();
             });
             $("input[id^='fecha_']").mask("99/99/9999");
             $("input[id^='fecha_']").change(function() {
@@ -152,7 +152,7 @@ function getUser(user) {
                     $(this).attr("data-err", "no");
                     $(this).next(".error").text("Ok").css("color", "green");
                 }
-                activeSabe();
+                activeSave();
             });
             $("input#sueldo_fijo, input#sueldo_contable").val(function(){return (parseFloat($(this).val()).format(2, 3, '.', ','));});
             $("input#sueldo_fijo, input#sueldo_contable").focusout(function(){$(this).val(parseFloat($(this).val()).format(2, 3, '.', ','));});
@@ -171,26 +171,38 @@ function getUser(user) {
                     $(this).attr("data-err", "no");
                     $(this).next(".error").text("Ok").css("color", "green");
                 }
-                activeSabe();
+                activeSave();
             });
             $.post("usuarios/UsersManager.php", { "action": "getSucsAll" }, function(data) {
                 $("#suc").parent().append("<select id='suc_select'>");
+                $("#suc_princ").parent().append("<select id='suc_princ_select'>");
 
                 $.each(data, function(key, value) {
                     if (value === $("#suc").val()) {
                         $("#suc_select").append("<option selected value='" + value + "'> " + key + "</option>");
                     } else {
-                        $("#suc_select").append("<option value='" + value + "'>" + key + "</option>");
+                        $("#suc_select").append("<option value='" + value + "'>" + key + "</option>");                        
+                    }
+                    if (value === $("#suc_princ").val()) {
+                        $("#suc_princ_select").append("<option selected value='" + value + "'> " + key + "</option>");
+                    } else {                        
+                        $("#suc_princ_select").append("<option value='" + value + "'>" + key + "</option>");
                     }
                 });
                 $("#suc_select").change(function() {
                     $("#suc").val($("#suc_select option:selected").val());
-                    activeSabe();
+                    activeSave();
                     verif("suc");
+                });
+                $("#suc_princ_select").change(function() {
+                    $("#suc_princ").val($("#suc_princ_select option:selected").val());
+                    activeSave();
+                    verif("suc_princ");
                 });
             }, "json");
 
             $("#suc").attr("disabled", true);
+            $("#suc_princ").attr("disabled", true);
             $("#id_tipo").attr("disabled", true);
 
             $.post("usuarios/UsersManager.php", { "action": "getTipoVendedor" }, function(data) {
@@ -205,7 +217,7 @@ function getUser(user) {
                 });
                 $("#tipo_vend").change(function() {
                     $("#id_tipo").val($("#tipo_vend option:selected").val());
-                    activeSabe();
+                    activeSave();
                     verif("id_tipo");
                     checkTipo();
                 });
@@ -225,7 +237,7 @@ function getUser(user) {
                     $(this).attr("data-err", "no");
                     $(this).next(".error").text("Ok").css("color", "green");
                 }
-                activeSabe();
+                activeSave();
             });
         });
         
@@ -271,7 +283,7 @@ function getMetas() {
     });
 }
 
-function activeSabe() {
+function activeSave() {
     var error = false;
     $("[data-err]").each(function() {
         if ($(this).attr("data-err") === "si") {
@@ -326,14 +338,23 @@ function updateList() {
             "onclick": "getUser('" + users[user].usuario + "')"
         });
         for (data in users[user]) {
+            var extra_class = "";
+            if(data == "img"){
+              console.log(data) ;   
+              extra_class =  users[user].usuario  ;   
+              if(extra_class == "*"){
+                  extra_class = "";
+              } 
+            }
+                
             if (fSuc === '%' && (users[user].estado == e1 || users[user].estado == e2)) {
                 $("<td/>", {
-                    "class": data,
+                    "class": data+" "+extra_class,
                     "text": users[user][data]
                 }).appendTo(tr);
-            } else if (users[user].suc === fSuc && (users[user].estado == e1 || users[user].estado == e2)) {
+            } else if (users[user].suc === fSuc && (users[user].estado == e1 || users[user].estado == e2)) { 
                 $("<td/>", {
-                    "class": data,
+                    "class": data+" "+extra_class,
                     "text": users[user][data]
                 }).appendTo(tr);
             }
@@ -341,6 +362,24 @@ function updateList() {
         $("#lista tbody").append(tr);
     }
     dynamicSearch();
+    buscarFotos();
+}
+
+function buscarFotos(){
+    $(".usuario").each(function(){
+       var user = $(this).text();
+       if(user !== "*"){
+            $("."+user).html("-");
+            $.post("Ajax.class.php", { "action": "getAvatar", "usuario": user }).done(function(data) {         
+                if(data !== "false"){
+                  var microtime = new Date().getMilliseconds();
+                  $("."+user).html('<img class="user_photo_mini" src="img/usuarios/'+user+'.jpg?action='+microtime+'" >');   
+                }else{ 
+                   $("."+user).html("");
+                }
+            }); 
+       }
+    });    
 }
 
 //verifica si hubo un cambio 
@@ -528,6 +567,7 @@ function dynamicSearch() {
             }
         });
     }
+    
 }
 /**
  * 
@@ -640,4 +680,33 @@ function limpiarFiltros() {
         dynamicSearch();
         setFiltros();
     }
+}
+
+function cambiarImagen(){
+    $(".select_image").fadeIn();    
+}
+
+function encodeImgtoBase64(element) { 
+      var img = element.files[0]; 
+      var reader = new FileReader(); 
+      reader.onloadend = function() { 
+        //$("#convertImg").attr("href",reader.result); 
+        //$("#convertImg").text(reader.result); 
+        $(".user_photo").attr("src", reader.result);
+        $("#levantar-mult").fadeIn();
+      };
+      reader.readAsDataURL(img);
+}
+
+function levantarDocumentoMult(){    
+    $("#levantar-mult").attr("disabled",true);
+       
+    var usuario = $("#usuario").text();
+    
+    var base64 = $(".user_photo").attr("src");
+    
+    $.post("usuarios/UsersManager.php", { "action": "cambiarImagen", base64: base64, "usuario": usuario  }, function() {
+        $(".btn").html("Ok");
+    });   
+    
 }

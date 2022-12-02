@@ -46,6 +46,51 @@ $(function () {
         }
     });
     
+    window.onload = function () {
+        if (typeof history.pushState === "function") {
+            history.pushState("jibberish", null, null);
+            window.onpopstate = function () {
+                history.pushState('newjibberish', null, null);
+                // Handle the back (or forward) buttons here
+                // Will NOT handle refresh, use onbeforeunload for this.
+                back();
+            };
+        } else {
+            var ignoreHashChange = true;
+            window.onhashchange = function () {
+                if (!ignoreHashChange) {
+                    ignoreHashChange = true;
+                    window.location.hash = Math.random();
+                    // Detect and redirect change here
+                    // Works in older FF and IE9
+                    // * it does mess with your hash symbol (anchor?) pound sign
+                    // delimiter on the end of the URL
+
+                } else {
+                    ignoreHashChange = false;    
+                }
+            };
+        }
+    }
+ 
+    // Config default toastr
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-bottom-left",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "500",
+            "hideDuration": "100",            
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "slideDown",
+            "hideMethod": "slideUp"
+          };
+    
     setTimeout("checkAvatar()",1000);  
     
 });
@@ -157,26 +202,21 @@ function statusInfo() {
      });
 }
 function errorMsg(error,time){ 
-    $("#status").html(error);  
-    $("#status").css("background","red");
-    $("#status").css("color","white"); 
-    $("#status").show();
-    setTimeout(function(){$("#status").fadeOut("slow",function(){
-       $("#status").css("background","yellow");
-       $("#status").css("color","black")     
-    });},time);    
+    toastr.options.timeOut = time;
+    toastr["error"](error);    
 }
 function infoMsg(info,time){
-    $("#status").html(info);    
-    $("#status").css("background","#3366ff");
-    $("#status").css("color","white");
-    $("#status").show();
-    setTimeout(function(){$("#status").fadeOut("slow",function(){
-       $("#status").css("background","yellow");
-       $("#status").css("color","black")     
-    });},time);   
+    toastr.options.timeOut = time;
+    toastr["info"](info );    
 }
-
+function warningMsg(info,time){
+    toastr.options.timeOut = time;
+    toastr["warning"](info);    
+}
+function successMsg(msg,time){
+    toastr.options.timeOut = time;
+    toastr["success"](msg);    
+}
 function changeSucTo(suc){    
     var usuario =$("#nick").text(); 
     var help =  $("#sucursal").attr("title").replace(/\d{2}$/,suc);
@@ -184,27 +224,14 @@ function changeSucTo(suc){
     $("#sucursal").attr("data-info",help);
     $("#sucursal").text("("+suc+")");
     document.cookie = "suc_"+usuario+"="+suc;
+    /*
     $.post("usuarios/UsersManager.php",{"action":"updateUser","data":"suc='"+suc+"'","user":usuario},function(){
         sucIdentity(suc);
-    });
+    });*/
 }
 
 function sucIdentity(suc){
-    var corp = /00|03/;
-    var corpUsers = /pablinos|saide|juliom/i;
-    var title = '';
-    var emp = '';
-    if (suc == '30') {
-        title = 'La Retaceria';
-        emp = 'LA RETACERIA';
-    }else if(corp.test(suc) || corpUsers.test(getNick())){
-        title = emp = 'CORPORACION TEXTIL S.A.';
-    }else{
-        title = 'Marijoa Tejidos';
-        emp = 'MARIJOA';
-    }
-    $("title").text(title);
-    $(".emp").text(emp);
+ 
 }
 
 function countDownClock(minutes){

@@ -15,8 +15,8 @@ function configurar(){
             }
         },
         responsive: true,
-	"lengthMenu": [[7, 14, 21, 28, -1], ["1 Lista", "2 Listas", "3 Listas", "4 Listas", "Todas"]],
-	"pageLength": 14,
+	"lengthMenu": [[5, 10, 15, 20, -1], ["1 Lista", "2 Listas", "3 Listas", "4 Listas", "Todas"]],
+	"pageLength": 5,
         "order": [[ 2, 'asc' ], [ 1, 'asc' ], [ 0, 'asc' ]],
         dom: 'l<"toolbar">frtip',
         initComplete: function(){

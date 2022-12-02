@@ -37,7 +37,7 @@ class Cuotas {
         // Sucursales
         $my = new My();
         $sql = "SELECT c.f_nro AS factura,id_cuota AS nro,DATE_FORMAT(c.fecha,'%d-%m-%Y') AS fecha,c.suc AS suc,ruc_cli,
-        cliente,c.moneda,monto,c.cotiz,monto_ref,valor_total,saldo,DATE_FORMAT(vencimiento,'%d-%m-%Y') AS venc,c.estado
+        cliente,c.moneda,monto,c.cotiz,monto_ref,saldo,ret_iva,DATE_FORMAT(vencimiento,'%d-%m-%Y') AS venc,c.estado
         FROM cuotas c, factura_venta f WHERE c.f_nro = f.f_nro AND f.estado = 'Cerrada' AND  c.suc = '$suc' AND  c.fecha  BETWEEN '$desde' AND '$hasta'";
         $my->Query($sql);
         
@@ -56,7 +56,7 @@ class Cuotas {
             $monto = $my->Record['monto'];            
             $cotiz = $my->Record['cotiz'];            
             $monto_ref = $my->Record['monto_ref'];
-            $valor_total = $my->Record['valor_total'];  
+            $ret_iva = $my->Record['ret_iva'];  
             $venc = $my->Record['venc'];
             $estado = $my->Record['estado'];
             
@@ -74,7 +74,7 @@ class Cuotas {
             $t->Set("monto",number_format($monto,2,',','.')); 
             $t->Set("monto_ref",number_format($monto_ref,2,',','.')); 
             $t->Set("cotiz",number_format($cotiz,2,',','.')); 
-            $t->Set("valor_total",number_format($valor_total,2,',','.'));             
+            $t->Set("ret_iva",number_format($ret_iva,2,',','.'));             
             $t->Set("venc",$venc);
             $t->Set("estado",$estado);
             $t->Show("data");

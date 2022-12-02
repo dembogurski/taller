@@ -29,22 +29,24 @@
  *
  */
 class Config {
-
+    
+    const PROJECT_NAME = "taller";
+    const SERVER_IP = "localhost";
     const LOG_FILE = "logs/logs.log";
-    const SQL_LOG_FILE = "D:/wamp/www/sistema/logs/sql.log";
+    const SQL_LOG_FILE = "G:/wamp/www/taller/logs/sql.log";
     const ERROR_LOG_FILE = "logs/error.log";
     const REPOSITORY_PATH = "/var/local/repos";  // Linux MacOSx
     const REPOSITORY_PATH_WIN = "C:/repos";          // Windows
     const WORKING_COPY_PATH = "../projects";     // for SVN any OS
     // Database configuration
-    const DB_HOST = "localhost";  // Hostname
-    const DB_NAME = "sistema";  // Database
+    const DB_HOST = "localhost:3307";  // Hostname
+    const DB_NAME = "taller";  // Database
     const DB_USER = "root";   // User
     const DB_PASSW = "";
-    const MAIN_DOMAIN = "http://www.sistema.com";  // Hostname
+    const MAIN_DOMAIN = "http://www.taller.com.py";  // Hostname
     // NAS configuration
-    const NAS_HOST = "192.168.2.252";
-    const NAS_HOST_EXTERNAL = "190.128.150.70:2252";
+    const NAS_HOST = "nas.taller";
+    const NAS_HOST_EXTERNAL = "nas.taller";
     const NAS_USER = "photo";
     const NAS_PASSW = "rootdba";
     const NAS_PORT = 22;
@@ -54,7 +56,12 @@ class Config {
     function __construct() {
         
     }
-
+    public function getProjectName() {
+        return self::PROJECT_NAME;
+    }
+    public function getServerIp() {
+        return self::SERVER_IP;
+    }
     public function getLogFile() {
         return self::LOG_FILE;
     }

@@ -7,11 +7,9 @@
  */
 require_once("../../Y_Template.class.php");
 require_once("../../Y_DB_MySQL.class.php");
-require_once("../../Y_DB_MSSQL.class.php");
 require_once("../../Functions.class.php");
 
-class ArqueoVentasDet
-{
+class ArqueoVentasDet{
     private $template;
     function __construct() {
         $this->template = new Y_Template("ArqueoVentasDet.html");
@@ -36,7 +34,7 @@ class ArqueoVentasDet
         $link = new My();
         $facturas = '';
         $ventas = array();
-        $query = "select f.f_nro,date_format(f.fecha_cierre,'%d/%m/%Y') as fecha_cierre,f.tipo,f.total as n_total,f.moneda,f.total_desc as n_total_desc,f.total_bruto as n_total_bruto,if(control_caja='Si','si','no') as control, if(empaque='Si','si','no') as control_empaque, e_sap from factura_venta f where f.suc='$suc' and f.fecha_cierre between '$desde' and '$hasta' and estado = 'Cerrada' order by f_nro asc";
+        $query = "select f.f_nro,date_format(f.fecha_cierre,'%d/%m/%Y') as fecha_cierre,f.tipo,f.total as n_total,f.moneda,f.total_desc as n_total_desc,f.total_bruto as n_total_bruto,f.total * cotiz AS n_total_ref, if(control_caja='Si','si','no') as control, if(empaque='Si','si','no') as control_empaque, e_sap from factura_venta f where f.suc='$suc' and f.fecha_cierre between '$desde' and '$hasta' and estado = 'Cerrada' order by f_nro asc";
 
         $link->Query($query);
         while ($link->NextRecord()) {
@@ -54,10 +52,16 @@ class ArqueoVentasDet
             foreach ($ventas as $venta) {
                 $t_factura = 0;
                 $suma = 0;
+                $factura_actual = 0;
+                $disableCheck = '';
+                $error = '';
                 foreach ($venta as $key => $data) {
                     $s_data = (strpos($key, "n_") === 0)?(number_format((double)$data, 2, ',', '.')):$data;
                     $this->template->Set($key, $s_data);
-                    if($key == 'n_total'){
+                    if ($key == 'f_nro'){
+                        $factura_actual = $s_data;
+                    }
+                    if($key == 'n_total_ref'){
                         $t_factura =  $data ;
                         $this->template->Set($key,number_format((double)$t_factura,2,',','.'));
                     }else{
@@ -65,6 +69,7 @@ class ArqueoVentasDet
                     }
                     // Detalle de cobros registrados por factura
                     
+                            
                     if ($key == 'f_nro' && key_exists($data, $pagos)) {
                         $this->template->Set('efectivo', '0.00');
                         $this->template->Set('cheques', '0.00');
@@ -73,9 +78,9 @@ class ArqueoVentasDet
                         $this->template->Set('reserva', '0.00');
                         $this->template->Set("resClass", "");
 
-                        $disableCheck = '';
-                        $error = '';
-
+                        //$disableCheck = '';
+                        //$error = '';
+                     
                         
                         foreach($pagos[$data] as $p_key=>$p_data){
                                 $suma += (double)$p_data;
@@ -97,16 +102,16 @@ class ArqueoVentasDet
                         $this->template->Set('cuotas', '0.00');
                         $this->template->Set('reserva', '0.00');
                     }
-                    if (($key == 'control_empaque' && ($data == 'No' || $data == 'Pr')) ||  ($key=='e_sap' && $data == 3)) {
+                    if (($key == 'control_empaque') && ($data == 'no') )   {
+                         
                         $disableCheck = 'disabled="disabled"';
                         if($key == 'control_empaque'){
                             $error = '_Emp';
                         }else{
                             $error = '_Sync';
                         }
-                    }else{
-                        $error = '';
-                    }
+                    } 
+                     
                 }
                 $verificacion = round((double)$t_factura) - round((double)$suma);
                 
@@ -116,10 +121,10 @@ class ArqueoVentasDet
                     $error = '';
                 }
 
-				$this->template->Set('c_tot_verif',($verificacion!=0)?'diff':'eq');
-				$this->template->Set('tot_verif',($verificacion!=0)?'&ne;':'=');
-				$this->template->Set('suma',number_format(round((double)$suma),2,',','.'));
-				$this->template->Set('disabled',$disableCheck);
+                $this->template->Set('c_tot_verif',($verificacion!=0)?'diff':'eq');
+                $this->template->Set('tot_verif',($verificacion!=0)?'&ne;':'=');
+                $this->template->Set('suma',number_format(round((double)$suma),2,',','.'));
+                $this->template->Set('disabled',$disableCheck);
                 
                 if ($disableCheck !== '') {
                         $this->template->Set('control', "error$error");
@@ -211,8 +216,8 @@ class ArqueoVentasDet
         $link = new My();
         $pagos['efectivo'] = "select e.f_nro, sum(e.entrada_ref - e.salida_ref) as monto from efectivo e where e.f_nro in ($facts) group by e.f_nro";
         $pagos['convenio'] = "select c.f_nro, sum(c.monto) as monto from convenios c where c.f_nro in ($facts) group by c.f_nro";
-        $pagos['cheques'] = "select c.f_nro, sum(c.valor) as monto  from  cheques_ter c where c.f_nro in ($facts) and estado ='Pendiente' group by c.f_nro";
-        $pagos['cuotas'] = "select c.f_nro, sum(c.monto) as monto from cuotas c where c.f_nro in ($facts) group by c.f_nro";
+        $pagos['cheques'] = "select c.f_nro, sum(c.valor_ref) as monto  from  cheques_ter c where c.f_nro in ($facts) and estado ='Pendiente' group by c.f_nro";
+        $pagos['cuotas'] = "select c.f_nro, sum(c.monto * cotiz) as monto from cuotas c where c.f_nro in ($facts) group by c.f_nro";
         $pagos['reserva'] = "select v.f_nro, sum(if(r.senia_entrega_ref is null,0,r.senia_entrega_ref)) as monto from factura_venta v inner join reservas r using(nro_reserva) where f_nro in ($facts)  group by v.f_nro";
         
         foreach ($pagos as $tipo => $query) {
@@ -227,7 +232,7 @@ class ArqueoVentasDet
     function verificado($factura)
     {
         $link = new My();
-        $link->Query("update factura_venta set control_caja='Si' where f_nro = $factura");
+        $link->Query("update factura_venta set control_caja='Si', e_sap = 2 where f_nro = $factura");
         if ($link->AffectedRows() > 0) {
             echo '{"msg":"Ok"}';
         } else {
@@ -247,9 +252,9 @@ class ArqueoVentasDet
 
     function getConvenios()
     {
-        $link = new Ms();
+        $link = new My();
         $convenios = array();
-        $link->Query("SELECT CreditCard,CardName FROM ocrc order by CardName asc;");
+        $link->Query("SELECT  cod_tarjeta as CreditCard,nombre as CardName,case  when tipo = 'Tarjeta Debito'  then 1   WHEN tipo = 'Tarjeta Credito'  THEN 1 WHEN tipo = 'Asociacion'  THEN 2 else 3 end as prioridad FROM tarjetas order by prioridad asc , CardName asc;");
         while ($link->NextRecord()) {
             $convenios['"'.$link->Record['CreditCard'].'"'] = $link->Record['CardName'];
         }
@@ -272,12 +277,12 @@ class ArqueoVentasDet
         $link = new My();
         $result = array();
 
-        $efectivo = array("names"=>array("id","Concepto","Moneda","Entrada","Salida","Cotiz","Entrada_ref","Salida_ref"),
-            "query"=>"select id_pago,id_concepto,m_cod,entrada,salida,cotiz,entrada_ref,salida_ref from efectivo where f_nro='$factura'");
+        $efectivo = array("names"=>array("id","Fecha","Concepto","Moneda","Entrada","Salida","Cotiz","Entrada_ref","Salida_ref","Eliminar" ),
+            "query"=>"select id_pago,fecha,id_concepto,m_cod,entrada,salida,cotiz,entrada_ref,salida_ref,'*' as eliminar  from efectivo where f_nro='$factura'");
         $cheques_ter = array("names"=>array("ID","Nro.","Nro.Cta.","Banco","Fecha Emis","Fecha Pag","Librador","Valor","Moneda","Cotiz","Valor Ref."),
             "query"=>"select id_cheque, nro_cheque,cuenta,id_banco,fecha_emis,fecha_pago,tipo,benef,valor,m_cod,cotiz,valor_ref from cheques_ter where f_nro='$factura' and estado = 'Pendiente'");
-        $convenios = array("names"=>array("id","Convenio","Voucher","Monto"),
-            "query"=>"select id_mov,cod_conv,voucher,monto from convenios where f_nro='$factura'");
+        $convenios = array("names"=>array("id","Fecha","Convenio","Voucher","Monto","Eliminar"),
+            "query"=>"select id_mov,fecha,cod_conv,voucher,monto,'*' as eliminar  from convenios where f_nro='$factura'");
         $cuotas = array("names"=>array("Nro.","Moneda","Monto","Cotiz","Monto Ref.","Dias","Vencimiento"),
             "query"=>"select id_cuota,moneda,monto,cotiz,monto_ref,dias,vencimiento from cuotas where f_nro='$factura'");
         $ejecutar = $$target;
@@ -345,7 +350,82 @@ class ArqueoVentasDet
             echo json_encode($return);
         }
     }
+    function eliminarRegistro($tipo,$id){
+      $db = new My();
+      $return = array();
+      if($tipo == "efectivo"){
+          $db->Query("delete from efectivo where id_pago = $id;");
+          $return['estado']='Ok';
+          $return['msg']='Ok se ha eliminado el registro';
+      }else if($tipo == "convenios"){
+          $db->Query("delete from convenios where id_mov = $id;");
+          $return['estado']='Ok';
+          $return['msg']='Ok se ha eliminado el registro';
+      }else{
+          $return['estado']='Error';
+          $return['msg']='No se definio lo que se desea eliminar';
+      }
+      echo json_encode($return);
+    }
+    
+    /*
+     * Agrega Registro de Efectivo y/ o
+     */
+    function agregarRegistro( $factura, $tipo){
+      $db = new My();
+      $return = array();
+      
+      $db->Query("SELECT total,suc,fecha FROM factura_venta WHERE f_nro = $factura");
+      $db->NextRecord();
+      $total = $db->Get('total');
+      $suc = $db->Get('suc');
+      $fecha = $db->Get('fecha');
+      
+      if($tipo == "convenios"){
+          $db->Query("INSERT INTO  convenios(cod_conv, id_concepto, f_nro, nro_reserva, trans_num, nombre, tipo, voucher, monto, moneda, cotiz, fecha_acred, neto, estado, fecha, hora, suc, timbrado_ret, fecha_ret, e_sap)
+          VALUES ( 4, 1, $factura, NULL, NULL, 'INFONET', '', '', $total, 'G$', $total, CURRENT_DATE, 1, 'Pendiente', '$fecha', CURRENT_TIME, '$suc', '', '', NULL);");
+          $return['estado']='Ok';
+          $return['msg']='Ok se ha agregado el registro';      
+      }elseif($tipo == "efectivo"){
+          $db->Query("INSERT INTO efectivo(id_concepto, f_nro, nro_reserva, nota_credito, nro_deposito, m_cod, usuario, trans_num, entrada, salida, cotiz, entrada_ref, salida_ref, fecha_reg, fecha, hora, suc, estado, e_sap)
+          VALUES (1, $factura,  NULL, NULL,NULL, 'G$', 'sistema',NULL, $total, 0, 1, $total,0, '$fecha', '$fecha', CURRENT_TIME, '$suc', 'Pendiente', NULL);");
+          $return['estado']='Ok';
+          $return['msg']='Ok se ha agregado el registro';      
+      }else{
+          $return['estado']='Error';
+          $return['msg']='No se definio lo que se desea agregar';
+      }
+      echo json_encode($return);
+    }
+    
+    function chequearHistorial($factura){
+        $db = new My();
+        $h = new My();
+        $db->Query(" SELECT codigo,lote FROM factura_venta f, fact_vent_det d WHERE  f.f_nro = d.f_nro and f.f_nro = $factura and f.clase <> 'Servicio'");
+        $array = array();
+        while($db->NextRecord()){
+            $codigo = $db->Get('codigo');
+            $lote = $db->Get('lote');
+            $h->Query("SELECT COUNT(*) AS cant FROM historial WHERE codigo = '$codigo' AND lote = '$lote' AND nro_doc = $factura AND tipo_doc = 'FV'");
+            $h->NextRecord();
+            $cant = $h->Get('cant');
+            if($cant <= 0){
+                array_push($array,array('codigo'=>$codigo,'lote'=>$lote,"cant"=>0));
+            }
+            if($cant > 1){
+                array_push($array,array('codigo'=>$codigo,'lote'=>$lote,"cant"=>$cant));
+            }
+        }
+        if(sizeof($array)==0 ){
+            echo json_encode( array("mensaje"=>"Ok"));
+        }else{
+            echo json_encode( array("mensaje"=>"Error","array"=>$array));
+        }
+    }
+    
 }
+
+
 
 $det = new ArqueoVentasDet();
 

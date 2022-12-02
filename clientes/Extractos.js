@@ -1,3 +1,4 @@
+var printing;
 
 $(function(){
     var tipo_vista  = $("#tipo_vista").val();
@@ -17,17 +18,21 @@ function switch_view(){
         $(".det_pago_vacio").prop("colspan","11");          
         $(".det_cab").prop("colspan","6");
         $(".det_total").prop("colspan","6");
+        $(".det_total_vacio").prop("colspan","7");     
         $(".titulo_extracto").prop("colspan","10");    
         $(".cli_data").prop("colspan","8");
         $(".orin_sp_vacio").prop("colspan","2");
     }else{
         $(".oculto").removeClass("oculto");
-        $(".det_pago_vacio").prop("colspan","13");
+        $(".det_pago_vacio").prop("colspan","12");
         $(".det_cab").prop("colspan","9");      
         $(".det_total").prop("colspan","9");     
-        $(".titulo_extracto").prop("colspan","16");
-         $(".cli_data").prop("colspan","14");
-         $(".orin_sp_vacio").prop("colspan","3");
+        $(".det_total_vacio").prop("colspan","6");     
+        
+        $(".titulo_extracto").prop("colspan","14");
+        $(".cli_data").prop("colspan","13");
+        $(".orin_sp_vacio").prop("colspan","3");         
+        
     }    
 }
 
@@ -52,11 +57,12 @@ function reporteDeudores(){
     var params = "width=800,height=760,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no"; 
     
     var user = getNick();
-    var codigo_cliente = $("#codigo_cliente").val();
-    if(codigo_cliente === ""){
-        codigo_cliente = "%";
+    //var codigo_cliente = $("#codigo_cliente").val();
+    var nombre_cliente = $("#nombre_cliente").val();
+    if(nombre_cliente === ""){
+        nombre_cliente = "%";
     }
-    var url = "reportes/Deudores.class.php?user="+user+"&codigo_cliente="+codigo_cliente+""; 
+    var url = "reportes/Deudores.class.php?user="+user+"&nombre_cliente="+nombre_cliente+""; 
     window.open(url,title,params);     
 }
 
@@ -65,7 +71,7 @@ function verDetalleCuenta(){
     var ruc_cliente = $("#ruc_cliente").val();
     var nombre_cliente = $("#nombre_cliente").val();
       
-    
+    var moneda =  $("#moneda").val();
     var desde =  $("#desde").val();
     var hasta =  $("#hasta").val();
     var estado = $("#estado").val();
@@ -97,10 +103,10 @@ function verDetalleCuenta(){
     
     var title = "Extracto de Cuenta de Cliente";  
     var URL = 'Extractos.class.php';
-    if($("select#tipoRep option:selected").text() === 'Resumido'){
-        var URL = 'ExtractosRes.php';
+    if($("select#tipoRep option:selected").text() === 'Compacto'){
+         URL = 'ExtractoCliente.class.php';
     }  
-    var url = "clientes/"+URL+"?action=verExtracto&desde="+desde+"&hasta="+hasta+"&CardCode="+CardCode+"&estado="+estado+"&ruc_cliente="+ruc_cliente+"&cliente="+nombre_cliente+"&paper_size="+paper_size+"&usuario="+usuario+"&order="+order+"&suc="+getSuc()+"&vista_cliente="+vista_cliente;
+    var url = "clientes/"+URL+"?action=verExtracto&desde="+desde+"&hasta="+hasta+"&CardCode="+CardCode+"&estado="+estado+"&ruc_cliente="+ruc_cliente+"&cliente="+nombre_cliente+"&moneda="+moneda+"&paper_size="+paper_size+"&usuario="+usuario+"&order="+order+"&suc="+getSuc()+"&vista_cliente="+vista_cliente;
 			 
     window.open(url,title,params);        
 }
@@ -129,5 +135,17 @@ function cerrar(){
     $( "#ui_clientes" ).fadeOut("fast"); 
 }
 
-
+function mostrarDocumento(nro_rec,tipo){
+    if(tipo === "RC"){ 
+        var params = "width=1024,height=760,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no";
+        var url = "ComprobanteReconciliacion.class.php?nro_rec="+nro_rec+"";                 
+        var title = "Comprobante de Reconciliacion";
+        if(!printing){        
+            printing = window.open(url,title,params);
+        }else{
+            printing.close();
+            printing = window.open(url,title,params);
+        }        
+   } 
+}
 

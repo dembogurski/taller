@@ -28,7 +28,9 @@ class FacturaVenta {
         $factura = $_POST['factura']; 
         $touch = $_POST['touch']; 
         $suc = $_POST['suc'];
+        $estado = $_POST['estado'];
         
+        //echo $estado;
         
         $db = new My();
         $db2 = new My();
@@ -48,12 +50,45 @@ class FacturaVenta {
         }     
         
         
-        $db->Query("SELECT valor FROM parametros WHERE clave = 'vent_det_limit'");
+        $db->Query("SELECT valor FROM parametros WHERE clave = 'vent_det_limit' or clave = 'limite_stock_negativo' order by clave desc");
         $db->NextRecord();
         $limite_detalles = $db->Record['valor'];
+        
+        $db->NextRecord();
+        $stock_negativo = $db->Record['valor'];
                 
         $t = new Y_Template("FacturaVenta.html");
         $t->Set("limite_detalles",$limite_detalles);
+        $t->Set("limite_stock_negativo",$stock_negativo);
+        $t->Set("estado",$estado);
+        
+        
+        // Buscar Lista de Bancos
+        $db->Query("SELECT id_banco,nombre FROM bancos order by nombre asc");
+        $bancos = "";
+        while ($db->NextRecord()) {
+            $id_banco = $db->Record['id_banco'];
+            $nombre = $db->Record['nombre'];
+            $bancos.="<option value='$id_banco'>$nombre</option>";
+        }
+        $t->Set("bancos", $bancos);
+        
+        $db->QUERY("SELECT  b.id_banco,b.nombre,cuenta, c.m_cod as moneda FROM bancos b, bcos_ctas c WHERE b.id_banco = c.id_banco ORDER BY b.nombre ASC");
+        $cuentas = "";
+        $i = 0;
+        while ($db->NextRecord()) {
+            $id_banco = $db->Record['id_banco'];
+            $nombre = $db->Record['nombre'];
+            $cuenta = $db->Record['cuenta'];
+            $moneda = $db->Record['moneda'];
+            $cuentas.="<option value='$id_banco' data-cuenta='$cuenta' onchange='setCuenta()' >$nombre - $cuenta - $moneda</option>";
+            if($i == 0){
+                $t->Set("cuenta",$cuenta);
+            }
+            $i++;
+        }
+        $t->Set("cuentas", $cuentas);
+        $t->Set("fecha_hoy",date("d/m/Y"));
         
         $db->Query("SELECT m_descri AS m, m_cod AS moneda FROM monedas WHERE m_ref <> 'Si';");
         //echo $db->NumRows();
@@ -98,7 +133,7 @@ class FacturaVenta {
         
         $decimales = 0;
                                                                                                                                // AND usuario = '$usuario'
-        $db->Query("SELECT   cod_cli ,ruc_cli AS ruc,tipo_doc_cli, cliente, cat,moneda,cotiz,cod_desc,pref_pago,desc_sedeco FROM factura_venta WHERE    f_nro  = '$factura'");
+        $db->Query("SELECT   cod_cli ,ruc_cli AS ruc,tipo_doc_cli, cliente, cat,moneda,cotiz,cod_desc,pref_pago,desc_sedeco,notas,nro_diag FROM factura_venta WHERE    f_nro  = '$factura'");
         if($db->NumRows()>0){
             $db->NextRecord();
             $cli_cod = $db->Record['cod_cli'];
@@ -111,6 +146,8 @@ class FacturaVenta {
             $cod_desc = $db->Record['cod_desc'];
             $pref_pago = $db->Record['pref_pago'];
             $desc_sedeco = round($db->Record['desc_sedeco'],0);
+            $notas = $db->Record['notas'];
+            $nro_diag = $db->Record['nro_diag'];
             
             $t->Set("cli_cod",$cli_cod);
             $t->Set("ruc",$ruc);
@@ -121,6 +158,8 @@ class FacturaVenta {
             $t->Set("cod_desc",$cod_desc);
             $t->Set("pref_pago",$pref_pago);
             $t->Set("desc_sedeco",$desc_sedeco);
+            $t->Set("notas",$notas);
+            $t->Set("nro_diag",$nro_diag);
             
             if($moneda != 'G$'){
                 $decimales = 2;
@@ -131,8 +170,13 @@ class FacturaVenta {
                 $t->Set("tipo_doc","C.I.");
             }
             $t->Show("cabecera_venta_existente");
-                     
-            $t->Show("area_carga_cab");
+                  
+            if($estado != "Cerrada"){
+                $t->Show("area_carga_cab");
+            }
+            
+            $t->Show("area_carga_cab_det_factura");
+            
             $t->Set("finalizar_state","disabled"); 
             
             $db = new My();
@@ -185,9 +229,62 @@ class FacturaVenta {
             $t->Show("config");
             // Solo si es Toutch
             if($touch=="true"){
-                require_once("../utils/NumPad.class.php");               
-                new NumPad();
+                //require_once("../utils/NumPad.class.php");               
+                //new NumPad();
             }
+            
+            /*****************Caja********************/
+            $date = date_create(date("Y-m-d"));
+            date_add($date, date_interval_create_from_date_string("30 days"));
+            $treinta_dias = date_format($date, "d-m-Y");
+
+            $t->Set("inicio_cuota", $treinta_dias);
+
+            $t->Set("fecha_hoy", date("d/m/Y"));
+
+            // Buscar Tarjetas
+            $ms = new My();
+            $ms->Query("SELECT cod_tarjeta AS CreditCard,nombre AS CardName,tipo AS Tipo FROM tarjetas WHERE tipo != 'Asociacion' ORDER BY nombre ASC");
+            $tarjetas = "";
+            while ($ms->NextRecord()) {
+                $conv_cod = $ms->Record['CreditCard'];
+                $conv_nombre = $ms->Record['CardName'];
+                $tipo = $ms->Record['Tipo'];
+                $tarjetas.="<option value='$conv_cod' data-tipo='$tipo' >$conv_nombre</option>";
+            }
+            $t->Set("tarjetas", $tarjetas);
+
+            // Buscar Lista de Bancos
+            $db->Query("SELECT id_banco,nombre FROM bancos order by nombre asc");
+            $bancos = "";
+            while ($db->NextRecord()) {
+                $id_banco = $db->Record['id_banco'];
+                $nombre = $db->Record['nombre'];
+                $bancos.="<option value='$id_banco'>$nombre</option>";
+            }
+            $t->Set("bancos", $bancos);
+
+            // Buscar Lista de Monedas
+            $db->Query("SELECT m_cod AS moneda, m_descri FROM monedas where m_cod != 'Y$' ");
+            $monedas = "";
+            $monedas_cod = "";
+            while ($db->NextRecord()) {
+                $moneda = $db->Record['moneda'];
+                $m_descri = $db->Record['m_descri'];
+                if (($moneda != 'P$' && $moneda != 'R$')) {
+                    $monedas.="<option value='$moneda'>$m_descri</option>";
+                }
+                $monedas_cod.="<option value='$moneda'>$moneda</option>";
+            }
+            $t->Set("monedas", $monedas);
+            $t->Set("monedas_cod", $monedas_cod);
+            $ncuotas = "";
+            for ($i = 1; $i <= 60; $i++) {
+                $ncuotas .= "<option class='n_cuota_$i cuota_x' >$i</option>";
+            }
+            $t->Set("n_cuotas", $ncuotas);
+
+            $t->Show("ui_factura");
                         
         }else{
             echo "Ocurrio un Error con respecto a la Factura Nro: $factura, Contacte con el Administrador";
@@ -234,9 +331,17 @@ function buscarArticulos() {
         $limit = 30;
     }
     $fn = new Functions(); 
-    $articulos = $fn->getResultArray("SELECT codigo,descrip FROM articulos WHERE mnj_x_lotes = 'No' and (codigo like '$articulo' or descrip like '$articulo%')");
+    $articulos = $fn->getResultArray("SELECT codigo,descrip,um,img FROM articulos WHERE mnj_x_lotes = 'No' and (codigo like '$articulo' or descrip like '$articulo%')");
     echo json_encode($articulos);
 }
+function getPuntos(){
+       require_once("../Functions.class.php");
+       $cod_cli = $_POST['cod_cli'];
+        
+       $fn = new Functions();       
+       $Qry = $fn->getResultArray("SELECT id, puntos, motivo, DATE_FORMAT( fecha,'%d-%m-%Y') as fecha, p.usuario, DATE_FORMAT( fecha_canje,'%d-%m-%Y') as fecha_canje , estado, valor FROM  puntos p, parametros pr WHERE cod_cli ='$cod_cli' and estado = 'Pendiente' and pr.clave = 'valor_puntos' ");
+       echo json_encode($Qry);    
+    }
 
 new FacturaVenta();
 ?>

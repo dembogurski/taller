@@ -2,14 +2,16 @@
     background-color: lightgreen;
     text-align: center;
     font-weight: 900;
-    font-variant: small-caps;
+    font-family: cambria;
+    text-transform: capitalize
 }
 
 .no {
     background-color: lightblue;
     text-align: center;
     font-weight: 900;
-    font-variant: small-caps;
+    font-family: cambria;
+    text-transform: capitalize
 }
 
 .si input {
@@ -156,8 +158,8 @@ div#editor_container{
     top: 15%;
     left: 0px;
     display: block;
-    background-color: brown;
-    -webkit-border-radius: -radius: 5px;    
+    background-color: orange;
+    -webkit-border-radius: 5px;    
     -moz-border-radius: 5px;    
     border-radius: 5px;
     display: none;
@@ -183,7 +185,7 @@ div#editor_header button#editor_close{
     background: url("../../js/jquery-ui/images/ui-icons_2e83ff_256x240.png") no-repeat scroll 0 0 transparent;
     background-position: -32px -192px;
     background-color: lightgray;
-    -webkit-border-radius: -radius: 5px;    
+    -webkit-border-radius:  5px;    
     -moz-border-radius: 5px;    
     border-radius: 5px;
 }
@@ -194,16 +196,18 @@ div#editor_header button#editor_close:hover{
     background-color: lightgray;
 }
 div#editor {    
-    background-color: lightgray;
+    background-color: wheat;
     padding: 5px 15px;    
 }
 
 div#editor table {
     border: none;
+    font-size: 12px;
+    font-family: cambria;
 }
 
 div#editor table th {
-    background-color: darkgray;
+    background-color: rgb(80,80,80);
     color: white;
     font-size: 12px;
 }

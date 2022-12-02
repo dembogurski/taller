@@ -7,7 +7,7 @@
  */
 require_once("../Y_Template.class.php");
 require_once("../Y_DB_MySQL.class.php");
-require_once("../Y_DB_MSSQL.class.php");
+
 
 class VentasEnCaja {
 

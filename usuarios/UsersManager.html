@@ -5,8 +5,8 @@
 <!-- end:   var_ini -->
 
 <!-- begin: head -->        
-        <script src="usuarios/UserManager.js?1537274193549"></script>
-        <link rel="stylesheet" href="usuarios/UserManager.css?1537274193549">      
+        <script src="usuarios/UserManager.js?_=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"></script>
+        <link rel="stylesheet" href="usuarios/UserManager.css?_=sssssssssssssssss">      
         <img id="ajaxLoader" src="img/loadingt.gif" />
         <div id="popUp"></div>
 <!-- end:   head --> 
@@ -17,18 +17,19 @@
                 <table>
                     <thead>
                         <tr>
-                            <th class="titulo" colspan="5"><h3>Usuarios</h3></th>
+                            <th class="titulo" colspan="6"><h3>Usuarios</h3></th>
                         </tr>
                         <tr>
-                            <td colspan="4">Suc: <select onchange="updateList()" id="filtro_suc"><option id="%">%</option>{users_sucs}</select> Filtro: <input onkeyup="dynamicSearch()" type="text" id="filtro_usuario" maxlength="27"><select id="filtro_criterio" onchange="dynamicSearch()"><option>Usuario</option><option>Nombre</option><option>Apellido</option></select> <br>Mostrar solo Activos: <input type="checkbox" id="filtro_estado" onchange="updateList()" checked="checked"> <button id="limpiar_filtros" onclick="limpiarFiltros()">Limpiar</button></td>
+                            <td colspan="5">Suc: <select onchange="updateList()" id="filtro_suc"><option id="%">%</option>{users_sucs}</select> Filtro: <input onkeyup="dynamicSearch()" type="text" id="filtro_usuario" maxlength="27"><select id="filtro_criterio" onchange="dynamicSearch()"><option>Usuario</option><option>Nombre</option><option>Apellido</option></select> <br>Mostrar solo Activos: <input type="checkbox" id="filtro_estado" onchange="updateList()" checked="checked"> <button id="limpiar_filtros" onclick="limpiarFiltros()">Limpiar</button></td>
                             <td><input type="button" value="Nuevo Usuario" id="registrar_nuevo" onclick="newUser()"></td>
                         </tr>
                         <tr>
                             <td>Suc:</td>
+                            <td>Img</td>
                             <td>Usuario</td>
-                            <td>Apellido</td>
                             <td>Nombre</td>
-                            <td>Estado</td>
+                            <td>Apellido</td>
+                            <td>Estado</td>    
                         </tr>
                     </thead>
                     <tbody>
@@ -96,7 +97,19 @@
 <!-- begin: r_table_h -->
 <table id="rest_table" class="form">
     <tr style="background-color: lightskyblue"><th colspan="2"><h3>Usuario: <span id="usuario">{user}</span></h3></th>
-    <th rowspan="3" style="vertical-align: top;background:#EAEAE8;padding-top:0px"><img width="60px" src="img/usuarios/{foto}.jpg"></th></tr>
+<th rowspan="6" style="vertical-align: top;background:#EAEAE8;padding-top:0px">
+    <img class="user_photo" src="img/usuarios/{foto}.jpg?action={random}" style="cursor:pointer" onclick="cambiarImagen()" >
+    <br>
+    
+    <label for="image-picker" class="btn select_image" style="cursor: pointer">Seleccionar</label>
+ 
+    <input  type="file" class="inputfile" id="image-picker" style="visibility:hidden;position:absolute" accept="image/*"  onchange="encodeImgtoBase64(this)" >    
+ 
+    <br>
+    <input     id="levantar-mult" type="button"  style="display: none"  value="Subir" onclick="levantarDocumentoMult()" >
+    <input type="hidden"  id="textAreaFileContents" value="">
+</th>
+</tr>
 <!-- end:   r_table_h -->
 
 <!-- begin: r_table_b -->

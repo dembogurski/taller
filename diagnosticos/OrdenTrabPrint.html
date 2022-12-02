@@ -1,0 +1,130 @@
+<!-- begin: headers -->   
+    <head>  
+        <link rel="stylesheet" type="text/css" href="DiagPrint.css?_=d" />  
+        <script type="text/javascript" src="../js/jquery-3.3.1.js" ></script>      
+        <script type="text/javascript" src="DiagPrint.js" ></script>      
+    </head>  
+<div id="diag_print">    
+<!-- end:   headers -->
+
+<!-- begin: head -->   
+<table style="width: 100%;border-collapse: collapse" border="1"  >
+    <tr>
+        <td style="width: 30%">
+            <table style="width: 100%">
+                <tr>
+                    <td style="text-align: center;vertical-align: top"> 
+                        <div><img src="../img/logo.jpg" style="width: 120px"></div>
+                        <div class="cab_data">Tel.:&nbsp;0983 832 839 </div>
+                        <div class="cab_data">Encarnaci&oacute;n - Paraguay</div>
+                    </td> 
+                     
+                </tr> 
+            </table>            
+        </td>
+        <td style="text-align: left;vertical-align: top">
+             <table style="width: 100%">
+                <tr>
+                    <td colspan="2" style="text-align: center;font-size: 26px;height: 40px"><b>Orden de Sevicio</b></td>
+                </tr>
+                <tr> <td style="width: 40px"><b>N&deg;:</b></td><td>{nro}</td> </tr>
+                <tr> <td><b>Fecha:</b></td><td>{fecha}</td> </tr>
+                
+                <tr style="font-size: 8px;height: 28px;vertical-align: bottom;text-align: center">
+                    <td colspan="2">{user}-{time}</td> 
+                </tr>
+             </table>          
+        </td>
+    </tr>
+</table>      
+<!-- end:   head -->
+ 
+
+<!-- begin: cliente --> 
+<table border="0" style="width: 100%">
+    <tr>
+        <td style="vertical-align: top;width: 50%" >
+            <div class="fielset">Datos del cliente</div>
+             <div style="border:solid black 1px;height: 100px">
+                 <table style="width: 100%;border-collapse: collapse" border="0"  class="cli_data" >
+                <tr>
+                    <td class="cli_label">Nombre/Raz&oacute;n Social:</td><td colspan="3">{cliente}</td>
+                </tr>
+                <tr>
+                    <td class="cli_label">CI/RUC:</td><td>{ruc}</td><td class="cli_label">Tel:</td><td>{tel}</td>
+                </tr>       
+                <tr>
+                    <td class="cli_label">Email:</td><td colspan="3">{email}</td>
+                </tr>    
+                <tr>
+                    <td class="cli_label">Dir:</td><td colspan="3">{dir}</td>
+                </tr>    
+             </table> 
+             </div>    
+        </td>
+<!-- end:   cliente -->
+
+<!-- begin: vechiculo -->   
+<td style="vertical-align: top" >
+    <div class="fielset">Datos del veh&iacute;culo</div> 
+    <div style="border:solid black 1px;height:  100px">
+        <table style="width: 100%;border-collapse: collapse" border="0"  class="cli_data" >
+        <tr>
+            <td class="cli_label">Marca:</td><td>{marca}</td><td class="cli_label">Modelo:</td><td>{modelo}</td>
+        </tr>     
+        <tr>
+            <td class="cli_label">Matricula:</td><td>{chapa}</td><td class="cli_label">VIN:</td><td>{vin}</td>
+        </tr>
+
+        <tr>
+            <td class="cli_label">Color:</td><td >{color}</td><td class="cli_label">A&ntilde;o Fab.:</td><td>{anio_fab}</td>
+        </tr>    
+        <tr>
+            <td class="cli_label">Combustible:</td><td >{combustible}</td><td class="cli_label">Tipo:</td><td><img src="../img/cartypes/{tipo}.jpg" style="height: 22px"> </td>
+        </tr> 
+        <tr>
+            <td class="cli_label">Otros:</td><td colspan="3">{otros}</td>
+        </tr> 
+     </table> 
+     </div>    
+</td>
+    </tr>
+</table>
+<!-- end:   vechiculo -->
+
+<!-- begin: recep -->   
+<div class="fielset">&nbsp;Detalle de la Orden de Servicio</div> 
+ 
+<table class="cli_data" style="width: 100%;border-collapse: collapse" border="1" >    
+    <tr class="titulo">
+        <th style="width:2%" >N&deg;</th> <th>Descripci&oacute;n</th>  <th style="width: 10%">Estado</th>
+    </tr>
+    
+
+<!-- end:   recep -->
+<!-- begin: recep_data -->   
+
+<tr>
+    <td class="item">{id_det}</td> <td class="item">{descrip}</td> <td class="itemc"> </td>     
+</tr>
+<tr>
+    <td style="height: 36px" colspan="3">Obs.:{obs_tecnico}</td>
+</tr>
+<!-- end:   recep_data -->
+<!-- begin: recep_foot -->   
+
+ 
+</table> 
+
+  
+   
+<!-- end:   recep_foot -->
+<!-- begin: sintomas -->   
+ 
+<!-- end:   sintomas -->
+<!-- begin: foot -->   
+ 
+
+<br><br><br><br><br><br>
+</div>     
+<!-- end:   foot -->

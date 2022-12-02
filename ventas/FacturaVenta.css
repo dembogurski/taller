@@ -19,13 +19,16 @@
     font-family: sans-serif;
     font-size: 12px;
     font-weight: normal;
-    background-color: white; //Casi blanco
+    background-color: white;  
     border-color: #999999;
     border-collapse: collapse;
     margin-top: 10px;
     margin-left: 2px;
     margin-right: 4px;
     margin-bottom: 10px; 
+}
+#lista_puntos{
+    border-collapse: collapse;
 }
 .turno{
     display:none
@@ -375,3 +378,110 @@ input#limite_credito.alerta{
 .art_selected {
     background-color:  goldenrod;
 }
+.fx, .mnj_lote, .descuento{
+   display: none; 
+}
+.forma_contado, .forma_credito{
+    display: none; 
+}
+.cotiz{
+    display: none;
+} 
+
+/****************************Caja*****************************/
+
+#imprimir_factura:disabled{
+    background-color: lightgrey;
+}
+#ventas{
+    border-collapse: collapse;
+}
+
+
+.printer_button{
+  background-image:url(../img/printer-01_32x32.png);
+  background-repeat:no-repeat;
+  border: 0 solid grey;
+  cursor: pointer;
+  height: 34px;
+  width: 44px;
+  background-position:center; 
+}
+.ticket_button{
+  background-image:url(../img/ticket.png);
+  background-repeat:no-repeat;
+  border: 0 solid grey;
+  cursor: pointer;
+  height: 32px;
+  width: 26px;
+  background-position:center; 
+}
+
+.moneda_factura{
+    border-style: solid;
+    border-width: 2px;
+    border-color: red;
+    font-weight: bolder;
+    color:green;
+}
+.venta_encaja{
+    background-color: white;
+}
+.lb_pago:hover{
+    background-color: lightskyblue;
+    cursor: pointer;    
+} 
+.limite_credito{
+    display: none;
+}
+.retencion{
+    display: none;
+}
+
+[aria-disabled="true"] a#tab_tarjetas:hover:before{
+    position: absolute;
+    bottom: -20px;
+    left: 10px;
+    color: rgba(0, 0, 0, 1);
+    background: rgba(0, 0, 0, 0.4);
+    content: 'Elimine el descuento para cobro con tarjeta';
+    font-weight: 900;
+    background-color: white; 
+}
+#cambios_chaco{
+    position: absolute;   
+    display: none;
+}
+.popup_print{
+    background-color: #FFFFCC;
+    border: solid gray 1px;
+    width: 500px;
+    border-radius: 3px;
+    position:relative;
+    margin:0 auto;
+    padding: 4px;
+}
+
+.user_photo{    
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #f9f9f9;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    box-shadow: 0 0 25px rgb(232, 232, 232) inset, 0 1px 0 rgb(195, 195, 195), 0 2px 0 rgb(201, 201, 201), 0 2px 3px rgb(51, 51, 51);
+    border-radius: 8px;
+    margin: 2px
+}
+ 
+.user_photo:hover { 
+    border: solid #e5e5e5 1px; 
+}
+
+.vendedor{
+   margin: 12px 16px 0 -6px; 
+   float: right;
+   font-weight: bolder
+}
+ 

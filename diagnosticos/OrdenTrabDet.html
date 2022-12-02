@@ -1,0 +1,129 @@
+<!-- begin: headers -->   
+    <head>  
+        <link rel="stylesheet" type="text/css" href="diagnosticos/OrdenTrabDet.css?_=0" />      
+        <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
+    </head>  
+<!-- end:   headers -->
+
+<!-- begin: insert_edit_form -->     
+<div class="form" id="form_OrdenTrabDet"></div>
+<!-- end:   insert_edit_form -->
+
+<!-- begin: data_header -->
+<div class="list_container">      
+    <table id="OrdenTrabDet"  border="1" class="display responsive nowrap db_tablename"  >
+        <thead>
+            <tr>
+                <th colspan="4" style="text-align: center;margin-top: 8px;background:lightblue">Detalle de Orden</th>
+            </tr>
+            <tr>
+                <th>N&deg;</th><th>Descrip</th><th>Estado</th><th></th>
+            </tr>
+        </thead>
+
+<!-- end:   data_header -->
+
+
+<!-- begin: data_line -->     
+    <tr >  <td>{id_det}</td> <td>{descrip}</td> <td>{estado}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editOrdenTrabDetUI("{id_det}") ></td>  </tr>
+<!-- end:   data_line -->
+
+
+<!-- begin: data_foot -->     
+
+        <tfoot>
+             
+        </tfoot>
+    </table> 
+</div>
+ 
+<!-- end:   data_foot -->
+
+<!-- begin: script -->      
+    <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+    <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
+    <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="js/functions.js" ></script>    
+    <script type="text/javascript" src="diagnosticos/OrdenTrabDet.js" ></script>
+    
+<!-- end:   script -->
+
+
+<!-- begin: edit_form_cab -->  
+<table border="0" class="form_table" id="edit_OrdenTrabDet" style="width: auto">
+    <tr> <th colspan="2" class="form_title" > Actualizar OrdenTrabDet  </th> </tr> 
+<!-- end:   edit_form_cab -->
+
+
+<!-- begin: edit_form_data -->     
+<tr > <td class="form_label">N&deg; Orden:</td> <td><input class="form_number PRI" type="number" id="form_id_orden"  readonly="readonly"  size="10"  value="{value_of_id_orden}" ></td>  </tr>
+<tr> <td class="form_label">N&deg;:</td> <td><input class="form_number PRI" type="number" id="form_id_det"  readonly="readonly"  size="10"  value="{value_of_id_det}" ></td>  </tr>
+<tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"  required="required" >{value_of_descrip}</textarea>*</td>  </tr>
+<tr> <td class="form_label">Fecha Hora Inicio:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_hora"      value="{value_of_fecha_hora}" ></td>  </tr>
+<tr> <td class="form_label">Estado:</td> <td>
+<select class="form_select" id="form_estado"   >{value_of_estado}</select>
+</td>  </tr>
+<tr> <td class="form_label">Obs Tecnico:</td> <td><textarea class="form_textarea" id="form_obs_tecnico" cols="40" rows="3"   >{value_of_obs_tecnico}</textarea></td>  </tr>
+
+<!-- end:   edit_form_data -->
+
+
+<!-- begin: edit_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_OrdenTrabDet" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeDetForm()">
+            <input type="button" value="Modificar Datos" onclick=updateOrdenTrabDetData("edit_OrdenTrabDet") id="OrdenTrabDet_update_button">
+            <input type="button" value=" Cerrar " onclick="closeDetForm()" id="OrdenTrabDet_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   edit_form_foot -->
+
+
+
+
+
+
+<!-- begin: add_form_cab -->  
+<table border="0" class="form_table" id="add_OrdenTrabDet">
+    <tr> <th colspan="2" class="form_title" > (Nuevo Registro) OrdenTrabDet  </th> </tr> 
+<!-- end:   add_form_cab -->
+
+
+<!-- begin: add_form_data -->     
+<tr style="display:none"> <td class="form_label">N&deg; Orden:</td> <td><input class="form_number PRI" type="number" id="form_id_orden"  readonly="readonly"    size="10" value="{value_of_id_orden}" ></td>  </tr>
+<tr> <td class="form_label">N&deg;:</td> <td><input class="form_number PRI" type="number" id="form_id_det"    readonly="readonly"  size="10"  value="{value_of_id_det}"></td>  </tr>
+<tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"  required="required" ></textarea>*</td>  </tr>
+<tr style="display:none"> <td class="form_label">Fecha Hora:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_hora"        value="" ></td>  </tr>
+<tr > <td class="form_label">Estado:</td> <td>
+<select class="form_select" id="form_estado"  >
+<option value="Pendiente">Pendiente</option>
+<option value="En Proceso">En Proceso</option>
+<option value="Culminado">Culminado</option>
+</select>
+</td>  </tr>
+<tr style="display:none"> <td class="form_label">Obs Tecnico:</td> <td><textarea class="form_textarea" id="form_obs_tecnico" cols="40" rows="3"   ></textarea></td>  </tr>
+
+<!-- end:   add_form_data -->
+
+
+<!-- begin: add_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_OrdenTrabDet" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeDetForm()">
+            <input type="button" value=" Grabar " onclick=addOrdenTrabDetData("add_OrdenTrabDet") id="OrdenTrabDet_save_button">
+            <input type="button" value=" Finalizar " onclick="closeDetForm()" id="OrdenTrabDet_close_button" style="display:none">
+            <input type="button" value=" Siguiente " onclick="siguienteDetForm()" id="OrdenTrabDet_next_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   add_form_foot -->
+
+
+<!-- begin: no_result -->     
+<div style="text-align: center;margin: 2cm auto"> Ningun registro para OrdenTrabDet <button type="button" id="add_button_proveedores" onclick="addOrdenTrabDetUI()">Agregar un nuevo registro para (OrdenTrabDet)</button></div> 
+<!-- end:   no_result -->

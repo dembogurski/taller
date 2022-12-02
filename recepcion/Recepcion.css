@@ -47,12 +47,12 @@ body{
     border-collapse:collapse
 }
 
-#diagnosticos tr th {
+#recepcion tr th {
     height: 10px;
     font-size: 14px;
 } 
 
-#diagnosticos tr td {
+#recepcion tr td {
     height: 10px;
 	font-size: 14px;
 }
@@ -194,4 +194,46 @@ input[type=number] {
 }
 #form_cod_cli{
     padding: 2px;   
+}
+
+.top_chapa{
+    background-color: blue;
+    color: white;
+    font-size: 4px;
+}
+.chapa{    
+    border-radius: 3px;
+    border:solid black 2px;
+    text-align: center;
+    color:black;
+    font-weight: bolder;
+    width: 74px;
+    min-width: 70px;
+    margin: 0 auto;   
+    float: right
+}
+
+.chapa > .nro_chapa{
+    font-family: helvetica;
+}
+.modelo{
+    font-weight: cambria;
+    font-size: 16px;
+    font-weight: bolder;
+}
+.rec_label_izq{
+    font-weight: bolder;    
+    font-size: 11px;
+    font-family: cambria
+}
+.rec_label_der{
+    font-weight: bolder;
+    font-size: 11px;
+    font-family: cambria; 
+    margin-left: 16px
+}
+.diag_print{
+    display:none;
+    cursor: pointer;
+    margin-bottom: -12px;
 }

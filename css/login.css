@@ -33,6 +33,13 @@
     height: 44px;
     font-size: 16px;
     z-index: 1;
+    background-color: white;
+    color: brown;
+    font-weight: bolder;
+    background-color: white;
+    border: solid brown 1px;
+    border-radius: 3px;
+    padding-left: 6px;
 }
 .login input[type="button"] {
     background-color: #4d90fe;
@@ -65,6 +72,16 @@
 .login_button{
     cursor: pointer;
 }
-
-
+@media only screen and (max-width: 1000px) {
+    .login input[type="text"], 
+    .login input[type="password"],
+    .login input[type="button"] {
+        height: 72px;
+        font-size: 30px;
+    }
+    .login{
+        width: 400px;
+    }
+    
+}
 

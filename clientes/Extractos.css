@@ -4,6 +4,13 @@
     Author     : Ing.Douglas
 */
 
+.Si_verificado{
+    background-color: greenyellow;
+}
+.No_verificado{
+    background-color: orange;
+}
+
 .error_field{
    border:solid red 2px; 
 }
@@ -39,3 +46,9 @@
 .oculto{
     display: none;
 }
+.select{
+    cursor: pointer;
+    width: 12px;
+    margin-left: 2px
+}
+

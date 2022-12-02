@@ -38,7 +38,7 @@ class Y_Template {
      *  Constructor
      *  ===========
      */
-    function Y_Template($file = "") {
+    function __construct($file = "") {
 
         // Internacionalization - to work with milti languages
         // Probing if a system is configurated
@@ -70,11 +70,11 @@ class Y_Template {
         $this->t_contents[$tag] = ""; // only defines a empty content
 
 
-        while ($c <= count($arr)) {
+        while ($c <= count($arr)-1) {
             $line = explode(" ", $arr[$c]);
  
             // Check if start a new block
-            if (($line[0] == "<!--") and ( strtolower($line[1]) == "begin:")) {
+            if (($line[0] == "<!--") && ( strtolower($line[1]) == "begin:")) {
                 $tag = $line[2];  // The name of the block
                 // If exist a "noeval" command, to template
                 // don't evaluate this block

@@ -1326,13 +1326,17 @@ function getLimiteCredito(){
          
         console.log("limite_vs_cant_cuotas_y_diff:  "  +limite_vs_cant_cuotas_y_diff + " cuotas_atrasadas_vs_permitidas  "+ cuotas_atrasadas_vs_permitidas +"  Diff  "+Diff+"  Deuda actual = "+deuda_actual+"  ");
         
+        /*
         if((( Limite > 0 && CantidadDeCuotas > 0 && Diff >= 0 ) && (cuotas_atrasadas_vs_permitidas))   || (es_funcionario)  ){
-            $("#tab_credito").fadeIn();             
+                      
         }else{
             $("#tab_credito").fadeOut();
-        }
+        } */
         
-        $(".limite_credito").fadeIn();
+        $("#tab_credito").fadeIn();  
+         
+         
+        //$(".limite_credito").fadeIn();
         if(Diff <= 0){
            $("#limite_credito").css("color","red"); 
         }else{

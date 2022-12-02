@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <!-- begin: header noeval -->
 <html>
-<head>
-<meta charset="ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-8" />
+ 
       <link rel="stylesheet" type="text/css" href="../../css/reportes.css" /> 
-      <script type="text/javascript" src="../../js/jquery-1.11.2.min.js" ></script>
+      <script src="../../js/html2canvas.js"></script>
+      <script type="text/javascript" src="../../js/jquery-3.3.1.min.js" ></script>   
+      
       <script type="text/javascript" src="../../js/reportes.js" ></script>
 	  <style>
 		.verifVentas{   
@@ -41,18 +43,14 @@
 			color: green;			
 		}
 		#obs_firma{
-			width: 100%;
+		  width: 100%;
+                  width: 70%;
+                  margin: 0 auto;
 		}
-		#obs_firma tr td{
-			border-bottom: 1px solid black;
-			height: 16px;
-			
-		}
-		#obs_firma tr td span{
-				background-color: white;
-				vertical-align: -20;
-				margin: -2px;
-				padding: 2px 7px;
+		#obs{
+                    border-bottom: 1px solid black;
+                    height: 16px;
+                    width: 100%;
 		}
 		#totales{
 			
@@ -60,9 +58,8 @@
 			width: 40%;
 			white-space: nowrap;
 		}
-		#totales table{
-			margin: 0px auto;
-			width: 80%
+		#totales table{			 
+		   width: 80%
 		}
 		#totales td{
 			padding: 2px 10px;
@@ -127,7 +124,9 @@
                     font-size: 12px;
                     font-family: cambria;
                 }
-                
+                .Servicio{
+                   background-color:   rgb(245, 218, 129)
+                }
 	  </style>
 	<style media="print">
 		.verifVentas{
@@ -145,8 +144,9 @@
 		var pp = [];
 		$(function(){
 			window.onbeforeunload = function() {
-				pp.forEach(function(ventana){ventana.close()});
+			  pp.forEach(function(ventana){ventana.close()});
 			};
+                        addScript('../../js/html2pdf.bundle.js');
 		});
 		// Abre PopUp de cobros
 		function verifCobros(){
@@ -176,18 +176,108 @@
 				caller.addClass("hide");
 			}
 		}
+                function addScript(url) {
+                    var script = document.createElement('script');
+                    script.type = 'application/javascript';
+                    script.src = url;
+                    document.head.appendChild(script);
+                }
+                function createPDF(){  
+                   var suc =  $("#suc").html();
+                   var fecha = $("#fecha_arqueo").val(); 
+                   $(".verifVentas").remove(); 
+                   //var element = document.getElementById('arqueo_caja');
+                   //var worker = html2pdf().from(element).save('Arqueo_caja-'+suc+"-"+fecha+"");
+                   
+                   $( window ).scrollTop(0);
+                   
+                   html2canvas(document.querySelector('#arqueo_caja')).then(function(canvas) {
+                        saveAs(canvas.toDataURL(), "Arqueo_caja-"+suc+"-"+fecha+".png");
+                   });
+                                   //html2pdf(element).save('Arqueo_caja-'+suc+"_"+fecha+"");
+                }
+                function saveAs(uri, filename) {
+
+                    var link = document.createElement('a');
+
+                    if (typeof link.download === 'string') {
+                        link.href = uri;
+                        link.download = filename;
+                        //Firefox requires the link to be in the body
+                        document.body.appendChild(link);
+                        //simulate click
+                        link.click();
+
+                        //remove the link when done
+                        document.body.removeChild(link);
+
+                    } else {
+                        window.open(uri);
+                    }
+                }
+                function agregarFirma(){
+                    var position = $("#firma_cajero").offset();
+                    var cuadro = $("#firma_cajero").width() / 2; 
+                    
+                    $("#verificar").css("margin-left",position.left - cuadro  ); 
+                    $("#verificar").css("margin-top",-140);      
+                    $("#verificar").fadeIn();    
+                    $("#passw").focus();    
+                    $("#passw").on('keyup', function (e) {
+                        if (e.key === 'Enter' || e.keyCode === 13) {
+                            firmarArqueoCaja();
+                        }
+                    });
+                }
+                function firmarArqueoCaja(){
+                   
+                   var passw = $("#passw").val();
+                   var usuario =  window.opener.getNick();
+                      
+                    $.ajax({
+                        type: "POST",
+                        url: "../../Ajax.class.php",
+                        data: {"action": "firmarArqueoCaja", "usuario": usuario, "passw": passw},
+                        async: true,
+                        dataType: "json",
+                        beforeSend: function () {
+                           $("#firma_cajero").html("<img src='../../img/loading_fast.gif' width='20px' height='20px' >");                    
+                        },
+                        success: function (data) {   
+                                if(data.mensaje === "Ok"){
+                                    var imagen = data.firma;  
+                                    $("#nombre_cajero").html(data.nombre_cajero);
+                                    $("#firma_cajero").html("<img src='../../img/firmas_digitales/"+imagen+".jpg' width='80px' height='50px' >");
+                                    $("#nombre_cajero").css("text-decoration","underline");
+                                    $("#verificar").fadeOut(function(){
+                                       setTimeout("createPDF()",500);
+                                    });    
+                                }else{
+                                    alert(data.mensaje);
+                                    $("#firma_cajero").html("---------");
+                                }                
+                        },
+                        error: function(e) {                 
+                            $("#firma_cajero").html("Error al obtener firma" + e  );                                
+                        }
+                    });  
+                } 
+                
 	  </script>
 	</head>
 <!-- end:   header -->   
 
 <!-- begin: head -->
+<div id="arqueo_caja">
 <input type="hidden" id="papar_size" value="{papar_size}">
 <input type="hidden" id="desde" value="{_desde}">
 <input type="hidden" id="hasta" value="{_hasta}">
 
+<input type="hidden" id="fecha_arqueo" value="{desde}">
+
 <table class="report_cab" border="1" cellspacing="0" cellpadding="0"> 
     <tr>
-        <th style="width: 15%" rowspan="2"><img src="../../img/logo.png" width="120"></th> 
+        <th style="width: 15%" rowspan="2"><img src="../../img/logo_small.png" style="width:140px"></th> 
         <th style="width: 70%;">Arqueo de Caja</th>
         <th style="font-size: 8px;width: 15%" rowspan="2">{user}-{time}</th> 
     </tr> 
@@ -197,21 +287,22 @@
     <tr class="report_header">
 		<th rowspan="2">Vendedor</th>
         <th id="contados" rowspan="2"><span>Contado</span></th>
-		<th colspan="4"> Tarjetas / Convenio </th>
-		<th colspan="2"> Cheques </th>
+		<th colspan="5"> Tarjetas / Convenio </th>
+		<th> Cheques </th>
 		<th id="cuotas" rowspan="2"><span>Cuotas</span></th>
 		<th id="devoluciones" rowspan="2"><span>Devs</span></th>
-		<th id="reservas" rowspan="2"><span>Reservas</span></th>
+                <th id="reservas" colspan="2" ><span>Reservas</span></th> 
 		<th rowspan="2">Totales</th>
 	</tr> 
     <tr class="report_header">        
         <th id="credito"><span>Cr&eacute;dito</span></th>
-        <th id="devito"><span>D&eacute;bito</span></th>
-        <th id="convenios"><span>Asoc.</span></th>
-        <th id="convenios"><span>Cripto.</span></th>
+        <th id="debito"><span>D&eacute;bito</span></th>
+        <th id="convenios"><span>Ret.</span></th>
+        <th id="cripto"><span>Cripto.</span></th>
+        <th id="qr"><span>Pg.QR</span></th>
         <th id="cheques_dia"><span>Al D&iacute;a</span></th>
-        <th id="cheques_diferido"><span>Diferido</span></th>
-              
+        <th id="reserva_entrante"><span> [<< </span></th> 
+        <th id="reserva_retirada"><span> [>> </span></th>           
     </tr>
 <!-- end:   head -->
 
@@ -222,13 +313,14 @@
     <td class="num">{contado}</td>
     <td class="num">{credito}</td>
     <td class="num">{debito}</td>    
-    <td class="num">{convenio}</td>
+    <td class="num">{retencion}</td>
     <td class="num">{criptomoneda}</td>
-    <td class="num">{ch_dia}</td>
-    <td class="num">{ch_dif}</td>
+    <td class="num">{pago_qr}</td>
+    <td class="num">{ch_dia}</td>     
     <td class="num">{cuotas}</td>
     <td class="num">{devoluciones}</td>
     <td class="num">{reservas}</td>
+    <td class="num">{reservas_ret}</td>
     <td class="num">{total}</td>    
 </tr>    
  
@@ -240,13 +332,14 @@
     <td class="num">{t_contado}</td>
     <td class="num">{t_credito}</td>
     <td class="num">{t_debito}</td>    
-    <td class="num">{t_convenio}</td>
+    <td class="num">{t_retencion}</td>
     <td class="num">{t_criptomoneda}</td>
-    <td class="num">{t_ch_dia}</td>
-    <td class="num">{t_ch_dif}</td>
+    <td class="num">{t_pago_qr}</td>
+    <td class="num">{t_ch_dia}</td>     
     <td class="num">{t_cuotas}</td>
     <td class="num">{t_devoluciones}</td>
     <td class="num">{t_reservas}</td>
+    <td class="num">{t_reservas_ret}</td>
     <td class="num">{t_total}</td> 
 </tr> 
 <!-- end:   total -->
@@ -256,15 +349,62 @@
 </table>    
 <!-- end:   foot  -->
 
+
+
+
+<!-- begin: head_servicio -->
+<table border="1"  cellspacing="0" cellpadding="0" style="empty-cells:show;width: 60%;border-collapse: collapse;margin:4px 0 4px 0">
+    <tr class="report_header2" style="background-color:rgb(245, 218, 129)"><th colspan="7">Facturas por Servicio</th></tr>
+    <tr class="report_header2" style="background-color:rgb(245, 218, 129)">
+		<th >Usuario</th>
+                <th >Cliente</th>
+                <th >Detalle</th>
+                <th >Contado</th> 
+                <th >Cuotas</th> 
+                <th >Cheques</th> 
+                <th >Totales</th>
+	</tr> 
+     
+<!-- end:   head_servicio  -->
+
+
+
+<!-- begin: data_servicio -->
+<tr class="data">
+    <td class="item"><p class="user" data-info="{vendedor}">{usuario}</p></td>
+    <td class="item">{cliente}</td>
+    <td class="item">{detalle}</td>
+    <td class="num">{contado}</td>       
+    <td class="num">{cuotas}</td>    
+    <td class="num">{cheques}</td>    
+    <td class="num">{total}</td>    
+</tr>    
+ 
+<!-- end:   data_servicio -->
+
+<!-- begin: total_servicio -->
+<tr class="report_foot">
+    <td>Totales:</td>
+    <td colspan="2"></td>
+    <td class="num">{t_contado}</td>   
+    <td class="num">{t_cuotas}</td>
+   <td class="num">{t_cheques}</td>
+    <td class="num">{t_total}</td> 
+</tr> 
+<!-- end:   total_servicio -->
+
+
+
+
 <!-- begin: resumen_head -->
- <table id="resumen" style="width: 100%">
+ <table id="resumen" style="width: 100%" cellspacing="0" cellpadding="0">
  <tr>
 
  <td> 
 <!-- end:   resumen_head  -->
 
 <!-- begin: extra_head -->
-<table border="1" cellspacing="0" cellpadding="0" style="width: 100%;empty-cells:show;border-collapse: collapse">
+<table border="1" cellspacing="0" cellpadding="0" style="width: 100%;empty-cells:show;border-collapse: collapse;margin-top: 4px">
 <tr class="report_header2">{ex_head}</tr>
 <!-- end:   extra_head  -->
 
@@ -286,8 +426,8 @@
  </td>
  <td style="vertical-align: top;">
  <table border="1" cellspacing="0" cellpadding="0" style="width: 80%;margin: 0 auto;visibility:{visibility};border-collapse: collapse">
-	<tr class="report_header">{cobros_ex_head}</tr>
-<!-- end:   cobos_head  -->
+	<tr class="report_header2">{cobros_ex_head}</tr>
+<!-- end:   cobros_head  -->
 
 <!-- begin: extra_body -->
 <tr {ex_conf}>{ex_data}</tr>
@@ -317,11 +457,21 @@
 <!-- end:   Verif_ventas  -->
 
 <!-- begin: end -->
-<table id="obs_firma">
-<tr><td colspan="2"><span>Obs.:</span></td></tr>
-<tr><td colspan="2"></td></tr>
-<tr><td colspan="2"></td></tr>
-<tr><td><span>Elaborado por:</span></td><td><span>Verificado por:</span></td></tr>
+<table id="obs_table"> 
+<tr><td ><span>Obs.:</span></td><td colspan="2" contenteditable="true" id="obs"></td></tr>
 </table>
+
+<table id="obs_firma"> 
+    <tr><td style="text-align: center" id="nombre_cajero">______________________</td> <td id="firma_cajero" style="border:solid black 1px;height: 50px;width: 80px; text-align: center;cursor: crosshair" onclick="agregarFirma()"> </td> </tr>
+    <tr><td style="width: 100px;text-align: center">Verificado por</td> <td style="text-align: center"> Firma </td></tr>
+</table>
+</div>
 </html>
+
+<div id="verificar" style="display:none;background-color: #F5DA81; position: absolute; border:1px solid gray;padding: 6px;text-align: center">
+    <label>Contrase&ntilde;a:</label><input  id="passw" class="passw" type="password" size="24" value=""><br>
+     
+    <input type="button"   value="Cancelar" onclick=javascript:$("#verificar").fadeOut()>    <input type="button"   value="Aceptar"  onclick="firmarArqueoCaja()"> <br>
+    <span id="msg_pw"></span>
+</div>
 <!-- end:   end  -->

@@ -25,11 +25,11 @@
 
 <body>
     <div> 
-        <div style="text-align: center" > <img src="img/ElZar.jpeg" width="324px" height="144" alt="  "> </div>
+        <div style="text-align: center" > <img src="img/logo.jpg" width="324px" height="144" alt="  "> </div>
            <h2 class="titulo_inicial">   Inicia sesi&oacute;n para acceder al Sistema    </h2> 
            <div name="login" class="login">
                <form method="post" name="loginform" action="Main.class.php">
-                   <input type="text" name="usuario" id="login_usuario" placeholder="Usuario" maxlength="30" value="<?php  echo "".$_REQUEST['usuario'].""; ?>"  onkeypress="return validar(event);" onblur="userBlur()" <?php if(isset($_REQUEST['usuario'])){ echo 'disabled="disabled"';  } ?>     >  
+                   <input type="text" name="usuario" id="login_usuario" placeholder="Usuario" maxlength="30" value="<?php if( isset($_REQUEST['usuario'])) {  echo "".$_REQUEST['usuario'].""; } ?>"  onkeypress="return validar(event);" onblur="userBlur()" <?php if(isset($_REQUEST['usuario'])){ echo 'disabled="disabled"';  } ?>     >  
                    <input type="password" id="login_password" placeholder="Contrase&ntilde;a" maxlength="26"  >  
                    <span class="eye_container"><img src="img/closed_eye.png" width="24px" class="eye" ><span><br> 
                    <?php
@@ -46,13 +46,13 @@
                         if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") { 
                             $https = true;
                         } 
-                        
+                        /*
                         if(!isMobile() && !$https){ 
                             require_once("utils/Keyboard.class.php");                                               
                             $keyboard = new Keyboard();
                             $keyboard->show();                            
                             echo '<img id="toggle_touch" src="img/keyboard_basic_red-disabled.png" style="cursor:pointer" type="button" value="Teclado Virtual" onclick="toggleTouch()">';
-                        }
+                        }*/
                    ?> 
                    <br>
                    <span id="msg_login" class="msg" style="height: 26px">&nbsp;</span> 

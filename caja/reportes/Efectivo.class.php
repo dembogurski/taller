@@ -7,7 +7,6 @@
  */
 require_once("../../Y_Template.class.php");
 require_once("../../Y_DB_MySQL.class.php"); 
-require_once("../../Y_DB_MSSQL.class.php");
 require_once("../../Functions.class.php");
 
 class Efectivo {
@@ -165,7 +164,7 @@ class Efectivo {
         $link = new My();
         
         //$link->Query("SELECT nombre,cuenta,nro_deposito,DATE_FORMAT(e.fecha,'%d-%m-%Y') as fecha,e.salida,b.suc,e.m_cod,e.cotiz*e.salida as cambio from bcos_ctas_mov b inner join bancos using(id_banco) inner join efectivo e using(nro_deposito) where e.suc = '$suc' and e.fecha between '$desde' and '$hasta' and e.id_concepto=9 group by e.salida_ref,b.nro_deposito order by e.id_pago asc");
-        $link->Query("SELECT bb.nombre,b.cuenta,e.nro_deposito,DATE_FORMAT(e.fecha,'%d-%m-%Y') as fecha,e.salida,b.suc,e.m_cod,e.cotiz*e.salida as cambio from bcos_ctas_mov b inner join bcos_ctas c on b.id_banco=c.id_banco and b.cuenta=c.cuenta inner join bancos bb on c.id_banco=bb.id_banco inner join efectivo e on b.nro_deposito=e.nro_deposito and b.fecha_reg = e.fecha_reg and b.suc = e.suc and e.salida=b.entrada where e.suc = '$suc' and e.fecha between '$desde' and '$hasta' and e.id_concepto=9 group by e.salida_ref,b.nro_deposito order by e.id_pago asc");
+        $link->Query("SELECT bb.nombre,b.cuenta,e.nro_deposito,DATE_FORMAT(e.fecha,'%d-%m-%Y') as fecha,DATE_FORMAT(b.fecha,'%d-%m-%Y') AS fecha_dep,e.salida,b.suc,e.m_cod,e.cotiz*e.salida as cambio from bcos_ctas_mov b inner join bcos_ctas c on b.id_banco=c.id_banco and b.cuenta=c.cuenta inner join bancos bb on c.id_banco=bb.id_banco inner join efectivo e on b.nro_deposito=e.nro_deposito and b.fecha_reg = e.fecha_reg and b.suc = e.suc and e.salida=b.entrada where e.suc = '$suc' and e.fecha between '$desde' and '$hasta' and e.id_concepto=9 group by e.salida_ref,b.nro_deposito order by e.id_pago asc");
 
         $t->Show("deposito_h");
         while($link->NextRecord()){
@@ -174,6 +173,7 @@ class Efectivo {
             $t->Set('nro_deposito',number_format($link->Record['nro_deposito'],0,',','.'));
             $t->Set("nro_deposito_ref",$link->Record['nro_deposito']);
             $t->Set('fecha',$link->Record['fecha']);
+            $t->Set('fecha_dep',$link->Record['fecha_dep']);
             $t->Set('salida',number_format($link->Record['salida'],2,',','.'));
             $t->Set('salida_data',$link->Record['salida']);
             $t->Set('suc',$link->Record['suc']);
@@ -202,14 +202,14 @@ class Efectivo {
 }
 
 function getCuentaContable($cuenta,$suc, $moneda){
-    $ms = new MS();
-    $sql = "SELECT AcctCode,AcctName FROM OACT WHERE AcctCode like '$cuenta%' AND ExportCode = '$suc' and  ( ActCurr = '$moneda' or  ActCurr = '##');";
+    $ms = new My();
+    $sql = "SELECT cuenta,nombre_cuenta from plan_cuentas   WHERE cuenta like '$cuenta%' AND suc = '$suc' and    moneda = '$moneda'  ;";
     $ms->Query($sql);
     $arr = array();
     if($ms->NumRows() > 0){
         $ms->NextRecord();
-        $AcctCode = $ms->Record['AcctCode'];
-        $AcctName = $ms->Record['AcctName'];
+        $AcctCode = $ms->Record['cuenta'];
+        $AcctName = $ms->Record['nombre_cuenta'];
         $arr[0]=$AcctCode;
         $arr[1]=$AcctName;
     }else{
@@ -251,7 +251,7 @@ function generarAsientos(){
 
            if($id_concepto == 13){ //Sobrante en Caja Sencillo
 
-               $array = getCuentaContable("1.1.1.2",$suc, "G$");      // Recaudaciones 
+               $array = getCuentaContable("1112",$suc, "G$");      // Recaudaciones 
                $cuenta1 = $array[0];
                $cuenta1SN = $array[1];
 
@@ -267,7 +267,7 @@ function generarAsientos(){
                VALUES ($id_asiento,2,'$cuenta2', '$cuenta2SN',0, $valor);");  
 
            }else if($id_concepto == 14 || $id_concepto == 10){ // Entrada por Diferencia de Cambio
-               $array = getCuentaContable("1.1.1.2",$suc, "G$");      // Recaudaciones 
+               $array = getCuentaContable("1112",$suc, "G$");      // Recaudaciones 
                $cuenta1 = $array[0];
                $cuenta1SN = $array[1];
 
@@ -292,7 +292,7 @@ function generarAsientos(){
                VALUES ($id_asiento,1,'$cuenta1','$cuenta1SN', $valor, 0);");     
 
 
-               $array = getCuentaContable("1.1.1.2",$suc, "G$");      // Recaudaciones 
+               $array = getCuentaContable("1112",$suc, "G$");      // Recaudaciones 
                $cuenta2 = $array[0];
                $cuenta2SN = $array[1]; 
 
@@ -317,7 +317,7 @@ function eliminarDeposito(){
     
 
     $respuesta = array();
-    $link->Query("INSERT into logs (usuario,fecha,hora,accion,tipo,doc_num,data) VALUES ('$usuario',DATE(NOW()),TIME(NOW()),'Eliminar','Deposito','$nro_deposito',CONCAT('$observacion - ',(select concat('usu:',usuario,', suc:',suc,', ent:',entrada,', idBco:',id_banco,', cta:',cuenta,', ent:',entrada,',fReg:',fecha_reg,',hReg:',hora,',idCto:',id_concepto) from bcos_ctas_mov where nro_deposito=$nro_deposito and entrada=$monto)))");
+    $link->Query("INSERT into logs (usuario,fecha,hora,accion,tipo,doc_num,data) VALUES ('$usuario',DATE(NOW()),TIME(NOW()),'Eliminar','Deposito','$nro_deposito',CONCAT('$observacion - ',(select concat('usu:',usuario,', suc:',suc,', ent:',entrada,', idBco:',id_banco,', cta:',cuenta,', ent:',entrada,',fReg:',fecha_reg,',hReg:',hora,',idCto:',id_concepto) from bcos_ctas_mov where nro_deposito=$nro_deposito and entrada=$monto limit 1)))");
 
     $link->Query("DELETE from bcos_ctas_mov WHERE nro_deposito = $nro_deposito and entrada=$monto");
     if($link->AffectedRows()>0){

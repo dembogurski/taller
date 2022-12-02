@@ -46,13 +46,17 @@ class NuevaEntradaMercaderias {
         }
         $patrones = substr($patrones, 0, -1);        
         $t->Set("designs", "[" . $patrones . "]");
+        $t->Set("gmonedas", "[]");
         
-        $t->Show("headers");
-        $t->Show("titulo_entrada");
+        $t->Show("headers");    
+        // $t->Show("script_entrada_merc");    
+
+$t->Show("script_entrada_merc");    
+$t->Show("titulo_entrada");
         
         $my = new My();
-        
-        $sql = "SELECT suc,nombre FROM sucursales WHERE estado  = 'Activo' AND suc <> '13'  ORDER BY suc ASC";
+         
+        $sql = "SELECT suc,nombre FROM sucursales WHERE tipo != 'Sub-Deposito' and estado = 'Activo' and suc <> '50'  ORDER BY suc ASC";
         //$sql = "SELECT suc,nombre FROM sucursales WHERE suc NOT LIKE '%.%'  ORDER BY suc ASC";
         $my->Query($sql);
         $sucs = "";
@@ -82,7 +86,10 @@ class NuevaEntradaMercaderias {
             $paises .="<option value='$Code'>$Name</option>";
         }
         $t->Set("paises", $paises);
-        $t->Set("estado", "Abierta");   
+        $t->Set("estado", "Abierta");  
+        
+        $t->Set("fecha_hoy", date("d-m-Y"));
+        
         
         $t->Show("cabecera_nueva_entrada");
          

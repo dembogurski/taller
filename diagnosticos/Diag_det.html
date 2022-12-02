@@ -1,0 +1,121 @@
+<!-- begin: headers -->   
+    <head>  
+        <link rel="stylesheet" type="text/css" href="diagnosticos/Diag_det.css?_=0" />      
+        <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
+    </head>  
+<!-- end:   headers -->
+
+<!-- begin: insert_edit_form -->     
+
+<!-- end:   insert_edit_form -->
+
+<!-- begin: data_header -->
+<div class="list_container" style="margin-top: 6px">      
+    <table id="diag_det"  border="1" class="display responsive nowrap db_tablename"  >
+        <thead>
+            <tr>
+                <th colspan="6" style="text-align: center;margin-top: 8px;background:lightblue">Detalle de Diagnostico</th>
+            </tr>
+            <tr class="titulo">
+                <th>Nro</th><th>Descrip</th><th>Precio</th><th>Cant</th><th>Subtotal</th><th></th>
+            </tr>
+        </thead>
+
+<!-- end:   data_header -->
+
+
+<!-- begin: data_line -->     
+<tr style="background-color: white">  <td class="itemc">{id_det}</td> <td class="item" style="max-width:140px">{descrip}</td> <td class="num">{precio}</td> <td class="num">{cant}</td> <td class="num">{subtotal}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editDiag_detUI("{id_det}") ></td>  </tr>
+<!-- end:   data_line -->
+
+
+<!-- begin: data_foot -->     
+
+        <tfoot>
+             
+        </tfoot>
+    </table> 
+</div>
+ 
+<!-- end:   data_foot -->
+
+<!-- begin: script -->      
+    <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+    <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
+    <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="js/functions.js" ></script>    
+    <script type="text/javascript" src="diagnosticos/Diag_det.js" ></script>
+    
+<!-- end:   script -->
+
+
+<!-- begin: edit_form_cab -->  
+<table border="0" class="form_table" id="edit_diag_det" style="width: auto">
+    <tr> <th colspan="2" class="form_title" > Modificar Detalle de Diagnostico  </th> </tr> 
+<!-- end:   edit_form_cab -->
+
+
+<!-- begin: edit_form_data -->   
+<tr style="display:none"> <td class="form_label">N&deg; Diag:</td> <td><input class="form_number MUL PRI" type="number" id="form_id_diag"  readonly="readonly"  size="10"  value="{id_diag}" ></td>  </tr>
+<tr> <td class="form_label">N&deg;:</td> <td><input class="form_text PRI" type="text" id="form_id_det"  readonly="readonly"    size="10"  value="{id_det}" ></td>  </tr>
+<tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   >{value_of_descrip}</textarea></td>  </tr>
+<tr> <td class="form_label">Precio:</td> <td><input class="form_number recalc" type="text" id="form_precio"    size="16" onkeypress="return onlyNumbers(event)" value="{value_of_precio}" ></td>  </tr>
+<tr> <td class="form_label">Cant:</td> <td><input class="form_number recalc" type="text" id="form_cant"    size="10" onkeypress="return onlyNumbers(event)" value="{value_of_cant}" ></td>  </tr>
+<tr> <td class="form_label">Subtotal:</td> <td><input class="form_number" type="text" id="form_subtotal"  readonly="readonly"     size="16"   value="{value_of_subtotal}" ></td>  </tr>
+<!-- end:   edit_form_data -->
+
+
+<!-- begin: edit_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_diag_det" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeDiag_detForm()">
+            <input type="button" value="Modificar Datos" onclick=updateDiag_detData("edit_diag_det") id="diag_det_update_button">
+            <input type="button" value=" Cerrar " onclick="closeDiag_detForm()" id="diag_det_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   edit_form_foot -->
+
+
+
+
+
+
+<!-- begin: add_form_cab -->  
+<table border="0" class="form_table" id="add_diag_det">
+    <tr> <th colspan="2" class="form_title" > (Nuevo Detalle de Diagnostico)  </th> </tr> 
+<!-- end:   add_form_cab -->
+
+
+<!-- begin: add_form_data -->     
+<tr style="display:none"> <td class="form_label">N&deg; Diag:</td> <td><input class="form_number MUL" type="number" id="form_id_diag"  readonly="readonly"  size="10"  value="{id_diag}" ></td>  </tr>
+<tr> <td class="form_label">N&deg;:</td> <td><input class="form_text" type="text" id="form_id_det"  readonly="readonly"    size="10"  value="{id_det}" ></td>  </tr>
+<tr> <td class="form_label">Descrip:</td> <td><textarea class="form_textarea" id="form_descrip" cols="40" rows="3"   ></textarea></td>  </tr>
+<tr> <td class="form_label">Precio:</td> <td><input class="form_number recalc" type="text" id="form_precio"      size="16" onkeypress="return onlyNumbers(event)" value="" ></td>  </tr>
+<tr> <td class="form_label">Cant:</td> <td><input class="form_number recalc" type="text" id="form_cant"      size="10" onkeypress="return onlyNumbers(event)" value="" ></td>  </tr>
+<tr> <td class="form_label">Subtotal:</td> <td><input class="form_number" type="text" id="form_subtotal"  readonly="readonly"     size="16"   value="" ></td>  </tr>
+
+<!-- end:   add_form_data -->
+
+
+<!-- begin: add_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_diag_det" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeDiag_detForm()">
+            <input type="button" value=" Grabar " onclick=addDiag_detData("add_diag_det") id="diag_det_save_button">
+            <input type="button" value="  Cerrar  " onclick="closeDiag_detForm()" id="diag_det_close_button" style="display:none">
+            <input type="button" value=" Siguiente " onclick="addDiag_detUI()" id="diag_det_next_button" style="display:none">
+             
+        </td>
+    </tr>
+</table> 
+<!-- end:   add_form_foot -->
+
+
+<!-- begin: no_result -->     
+<div style="text-align: center;margin: 2cm auto"> Ningun detalle <button type="button" id="add_button_det" onclick="addDiag_detUI()">Agregar un detalle de Diagnostico</button></div> 
+<!-- end:   no_result -->

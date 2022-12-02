@@ -165,7 +165,7 @@
 
 <table class="report_cab" border="1" cellspacing="0" cellpadding="0"> 
     <tr>
-        <th style="width: 15%" rowspan="2"><img src="../../img/logo_small.png"></th> 
+        <th style="width: 15%" rowspan="2"><img src="../../img/logo_small.png" style="width:140px"></th> 
         <th style="width: 70%;">Flujo de Efectivo</th>
         <th style="font-size: 8px;width: 15%" rowspan="2">{user}-{time}</th> 
     </tr> 
@@ -240,7 +240,7 @@
 <!-- begin: deposito_h -->
 <div id="datosDep">
     <table border="1" cellspacing="0" cellpadding="0">
-        <tr><th>Nombre</th><th>Cuenta</th><th>Nro. Dep.</th><th>Movimiento</th><th>Moneda</th><th>Monto</th><th></th></tr>
+        <tr><th>Nombre</th><th>Cuenta</th><th>Nro. Dep.</th><th>Valor</th><th>Fecha</th><th>Moneda</th><th>Valor Gs.</th><th></th></tr>
 <!-- end: deposito_h -->
 
 <!-- begin: deposito_b -->
@@ -249,6 +249,7 @@
     <td class="num">{cuenta}</td>
     <td class="num">{nro_deposito}</td>
     <td class="num">{salida}</td>
+    <td class="itemc">{fecha_dep}</td>
     <td class="itemc">{m_cod}</td>
     <td class="num">{cambio}</td>
     <td class="itemc"><button class="eliminar_deposito" onclick="eliminar($(this),{salida_data})" {eliminar}>Eliminar</button></td>

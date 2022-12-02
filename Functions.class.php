@@ -132,7 +132,7 @@ class Functions {
         require_once("Y_DB_MySQL.class.php");
         $db = new My();
         $ip = $this->getIP();
-        $db->Query("INSERT INTO LOGS(usuario, fecha, hora, accion, DATA,ip) VALUES ('$usuario', current_date, current_time, '$accion', '$data','$ip');");
+        $db->Query("INSERT INTO logs(usuario, fecha, hora, accion, DATA,ip) VALUES ('$usuario', current_date, current_time, '$accion', '$data','$ip');");
         return true;
     }
 
@@ -159,7 +159,7 @@ class Functions {
         $caracter; //extrae el caracter!!!		
         for ($i = 0; $i < strlen($numero); $i++) {
             //$caracter = numero.charAt(i);//se obtiene un caracter
-            $caracter = $numero{$i};
+            $caracter = $numero[$i];
 
             if (is_numeric($caracter)) {
                 $numero_al = $numero_al . "" . $caracter;
@@ -177,7 +177,7 @@ class Functions {
             if ($k > $basemax) {
                 $k = 2;
             }
-            $aux = $numero_al{$i};
+            $aux = $numero_al[$i];
             $v_total = $v_total + ($aux * $k);
             $k = $k + 1;
         }
@@ -265,8 +265,10 @@ class Functions {
      * @return array
      */
     function getResultArray($sql) {
+        
         require_once("Y_DB_MySQL.class.php");
         $db = new My();
+        $db->Query("SET lc_time_names = 'es_PY'");
         $array = array();
         $db->Query($sql);
         while ($db->NextRecord()) {
@@ -302,7 +304,7 @@ class Functions {
         $db = new My();
         
         // Datos del Stock Actual
-        $db->Query("SELECT SUM(cantidad) AS stock_actual,a.costo_prom AS ppp,   SUM(cantidad) * a.costo_prom AS  valor_stock_actual FROM articulos a, stock s WHERE a.codigo = s.codigo AND s.codigo = '$codigo' AND tipo_ent = 'EM' AND nro_identif <> $id_compra AND s.estado_venta NOT IN( 'FP', 'Bloqueado') GROUP BY s.codigo");
+        $db->Query("SELECT SUM(s.cantidad) AS stock_actual,a.costo_prom AS ppp,   SUM(s.cantidad) * a.costo_prom AS  valor_stock_actual FROM articulos a, stock s, historial h WHERE  a.codigo = s.codigo AND s.codigo = h.codigo AND h.tipo_doc = 'EM' AND nro_doc <> $id_compra AND s.codigo = '$codigo' AND s.tipo_ent = 'EM' AND s.estado_venta NOT IN('FP') GROUP BY s.codigo");
         $stock_actual = 0;
         $precio_promedio_actual = 0;
         $valor_stock_actual = 0;
@@ -315,8 +317,8 @@ class Functions {
         }    
         
         // Datos de la compra actual + Gastos de la compra actual
-        $db->Query("SELECT SUM(cant_calc) AS cant_compra, SUM(cant_calc *  precio_real)   AS  valor_stock_comprado,cotiz, sum(d.sobre_costo) as total_gastos ,e.origen, precio_real FROM articulos a, entrada_merc e, entrada_det d 
-        WHERE  e.id_ent = d.id_ent AND a.codigo = d.codigo AND d.codigo = '$codigo'  AND e.id_ent = $id_compra and e.estado = 'Cerrada'  GROUP BY d.codigo ");
+        //$db->Query("SELECT SUM(cant_calc) AS cant_compra, SUM(cant_calc *  precio_real)   AS  valor_stock_comprado,cotiz, sum(d.sobre_costo * cant_calc) as total_gastos ,e.origen, precio_real FROM articulos a, entrada_merc e, entrada_det d  WHERE  e.id_ent = d.id_ent AND a.codigo = d.codigo AND d.codigo = '$codigo'  AND e.id_ent = $id_compra and e.estado = 'Cerrada'  GROUP BY d.codigo ");
+        $db->Query("SELECT SUM(cant_calc) AS cant_compra, SUM(cant_calc *  precio_ms)     AS  valor_stock_comprado,cotiz, sum(d.sobre_costo * cant_calc) as total_gastos ,e.origen, precio_real FROM articulos a, entrada_merc e, entrada_det d  WHERE  e.id_ent = d.id_ent AND a.codigo = d.codigo AND d.codigo = '$codigo'  AND e.id_ent = $id_compra and e.estado = 'Cerrada'  GROUP BY d.codigo "); // se cambio SUM(cant_calc *  precio_real)   AS  valor_stock_comprado precio_real x precio_ms porque estaba sobrecargando los gastos
         $cant_compra = 0;
         $valor_stock_comprado = 0;
         $total_gastos = 0;
@@ -332,7 +334,7 @@ class Functions {
         }   
          
         
-        $valor_stock_comprado += $total_gastos;
+        $valor_stock_comprado  = $valor_stock_comprado + $total_gastos;
         
         $nuevo_ppp = ($valor_stock_actual + $valor_stock_comprado) / ($stock_actual + $cant_compra);
          

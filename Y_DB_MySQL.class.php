@@ -80,7 +80,7 @@ class My {
      *  Constructor
      *  ===========
      */
-    function My() {
+    function __construct() {
         $c = new Config();
  
         $this->Host = $c->getDBHost();  // Hostname

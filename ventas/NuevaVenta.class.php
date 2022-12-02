@@ -23,21 +23,51 @@ class NuevaVenta {
     }
 
     function main() {
-
-        //$session = $_POST['session'];
+        $t = new Y_Template("FacturaVenta.html");
+        $db = new My();
+        
+        if( isset($_GET['cod_cli'])){ 
+            $cod_cli = $_GET['cod_cli'];
+            $nro_diag = $_GET['nro_diag'];
+            $db->Query("SELECT nombre FROM clientes WHERE cod_cli = '$cod_cli'");
+            $db->NextRecord();
+            $nombre = $db->Record['nombre'];   
+            $t->Set("cliente",$nombre);
+            $t->Set("nro_diag",$nro_diag);
+            $t->Set("auto_buscar_cliente","true");    
+            
+        }
+        
+        
         $usuario = $_POST['usuario'];
         $touch = $_POST['touch'];
         $suc = $_POST['suc'];
+        $estado = "Abierta";
+        $tipo_doc = "Factura";
+        if(isset($_GET['estado'])){
+           $estado = $_GET['estado'];
+           $tipo_doc = "Presupuesto";
+        }
+        
+        
 
-
-        $db = new My();
+        
         $db2 = new My();
-        $db->Query("SELECT valor FROM parametros WHERE clave = 'vent_det_limit'");
+        
+        $db->Query("SELECT valor FROM parametros WHERE clave = 'vent_det_limit' or clave = 'limite_stock_negativo' order by clave desc");
         $db->NextRecord();
         $limite_detalles = $db->Record['valor'];
 
-        $t = new Y_Template("FacturaVenta.html");
-        $t->Set("limite_detalles", $limite_detalles);
+        $db->NextRecord();
+        $stock_negativo = $db->Record['valor'];
+                
+        
+        
+        $t->Set("tipo_doc",$tipo_doc);
+        
+        $t->Set("limite_detalles",$limite_detalles);
+        $t->Set("limite_stock_negativo",$stock_negativo);
+        $t->Set("estado",$estado);
 
 
         $db->Query("SELECT m_descri AS m, m_cod AS moneda FROM monedas WHERE m_ref <> 'Si';");
@@ -100,26 +130,8 @@ class NuevaVenta {
 
 }
 
-function getLotesMenores() {
-    require_once("../Y_DB_MSSQL.class.php");
-    $lote = $_POST['lote'];
-    $suc = $_POST['suc'];
-    $cantidad = $_POST['cantidad']; // Cantidad a vender
-    $ms = new MS();
-    $ms2 = new MS();
-    $ms->Query("select ItemCode,BatchNum,Quantity,U_img from oibt  where WhsCode = '$suc' and BatchNum = '$lote'   and U_img <> '0/0' and U_img <> '' ");
-    $arr = array();
-    if ($ms->NumRows() > 0) {
-        $ms->NextRecord();
-        $ItemCode = $ms->Record['ItemCode'];
-        $Img = $ms->Record['U_img'];
-        $Quantity = $ms->Record['Quantity'];
-        $ms2->Query("select BatchNum,Quantity,U_img from oibt  where WhsCode = '$suc' and ItemCode = '$ItemCode'  and U_img = '$Img' and Quantity >= $cantidad  and Quantity < $Quantity order by Quantity asc;  ");
-        while ($ms2->NextRecord()) {
-            array_push($arr, $ms2->Record);
-        }
-    }
-    echo json_encode($arr);
+function getLotesMenores() { 
+    echo json_encode(array());
 }
 
 function verifTurnoNFactura() {
@@ -136,9 +148,11 @@ function verifTurnoNFactura() {
 
 function crearFactura() {
     $cod_cli = $_POST['cod_cli']; 
+    
      
     $usuario = $_POST['usuario'];
     $suc = $_POST['suc'];
+    $estado = $_POST['estado'];
      
     $moneda = $_POST['moneda'];
     $cotiz = $_POST['cotiz'];
@@ -151,7 +165,12 @@ function crearFactura() {
     if (!isset($_POST['turno'])) {
         $turno = 100;
     }
-    
+    $nro_diag = 'null';
+    $notas = "";
+    if ( $_POST['nro_diag'] != "" ) {
+        $nro_diag = $_POST['nro_diag'];
+        $notas = "Basado en Diagnostico Nro: $nro_diag";
+    }
     
     if($turno_id === ""){  
         $turno_id = 0;
@@ -173,11 +192,11 @@ function crearFactura() {
     
     $hora = date('H:i');
     
-    $db->Query("INSERT INTO factura_venta(cod_cli,cliente,usuario,fecha,hora,turno,ruc_cli,tipo_doc_cli,suc,cat,total,total_desc,total_bruto,estado,cod_desc,moneda,cotiz,turno_id, turno_fecha, turno_llamada,empaque,nro_reserva)
-    VALUES ('$cod_cli','$cliente','$usuario',current_date,'$hora',$turno,'$ruc','$tipo_doc','$suc',$cat,0,0,0,'Abierta',0,'$moneda',$cotiz,$turno_id, $turno_fecha, $turno_llamada,'No',NULL);");
+    $db->Query("INSERT INTO factura_venta(cod_cli,cliente,usuario,fecha,hora,turno,ruc_cli,tipo_doc_cli,suc,cat,total,total_desc,total_bruto,estado,cod_desc,moneda,cotiz,turno_id, turno_fecha, turno_llamada,empaque,nro_reserva,nro_diag,notas)
+    VALUES ('$cod_cli','$cliente','$usuario',current_date,'$hora',$turno,'$ruc','$tipo_doc','$suc',$cat,0,0,0,'$estado',0,'$moneda',$cotiz,$turno_id, $turno_fecha, $turno_llamada,'No',NULL,$nro_diag,'$notas');");
     
     
-    $db->Query("SELECT f_nro AS NRO FROM factura_venta WHERE estado = 'Abierta' AND usuario = '$usuario'  ORDER BY f_nro DESC LIMIT 1");
+    $db->Query("SELECT f_nro AS NRO FROM factura_venta WHERE estado = '$estado' AND usuario = '$usuario'  ORDER BY f_nro DESC LIMIT 1");
     $db->NextRecord();
     $nro = $db->Record['NRO'];
     echo $nro;

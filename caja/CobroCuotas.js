@@ -1,6 +1,5 @@
 var total_checked = 0;
-var rs = 0; // Cotizacion en Reales Pesos y Dolares
-var ps = 0;
+var gs = 1; // Cotizacion en Reales Pesos y Dolares
 var us = 0;
 var factura = 0;
 var vuelto_gs = 0;
@@ -11,44 +10,30 @@ var puede_imprimir_recibo = true;
 var permiso = false;
 
 var printing;
+var ventana;
 
 var flagImpresionChequesXCuotas = true;
 
 var MAX_DIAS_ATRASO_CHEQUES = 0;
  
-   /*
-function configurar(){
-    $( "#tabs" ).tabs();
-    console.log("Cobro de cuotas configurar");
-    eliminarPagosAbiertos();
-    $(".clicable").click(function(){ 
-             var factura = $(this).parent().attr("id").substring(5,20);
-             cobrarFactura(factura);
-         });
-            
-         $(window).scroll(function(){
-             $('#popup_caja').animate({top:$(window).scrollTop()+"px" },{queue: false, duration: 350});
-         });
-          
-         statusInfo(); 
-} */
+var dataToSend = null; 
 
 function configurar(){
     eliminarPagosAbiertos();
     $("#monedas_cheque").change(function(){
         var mon = $(this).val();
         if(mon == 'G$'){
-            $("#valor_cheque_gs").prop("disabled",true);
-            $("#valor_cheque_gs").attr("readonly",true);
+            $("#valor_cheque_ref").prop("disabled",true);
+            $("#valor_cheque_ref").attr("readonly",true);
         }else{
-            $("#valor_cheque_gs").removeAttr("disabled");
-            $("#valor_cheque_gs").removeAttr("readonly");
+            $("#valor_cheque_ref").removeAttr("disabled");
+            $("#valor_cheque_ref").removeAttr("readonly");
         }      
     });
-    $("#valor_cheque_gs").change(function(){
+    $("#valor_cheque_ref").change(function(){
         var valor = parseFloat($(this).val());
         var valor_ref_fortted = valor.format(2, 3, '.', ','); 
-        $("#valor_cheque_gs").val(valor_ref_fortted);
+        $("#valor_cheque_ref").val(valor_ref_fortted);
         
         if($("#monedas_cheque").val()!='G$'){
            var cotiz = valor / $("#valor_cheque").val().replace(/\./g, '').replace(/\,/g, '.');
@@ -99,6 +84,10 @@ function configurar(){
     if(ruc != ""){   
         buscarCliente($("#ruc_cliente"));
     }
+    /*
+    if(getSuc()=="00"){
+        $("#cotiz_us").prop("readonly",false);
+    }*/
 }
 var date_diff = function(date1, date2) {
    dt1 = new Date(date1);
@@ -106,22 +95,70 @@ var date_diff = function(date1, date2) {
    return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
 }
 
+function mostrarEstadoLineaCredito(){
+    $("#resumen_linea_credito").slideToggle();
+    $("#resumen_linea_credito").draggable();
+}
+
 function getLimiteCredito(){
+    console.log("getLimiteCredito()");
    var CardCode = $("#codigo_cliente").val();
    $.post( "Ajax.class.php",{ action: "getLimiteCreditoCliente",CardCode:CardCode}, function( data ) {
-       var Limite = data.Limite;
-       var Cuotas = data.Cuotas;
-       var Cheques = data.Cheques;
-       var Diff = Limite - (Cuotas + Cheques); 
-       $("#limite_credito").val( ( Diff).format(0, 3, '.', ','));
-       if(Limite > 0){
-          $(".limite_credito").fadeIn();
-          if(Diff <= 0){
-             $("#limite_credito").css("color","red"); 
-          }else{
-             $("#limite_credito").css("color","green");  
-          }
-       }// Sin no tiene Limite no mostramos
+       //var es_funcionario = $("#nombre_cliente").val().indexOf("FUNCIONARI")>=0?true:false; 
+       var Limite = parseFloat(data.Limite);
+       var Cuotas = parseFloat(data.Cuotas);
+       var Cheques = parseFloat(data.Cheques);
+       var ChequesAlDiaNoProcesados = parseFloat(data.ChequesAlDiaNoProcesados);
+       var EfectivoNoProc = parseFloat(data.EfectivoNoProc);
+       var VentasNoProcesadas = parseFloat(data.VentasNoProcesadas);
+       var CuotasAtrasadas = parseInt(data.CuotasAtrasadas);
+       var CuotasAtrasadasPermitidas = parseInt(data.LIMITE_CUOTAS_ATRASADAS);
+       
+       var CantidadDeCuotas = parseInt(data.CANTIDAD_CUOTAS);
+       var PlazoMaximo = parseInt(data.PLAZO_MAXIMO);
+       
+       TASA_INTERES_PUNITORIA = parseFloat(data.TASA_INTERES_PUNIT);
+        
+       $("#cambiar_tasa_interes").val(TASA_INTERES_PUNITORIA);
+        
+       $(".filas_linea_credito").remove(); 
+       
+      
+       var LimiteCredito =  (Limite) .format(0, 3, '.', ','); 
+       var CuotasPendientes =  (Cuotas) .format(0, 3, '.', ',');
+       var ChequesDiferidos =  (Cheques) .format(0, 3, '.', ',');
+       var ChequesAlDiaNoProcesadosF = ( ChequesAlDiaNoProcesados) .format(0, 3, '.', ',');
+       var EfectivoNoProcF = ( EfectivoNoProc) .format(0, 3, '.', ',');
+       var VentasNoProcesadasF = ( VentasNoProcesadas) .format(0, 3, '.', ',');
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Limite Credito:</td><td  class='num'>"+LimiteCredito+"</td></tr>"); 
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Cantidad Maxima de Cuotas:</td><td  class='num'>"+CantidadDeCuotas+"</td></tr>"); 
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Limite Cuotas Atrasadas:</td><td  class='num'>"+CuotasAtrasadasPermitidas+"</td></tr>");
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Plazo Maximo de Cuotas:</td><td  class='num'>"+PlazoMaximo+"</td></tr>"); 
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Cuotas Pendientes:</td><td  class='num'>"+CuotasPendientes+"</td></tr>"); 
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Cuotas Atrasadas:</td><td  class='num'>"+CuotasAtrasadas+"</td></tr>"); 
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' onclick='verChequesDiferidos()' style='cursor:pointer' >Cheques Diferidos:</td><td onclick='verChequesDiferidos()' style='cursor:pointer' class='num'>"+ChequesDiferidos+"</td></tr>"); 
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Cheques AlDia no Procesados:</td><td  class='num'>"+ChequesAlDiaNoProcesadosF+"</td></tr>"); 
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Efectivo por Cobro Cuotas No Procesados:</td><td  class='num'>"+EfectivoNoProcF+"</td></tr>"); 
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' >Ventas no Procesadas:</td><td  class='num'>"+VentasNoProcesadasF+"</td></tr>"); 
+       
+       var Diff = parseFloat(Limite - (Cuotas + Cheques + VentasNoProcesadas) + (EfectivoNoProc + ChequesAlDiaNoProcesados)); 
+       var saldo_a_favor = (Diff)  .format(0, 3, '.', ',');
+       $("#resumen_linea_credito").append("<tr class='filas_linea_credito'><td class='item' ><b>Saldo a Favor:</b></td><td  class='num'><b>"+saldo_a_favor+"</b></td></tr>"); 
+       
+       
+       $("#limite_credito").val( ( Diff).format(0, 3, '.', ',')); 
+       if(Diff <= 0){
+          $("#limite_credito").css("color","red"); 
+       }else{
+          $("#limite_credito").css("color","green");  
+       }
+       $("#icon_estado_linea_credito").fadeIn();
+       if(permiso != "vem"){
+           buscarCuotas(false);
+       }else{
+           buscarCuotas(true);
+       } 
+       
    },'json'); 
 }
 
@@ -164,7 +201,7 @@ function eliminarPagosAbiertos(){
 function ocultar(){}
 function mostrar(){ 
     setTimeout("puedeExonerarIntereses()",500);
-     getLimiteCredito();   
+    // getLimiteCredito();   
 }
 function getFacturasContables(){
    var suc = getSuc();   
@@ -239,16 +276,18 @@ function getFacturasContables(){
       }     
   } 
 function generarCobro(){
+   $("#nro_cobro").prop("readonly",true); 
    $(".area_impresion_recibos").fadeOut(); 
    puede_imprimir_recibo = true;
    var CardCode = $("#codigo_cliente").val();
    var RUC = $("#ruc_cliente").val();
    var Cliente = $("#nombre_cliente").val();
    var moneda = $("#moneda").val();
-   $("#moneda_cobro").val(moneda);
-       
-   rs = float("cotiz_rs");
-   ps = float("cotiz_ps");
+   $("#moneda_cobro").html(moneda);
+   $(".moneda_ref").html(moneda);
+   
+   //rs = float("cotiz_rs");
+   //ps = float("cotiz_ps");
    us = float("cotiz_us");
    
    var legales = 0;
@@ -266,9 +305,10 @@ function generarCobro(){
        cotizmon = 1;
    }
    var interes = 0;
+   total_checked = 0;
    
    configurarPopup(); 
-   var dataToSend = { 
+   dataToSend = { 
      CardCode: CardCode, 
      RUC:RUC,
      Cliente:Cliente,
@@ -286,25 +326,28 @@ function generarCobro(){
    $(".checked").each(function(){
        var id =  ( $(this).attr("id")).toString().substring(6,30);   
        $("#pagar_"+id).attr("readonly",true); 
-             
-       
+          
         if($(this).is(":checked")){ 
+            
+            
             $("#ct_"+id).css("background","#ECEDD7"); 
             $("#pagar_"+id).css("background","#ECEDD7"); 
             var FolioNum = $(this).parent().next().html();
             var Tipo = $(this).parent().parent().attr("data-tipo");
             var Factura_ = $(this).parent().next().next().next().html();
-            var Cuota =  $(this).parent().next().next().next().next().html();
-            var FechaFactura =  $(this).parent().next().next().next().next().next().html();
-            var Total = ($(this).parent().next().next().next().next().next().next().next().next().html()).replace(/\./g, '').replace(/\,/g, '.');
-            var Pagado = ($(this).parent().next().next().next().next().next().next().next().next().next().html()).replace(/\./g, '').replace(/\,/g, '.');
-            var interes = ($(this).parent().next().next().next().next().next().next().next().next().next().next().html()).replace(/\./g, '').replace(/\,/g, '.');
-            if(FolioNum != ""){
+            var Cuota =  $(this).parent().parent().find(".cuota_"+id).html();
+            var FechaFactura =  $(this).parent().parent().find(".fecha_fac_"+id).html();
+            var Total =  parseFloat(($("#pagar_"+id).val()).replace(/\./g, '').replace(/\,/g, '.'));
+            
+            var Pagado = ($(this).parent().parent().find(".pagado_"+id).html()).replace(/\./g, '').replace(/\,/g, '.');
+            var interes = ($(this).parent().parent().find(".interes_"+id).html()).replace(/\./g, '').replace(/\,/g, '.');
+            if(FolioNum != "" && FolioNum != "0" && FolioNum != "N/A"){
                 legales++;
             }else{
                 ilegales++;
             }
             total_intereses += parseFloat( interes );
+            total_checked+=Total; 
            
             var pago_actual = $("#pagar_"+id).val();
             var Monto = ( pago_actual ).replace(/\./g, '').replace(/\,/g, '.') - interes  ;
@@ -320,8 +363,7 @@ function generarCobro(){
             i++;
         }  
     }); 
-    if(total_intereses > 0){
-        getFacturasContablesManuales();
+    if(total_intereses > 0){         
         $("#imprimir_recibo_termico").fadeOut();        
     }
     if(legales > 0 && ilegales > 0){
@@ -487,38 +529,52 @@ function cancelar(){
 function setRef(){
       var moneda = $("#moneda").val();
       var entrega_gs = float("entrega_gs");
+      var entrega_us = float("entrega_us"); 
+       
+      var moneda_ref = $("#moneda_cobro").html();
       
-      var entrega_rs = float("entrega_rs") * rs;
-      var entrega_ps = float("entrega_ps") * ps;
-      var entrega_us = float("entrega_us") * us; 
-      
-      var cortiz = 1;
-      if(moneda == "U$"){
-          cotiz = float("cotiz_us");
-      }else if(moneda == "G$"){
-          cotiz = 1;
+      var _ref = "";
+      if(moneda_ref != "Gs"){
+         _ref = "_moneda";
+      }
+      cotiz = float("cotiz_us");
+       
+       
+      if(moneda == "U$"){          
+          entrega_gs = float("entrega_gs") / cotiz;
+      }else if(moneda == "G$"){          
+          entrega_us = float("entrega_us") * cotiz;          
       }else{
           alert("Error sistema no soporta Pagos de Facturas que no sean Guaranies o Dolares");
           return;
       }
                 
-      var total_entrega_efectivo =  entrega_gs + entrega_rs +  entrega_ps + entrega_us  ;
+      var total_entrega_efectivo =  entrega_gs + entrega_us  ;
       
       var total_convenios = parseFloat($(".total_convenios").text().replace(/\./g, '').replace(/\,/g, '.'));
       
-      var total_cheques =  parseFloat($(".total_cheques").text().replace(/\./g, '').replace(/\,/g, '.'));
-      
+      var total_cheques =  parseFloat($(".total_cheques"+_ref).text().replace(/\./g, '').replace(/\,/g, '.'));
+      if(isNaN( total_cheques )){
+          total_cheques = 0;
+      }
+          
+             
       var total_deposito =  parseFloat($("#total_dep").val().replace(/\./g, '').replace(/\,/g, '.'));
        
+                
        
       
       var total_pagar  = float("total_moneda");
       var vuelvo_faltante = total_pagar - (total_entrega_efectivo + total_convenios + total_cheques  );
         
-      var total_entregado = (total_entrega_efectivo + total_convenios + total_cheques + total_deposito) / cotiz;
+      var total_entregado = parseFloat(((total_entrega_efectivo + total_convenios + total_cheques + total_deposito) ).toFixed(2));
       var diff = (total_entregado-total_pagar).format(2, 3, '.', ',');
-             
+      
+      var diffn = ((total_entregado-total_pagar) * -1) .format(2, 3, '.', ',');
+    
+    
       $("#total_entrega").val(total_entregado.format(2, 3, '.', ','));      
+            
       
       if(total_entregado > total_pagar ){
           $("#msg_sobrante").html("El monto debe ser Exacto, ha sobrepasado "+moneda+". "+diff);
@@ -528,6 +584,7 @@ function setRef(){
       }else{
            $(".cerrar_cobro").attr("disabled",true);
           $("#msg_sobrante").html("");$("#finalizar").attr("disabled",true);
+          $("#msg_sobrante").html("Faltante "+moneda+". "+diffn);
       }
       
 }      
@@ -536,7 +593,7 @@ function imprimirReciboTermico(){
     
     var nro_cobro = $("#nro_cobro").val();  
     var params = "width=400,height=400,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no";
-    var url = "https://190.128.150.70:2443/marijoa_sap/caja/ImpresorReciboTermico.class.php?nro_cobro="+nro_cobro+"&tipo=original";                 
+    var url = "https://190.128.150.70:2443/marijoa/caja/ImpresorReciboTermico.class.php?nro_cobro="+nro_cobro+"&tipo=original";                 
     var title = "Recibo";
     if(!printing){        
         printing = window.open(url,title,params);
@@ -574,21 +631,21 @@ function imprimirRecibo(){
             height:160,
             modal: true,
             buttons: {
+              "Cerrar": function() {            
+                $( this ).dialog( "destroy" );
+                return;
+              },  
               "Cancelar": function() {
                  $( this ).dialog( "close" );
-                         return;
+                 return;
               },  
-              "Aceptar": function() {
+              "Imprimir Recibo": function() {
                   $( this ).dialog( "close" ); 
                   factura_manual = $("#facturas_manuales").val();  
                   pdv = $("#facturas_manuales option:selected").attr("data-pdv"); 
                   var url = "caja/ImpresorRecibo.class.php?nro_cobro="+nro_cobro+"&ruc="+ruc+"&cliente="+cliente+"&suc="+suc+"&factura_legal="+factura_contable+"&usuario="+usuario+"&papar_size="+papar_size+"&tipo_factura="+tipo_factura+"&pdv="+pdv+"&moneda="+moneda+"&intereses="+intereses+"&factura_manual="+factura_manual+"&cancelacion="+cancelacion+"&pago_cuenta="+pago_cuenta;
                   if(typeof(showModalDialog) === "function"){   window.showModalDialog(url,title,params);  }else{   window.open(url,title,params);    }
-              },        
-              "Cerrar": function() {            
-                $( this ).dialog( "destroy" );
-                return;
-              }
+              } 
             }
             }); 
          }else{
@@ -622,40 +679,16 @@ function imprimirReciboPagoAnterior(){
           
          var title ="Impresion de Facturas Contables";
          var params ="width=800,height=840,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no";
-         
-         
+          
          //intereses = 0;
          
          var url = "caja/ImpresorRecibo.class.php?nro_cobro="+nro_cobro+"&ruc="+ruc+"&cliente="+cliente+"&suc="+suc+"&factura_legal="+factura_contable+"&usuario="+usuario+"&papar_size="+papar_size+"&tipo_factura="+tipo_factura+"&pdv="+pdv+"&moneda="+moneda+"&intereses="+intereses+"&factura_manual="+factura_manual+"&cancelacion="+cancelacion+"&pago_cuenta="+pago_cuenta;  
-           if(typeof(showModalDialog) === "function"){   window.showModalDialog(url,title,params);  }else{   window.open(url,title,params);    }  
-         /* Marcos no quiere
-         if(intereses > 0){
-           $( "#facturas_manuales_div" ).dialog({
-            resizable: false,
-            height:160,
-            modal: true,
-            buttons: {
-              "Cancelar": function() {
-                 $( this ).dialog( "close" );
-                         return;
-              },  
-              "Aceptar": function() {
-                  $( this ).dialog( "close" ); 
-                  factura_manual = $("#facturas_manuales").val();  
-                  var url = "caja/ImpresorRecibo.class.php?nro_cobro="+nro_cobro+"&ruc="+ruc+"&cliente="+cliente+"&suc="+suc+"&factura_legal="+factura_contable+"&usuario="+usuario+"&papar_size="+papar_size+"&tipo_factura="+tipo_factura+"&pdv="+pdv+"&moneda="+moneda+"&intereses="+intereses+"&factura_manual="+factura_manual+"&cancelacion="+cancelacion+"&pago_cuenta="+pago_cuenta;
-                  if(typeof(showModalDialog) === "function"){   window.showModalDialog(url,title,params);  }else{   window.open(url,title,params);    }
-              },        
-              "Cerrar": function() {            
-                $( this ).dialog( "destroy" );
-                return;
-              }
-            }
-            }); 
-         }else{
-           var url = "caja/ImpresorRecibo.class.php?nro_cobro="+nro_cobro+"&ruc="+ruc+"&cliente="+cliente+"&suc="+suc+"&factura_legal="+factura_contable+"&usuario="+usuario+"&papar_size="+papar_size+"&tipo_factura="+tipo_factura+"&pdv="+pdv+"&moneda="+moneda+"&intereses="+intereses+"&factura_manual="+factura_manual+"&cancelacion="+cancelacion+"&pago_cuenta="+pago_cuenta;  
-           if(typeof(showModalDialog) === "function"){   window.showModalDialog(url,title,params);  }else{   window.open(url,title,params);    }  
-         }            
-         */ 
+         if(typeof(showModalDialog) === "function"){   
+             window.showModalDialog(url,title,params);  
+         }else{   
+             window.open(url,title,params);    
+         }  
+         
      }else{
          alert("Debe Pre cargar las Facturas Contables para poder Imprimir");
      }
@@ -664,7 +697,7 @@ function imprimirReciboPagoAnterior(){
     }
   } 
   
-  function imprimirReciboXFactura(){
+  function imprimirReciboXFactura(){  console.log("imprimirReciboXFactura");
      var nro_cheque = $("#bcheque").val(); 
      var factura_contable = $("#factura_contable").val(); // Nro de Recibo en Realidad
      var tipo_factura = $("#tipo_fact").val();
@@ -717,7 +750,7 @@ function finalizar(){
                 $("#imprimir_recibo_termico").removeAttr("disabled"); 
             }
             
-            $("#msg").html("El Pago se vera reflejado el unos minutos");
+            $("#msg").html("El Pago se vera reflejado despues del control de auditoria");
         },
         error: function() {
             $("#msg").html("Ocurrio un error en la comunicacion con el Servidor...");
@@ -727,24 +760,42 @@ function finalizar(){
   
   
 function showMult(id){
-      var val = parseFloat($("#"+id).val() );  
-      var ter = id.substring(8,12);
-      if(ter == "rs"){
-          var mult_rs = (rs*val).format(2, 3, '.', ',');
-          $("#mult_"+ter).text(" * "+rs+" = "+ mult_rs);
-          guardarEfectivo(id,"R$",rs);
-      }else if(ter == "ps"){
-          var mult_ps = (ps*val).format(2, 3, '.', ',');
-          $("#mult_"+ter).text(" * "+ps+" = "+ mult_ps);
-          guardarEfectivo(id,"P$",ps);
-      }else if(ter == "us"){
-          var mult_us = (us*val).format(2, 3, '.', ',');
-          $("#mult_"+ter).text(" * "+us+" = "+ mult_us);
-          guardarEfectivo(id,"U$",us);
-      }else{ //Guaranies
-         guardarEfectivo(id,"G$",1);            
-      }
-  }
+    var val = parseFloat($("#"+id).val().replace(/\./g, '').replace(/\,/g, '.') );  
+    var ter = id.substring(8,12);
+    
+    var m_gs = gs;
+    var m_us = us;
+    
+    var moneda = $("#moneda").val();
+    if(moneda === "G$"){
+        m_gs = 1;
+    }else{
+        m_us = 1;
+    } 
+    
+    console.log("moneda: "+moneda+"  valor:"+ val+"  "+ter+"   "+m_gs+"  "+m_us+"");
+      
+    if(ter == "us"){                
+        if(moneda == "G$"){
+            var mult_us = (m_us*val).format(2, 3, '.', ',');   
+            $("#mult_"+ter).text(" * "+m_us+" = "+ mult_us);   
+        }else{
+            var mult_us = (m_gs*val).format(2, 3, '.', ',');   
+            $("#mult_"+ter).text(" * "+m_us+" = "+ mult_us);   
+        }
+        guardarEfectivo(id,"U$",us);
+    }else{ //Guaranies
+        if(moneda == "G$"){
+            var mult_gs = (val).format(2, 3, '.', ',');
+            $("#mult_"+ter).text(" * "+m_gs+" = "+ mult_gs);
+        }else{
+            var mult_gs = (val / us).format(2, 3, '.', ',');
+            $("#mult_"+ter).text(" / "+m_us+" = "+ mult_gs);
+        }
+        
+        guardarEfectivo(id,"G$",gs);            
+    }
+}
    
 function guardarEfectivo(id,moneda,cotiz){
     var nro_cobro = $("#nro_cobro").val();   
@@ -791,10 +842,11 @@ function seleccionarCliente(obj){
     $(".titulo").children().css("padding-right","8px");
     $(".num").children().css("padding-left","4px");
     $(".num").children().css("padding-right","4px");
-     getLimiteCredito();   
+    
 }
 
 function puedeExonerarIntereses(){
+    console.log("puedeExonerarIntereses()");
     $.ajax({
         type: "POST",
         url: "Ajax.class.php",
@@ -808,10 +860,13 @@ function puedeExonerarIntereses(){
             if (exito == "success") {                          
                 permiso = $.trim(objeto.responseText);  
                 if(permiso != "vem"){
-                    buscarCuotas(false);
+                    $("#cambiar_tasa_interes").prop("readonly",true);
+                    //buscarCuotas(false);
                 }else{
-                    buscarCuotas(true);
+                    $("#cambiar_tasa_interes").prop("readonly",false);
+                    //buscarCuotas(true);
                 } 
+                getLimiteCredito();   
             }
         },
         error: function () {
@@ -819,6 +874,25 @@ function puedeExonerarIntereses(){
         }
     }); 
      
+}
+function cambiarTasaInteresPunitoria(){
+    var nueva_tasa = $("#cambiar_tasa_interes").val();
+    if(!isNaN(nueva_tasa)){
+        if(nueva_tasa >= 0){
+            TASA_INTERES_PUNITORIA = nueva_tasa;
+            if(permiso != "vem"){
+                buscarCuotas(false);
+            }else{
+                buscarCuotas(true);
+            } 
+        }else{
+           errorMsg("Ingrese un numero valido para la tasa de interes punitoria",15000);
+           $("#cambiar_tasa_interes").val(27.6);
+        }
+    }else{
+        errorMsg("Ingrese un numero valido para la tasa de interes punitoria",15000);
+        $("#cambiar_tasa_interes").val(27.6);
+    }
 }
 function buscarCuotas(permiso){
       
@@ -846,6 +920,8 @@ function buscarCuotas(permiso){
                     var id_cuota = data[i].id_cuota;
                     var fecha_factura = data[i].fecha_factura;
                     var vencimiento = data[i].vencimiento;
+                    var fecha_ult_pago = data[i].fecha_ult_pago;
+                    
                     var DiasAtraso = data[i].DiasAtraso;
                     var FolioNum = data[i].FolioNum;
                     var Exonerada = data[i].Exonerada;
@@ -860,7 +936,7 @@ function buscarCuotas(permiso){
                     }
                     
                     var monto = parseFloat(data[i].monto).format(decimales, 3, '.', ',') ;
-                    var pagado = parseFloat(data[i].pagado).format(decimales, 3, '.', ',');
+                    
                     
                     var PagosPendientes = parseInt(data[i].PagosPendientes); // Pagos anteriormente enviados no pendientes de sincronizacion con SAP
                     
@@ -897,13 +973,9 @@ function buscarCuotas(permiso){
                        
                       faltante = (faltante).format(2, 3, '.', ',') ;
                       
-                     /*if(Tipo == 'NC'){
-                         monto = parseFloat((monto.replace(/\./g, '').replace(/\,/g, '.')) * -1).format(decimales, 3, '.', ',') ;
-                         pagado =  parseFloat((pagado.replace(/\./g, '').replace(/\,/g, '.')) * -1).format(decimales, 3, '.', ',') ;
-                         //readonly = 'readonly="readonly"';
-                         faltante =  parseFloat(-Total - pagado) ;
-                     }  */ 
-                  
+                      var pagado = parseFloat(data[i].pagado).format(decimales, 3, '.', ',');
+                       
+                    
                     var exonerar = "";
                     if(permiso){     
                         if(Exonerada == "0"){  
@@ -911,15 +983,21 @@ function buscarCuotas(permiso){
                         }else{
                            exonerar = "<td style='text-align:center;width: 5%'><input type='button' value='No Exonerar' onclick='exonerar("+factura+","+id_cuota+",0)'></td>";
                         }
+                        $("#tasa_interes_container").fadeIn(); 
+                    }else{
+                        $("#tasa_interes_container").remove();
                     }
                       
                     var color = 'black';
                     if(DiasAtraso > 0){
                         color = 'red';
                     }
-                    $("#lista_cuotas").append("<tr id='ct_"+factura+"-"+id_cuota+"' class='cuotas "+pending+"' data-tipo='"+Tipo+"' title='"+title+"'> \n\
-                    <td class='itemc checkable' style='background:white'>"+Tipo+"&nbsp;<input id='check_"+factura+"-"+id_cuota+"' "+selectable+" style='cursor:pointer' class='checked' type='checkbox'>  </td> \n\
-                    <td class='item'>"+FolioNum+"</td><td class='item' itemc>"+moneda+"</td><td class='itemc'>"+factura+"</td> <td  class='itemc'>"+id_cuota+"</td> <td class='itemc'>"+fecha_factura+"</td> <td  class='itemc'>"+vencimiento+"</td> <td  class='itemc' style='color:"+color+"'>"+DiasAtraso+"</td> <td  class='num'>"+monto+"</td> <td  class='num'>"+pagado+"</td> <td  class='num'>"+interes+"</td> <td class='num'> <input type='text' size='10' class='editable num' "+selectable+" "+readonly+" maxlength='16' data-max='"+faltante+"' value='"+faltante+"' size='14' class='num total_pagar' id= 'pagar_"+factura+"-"+id_cuota+"'  style='width:100%'> </td> "+exonerar+" </tr>"); 
+                    if(fecha_ult_pago === vencimiento){ // No mostrar si son iguales
+                        fecha_ult_pago = "";
+                    }
+                    $("#lista_cuotas").find("tr:last").before("<tr id='ct_"+factura+"-"+id_cuota+"' class='cuotas "+pending+"' data-tipo='"+Tipo+"' title='"+title+"'> \n\
+                    <td class='itemc checkable' style='background:white'><input id='check_"+factura+"-"+id_cuota+"' "+selectable+" style='cursor:pointer' class='checked' type='checkbox'>  </td> \n\
+                    <td class='item folio_"+factura+"-"+id_cuota+"'>"+FolioNum+"</td><td class='itemc moneda_"+factura+"-"+id_cuota+"' >"+moneda+"</td><td class='itemc ref_"+factura+"-"+id_cuota+"'>"+factura+"</td> <td  class='itemc cuota_"+factura+"-"+id_cuota+"'>"+id_cuota+"</td> <td class='itemc fecha_fac_"+factura+"-"+id_cuota+"'>"+fecha_factura+"</td> <td  class='itemc venc_"+factura+"-"+id_cuota+"'>"+vencimiento+"</td><td  class='itemc up_"+factura+"-"+id_cuota+"'>"+fecha_ult_pago+"</td> <td  class='itemc da_"+factura+"-"+id_cuota+"' style='color:"+color+"'>"+DiasAtraso+"</td> <td  class='num monto_"+factura+"-"+id_cuota+"'>"+monto+"</td> <td  class='num pagado_"+factura+"-"+id_cuota+"'>"+pagado+"</td> <td  class='num interes_"+factura+"-"+id_cuota+"'>"+interes+"</td> <td class='num'> <input type='text' size='10' class='editable num' "+selectable+" "+readonly+" maxlength='16' data-max='"+faltante+"' value='"+faltante+"' size='14' class='num total_pagar' id= 'pagar_"+factura+"-"+id_cuota+"'  style='width:100%'> </td> "+exonerar+" </tr>"); 
                     total_deuda += parseFloat(data[i].monto);
                 } 
                 $(".editable").change(function(){
@@ -935,7 +1013,7 @@ function buscarCuotas(permiso){
                         if(val.toString().indexOf(".") > -1){
                             $(this).val(val.toString().replace(/\./g, ','));
                         }
-                    }    
+                    }        
                     var id = $(this).parent().parent().attr("id").substring(3,60);
                     $("#check_"+id).prop("checked",true); 
                     sumar();
@@ -996,7 +1074,8 @@ function exonerar(DocNum,id_cuota,exonerar){
     }); 
 }
 function sumar(){
-    total_checked = 0;
+    var total_checked = 0;
+    var total_interes = 0;
     var cant = 0;
     $(".checked").each(function(){
         if($(this).is(":checked")){  
@@ -1021,16 +1100,152 @@ function sumar(){
                 
             $("#moneda").val(moneda);
              total_checked+=total; 
+             total_interes+=interes; 
          } 
         }
     });
     if(total_checked > 0){
-        $("#generar_cobro").removeAttr("disabled");
+        if(total_interes > 0){
+            $("#generar_cobro").attr("disabled",true); 
+           $("#msg_intereses").slideDown();
+           $("#suma_interes").html(total_interes.format(2, 3, '.', ',')); 
+        }else{
+           $("#msg_intereses").slideUp();
+           $("#generar_cobro").removeAttr("disabled");
+        }
     }else{
+        $("#msg_intereses").slideUp();
         $("#generar_cobro").attr("disabled",true); 
     }
     $("#total_a_pagar").html(total_checked.format(2, 3, '.', ','));
      
+}
+function previewFacturaXIntereses(){
+  var CardCode = $("#codigo_cliente").val();
+   var RUC = $("#ruc_cliente").val();
+   var Cliente = $("#nombre_cliente").val();
+   var moneda = $("#moneda").val();
+   $("#moneda_cobro").val(moneda);
+       
+   //rs = float("cotiz_rs");
+   //ps = float("cotiz_ps");
+   us = float("cotiz_us");
+   
+   var legales = 0;
+   var ilegales = 0;
+    
+   var cotizmon = 1;
+   if(moneda === "U$"){
+       cotizmon = us;
+       $("#tarjetas").fadeOut();
+   }else if(moneda === "R$"){
+       cotizmon = rs;
+   }else if(moneda === "P$"){
+       cotizmon = ps;
+   }else{
+       cotizmon = 1;
+   }  
+  dataToSend = { 
+     CardCode: CardCode, 
+     RUC:RUC,
+     Cliente:Cliente,
+     usuario:getNick(),
+     suc:getSuc(),
+     moneda:moneda,
+     cotiz:cotizmon,
+     data: [] 
+   }; 
+  
+   $("#generar_cobro").attr("disabled",true);
+   $(".checked").attr("disabled",true); 
+   
+   $(".fila_intereses").remove();
+   
+   var i = 0;
+   var total_intereses = 0;
+   $(".checked").each(function(){
+       var id =  ( $(this).attr("id")).toString().substring(6,30);   
+       $("#pagar_"+id).attr("readonly",true); 
+       
+              
+        if($(this).is(":checked")){ 
+             
+            $("#ct_"+id).css("background","#ECEDD7"); 
+            $("#pagar_"+id).css("background","#ECEDD7"); 
+            var FolioNum = $(this).parent().next().html();
+            var Tipo = $(this).parent().parent().attr("data-tipo");
+            var Factura_ = $(this).parent().next().next().next().html();
+            var Cuota =  $(this).parent().parent().find(".cuota_"+id).html();
+            var FechaFactura =  $(this).parent().parent().find(".fecha_fac_"+id).html();
+            var Total = ($(this).parent().parent().find(".monto_"+id).html()).replace(/\./g, '').replace(/\,/g, '.');
+            var Pagado = ($(this).parent().parent().find(".pagado_"+id).html()).replace(/\./g, '').replace(/\,/g, '.');
+            var interes = ($(this).parent().parent().find(".interes_"+id).html()).replace(/\./g, '').replace(/\,/g, '.');
+            if(FolioNum !== ""){
+                legales++;
+            }else{
+                ilegales++;
+            }
+            total_intereses += parseFloat( interes );
+           
+            var pago_actual = $("#pagar_"+id).val();
+            var Monto = ( pago_actual ).replace(/\./g, '').replace(/\,/g, '.') - interes  ;
+            
+            var dia = FechaFactura.toString().substring(0,2);
+            var mes = FechaFactura.toString().substring(3,5);
+            var anio = FechaFactura.toString().substring(6,10);
+            
+            var FechaFacturaMySQL = anio+"-"+mes+"-"+dia;
+            var format_int = (parseFloat( interes )).format(2, 3, '.', ',');
+            
+            if(interes > 0){
+                dataToSend.data[i]={Factura:Factura_,FolioNum:FolioNum,Tipo:Tipo,Cuota:Cuota,Monto:Monto,Total:Total,Pagado:Pagado,FechaFactura:FechaFacturaMySQL,Interes:interes}; 
+                $("#table_detalle_intereses").append("<tr class='fila_intereses'><td class='itemc'>"+Factura_+"</td><td class='itemc'>"+Cuota+"</td><td class='num'>"+format_int+"</td></tr>");
+                i++;
+            }
+        }  
+    });     
+    var format_total_intereses = (total_intereses).format(2, 3, '.', ','); 
+    $("#table_detalle_intereses").append("<tr class='fila_intereses'><td class='item'> </td><td class='item'> </td><td class='num' style='font-weight:bold'>"+format_total_intereses+"</td></tr>");
+    $("#table_detalle_intereses").append("<tr class='fila_intereses'><td class='itemc' colspan='3'><input type='button' value='Cancelar' onclick='cancelarGenerarFactura()'>  <input type='button' value='Confirmar Generar Factura' onclick='generarFacturaXIntereses()'> </td> </tr>");
+    $("#detalle_intereses").fadeIn();
+    var mitad = $("#detalle_intereses").width() / 2;
+    var window_w_2 = $(window).width() / 2;
+    $("#detalle_intereses").offset({left:window_w_2 - mitad,top:120});
+}
+
+function cancelarGenerarFactura(){
+   $("#detalle_intereses").fadeOut();
+}
+
+function generarFacturaXIntereses(){
+   
+    $.ajax({
+        type: "POST",
+        url: "caja/CobroCuotas.class.php",
+        data: {action: "generarFacturaXIntereses", suc: getSuc(), usuario: getNick(),datos:JSON.stringify(dataToSend)},
+        async: true,
+        dataType: "json",
+        beforeSend: function () {
+            $("#msg").html("<img src='img/loading_fast.gif' width='16px' height='16px' >"); 
+        },
+        success: function (data) {   
+            if (data.mensaje === "Ok") {
+                
+                $("#detalle_intereses").fadeOut();
+                $("#msg_intereses").fadeOut();
+                $("#msg").html("Dirijase a Caja y Cobre la Factura por Intereses");
+                alert("Se ha creado una Factura en Caja, procesa al cobro de la misma \n para que desaparezcan los Intereses de las Cuotas Pendientes.");
+            } else {
+                $("#msg").html("Error al Generar la Factura por Intereses pongase en contacto con el Administrador.");   
+            }                
+        },
+        error: function (e) {                 
+            $("#msg").html("Error al Generar la Factura por Intereses pongase en contacto con el Administrador.");   
+            errorMsg("Error al Generar la Factura por Intereses pongase en contacto con el Administrador." + e, 10000);
+        }
+    }); 
+   
+    
 }
 
 function cobroCuotasUI(){
@@ -1041,18 +1256,35 @@ function cobroCuotasUI(){
 function calcRefCheque(){
      var valor = float("valor_cheque");
      var moneda_chq = $("#monedas_cheque").val();
-     if(   moneda_chq === "G$"){
-         $("#cotiz_cheque").val("1,00");  
-     }else{ // U$
-         $("#cotiz_cheque").val(us);
-     }     
+     
+     var moneda_ref = $("#moneda_cobro").html();
+     
+     if(moneda_ref ==  moneda_chq  ){
+         $("#cotiz_cheque").val(1);
+     }
+     
+     if(moneda_ref == "Gs" &&  moneda_chq === "U$"){
+          $("#cotiz_cheque").val(us);
+     }
+     if(moneda_ref == "U$" &&  moneda_chq === "G$"){
+        if( $("#cotiz_cheque").val() == ""){
+          $("#cotiz_cheque").val(us);
+        }
+     }
+     
      var cotiz = isNaN( $("#cotiz_cheque").val())?float("cotiz_cheque"):$("#cotiz_cheque").val();
+     
      var valor_ref = valor * cotiz;
+      
+     if(moneda_ref == "U$" &&  moneda_chq === "G$"){
+         valor_ref = valor / cotiz;
+     }
+      
      var valor_ref_fortted = valor_ref.format(2, 3, '.', ','); 
 
      console.log(valor_ref_fortted);
 
-     $("#valor_cheque_gs").val(valor_ref_fortted);
+     $("#valor_cheque_ref").val(valor_ref_fortted);
      checkCheque();     
  }
  function buscarDatosCheque(){
@@ -1073,7 +1305,7 @@ function checkCheque(){
    var chq_num = $("#nro_cheque").val();
    var nro_cuenta = $("#nro_cuenta").val();
    var benef = $("#benef").val();
-   var valor_gs = float("valor_cheque_gs");
+   var valor_gs = float("valor_cheque_ref");
    if(chq_num.length >= 3 && nro_cuenta.length > 3 &&  benef.length >= 3 && valor_gs > 0){
        $("#add_cheque").removeAttr("disabled");
    }else{
@@ -1091,16 +1323,26 @@ function addCheque(){
    var valor = float("valor_cheque");  
    var moneda = $("#monedas_cheque").val();
    var cotiz = float("cotiz_cheque");  
-   var valor_gs = float("valor_cheque_gs");  
+   var valor_gs = float("valor_cheque_ref");  
    var emis = validDate($("#fecha_emision").val()).fecha;  
    var pago = validDate($("#fecha_pago").val()).fecha;  
    var suc = getSuc();
    var trans_num = $("#nro_cobro").val();
    var tipo = $("#tipo").val();
+   
+    var moneda_ref = $("#moneda_cobro").html();
+    
+   if(moneda_ref === "U$" && moneda != "U$"){
+       valor = float("valor_cheque") / cotiz;
+       valor_gs =  float("valor_cheque");
+   }
+   if(moneda_ref === "U$" && moneda == "U$"){
+      // cotiz = 1;
+   }
 
    $.ajax({
        type: "POST",
-       url: "Ajax.class.php",
+       url: "caja/CobroCuotas.class.php",
        data: {action: "agregarCheque", nro_cheque: nro_cheque, suc: suc,cuenta:cuenta,banco:banco,valor:valor,moneda:moneda,cotiz:cotiz,valor_ref:valor_gs,benef:benef,emision:emis,pago:pago,factura:null,concepto:8,trans_num:trans_num,campo:"trans_num","tipo":tipo},
        async: true,
        dataType: "html",
@@ -1110,13 +1352,16 @@ function addCheque(){
        complete: function(objeto, exito) {
            if (exito == "success") {                          
                var total_cheques = parseFloat($.trim(objeto.responseText)).format(0, 3, '.', ',');
-               var valor_f = parseFloat(valor).format(0, 3, '.', ',');
+               var valor_f = parseFloat(valor).format(2, 3, '.', ',');
                var valor_gs_f = parseFloat(valor_gs).format(0, 3, '.', ',');
+               
 
                $("#msg_cheques").html(""); 
                $(".cheques_foot").remove();
-               $("#lista_cheques").append("<tr class='tr_"+nro_cheque+" tr_cheques'><td>"+nro_cheque+"</td><td>"+nombre_banco+"</td><td>"+cuenta+"</td><td>"+benef+"</td><td  class='num' >"+valor_f+"</td><td class='itemc'>"+moneda+"</td><td class='num'>"+cotiz+"</td><td class='num'>"+valor_gs_f+"</td><td class='itemc'>"+emis+"</td><td class='itemc'>"+pago+"</td><td class='itemc'><img class='del_chq' title='Borrar Cheque' style='cursor:pointer' src='img/trash_mini.png' onclick=delCheque('"+nro_cheque+"','"+factura+"');></td></tr>");
-               $("#lista_cheques").append("<tr class='cheques_foot'><td colspan='7' > </td><td style=';font-weight: bolder;font-size: 13px' class='total_cheques num'>"+total_cheques+"</td><td></td> </tr>")
+               $("#lista_cheques").append("<tr class='tr_"+nro_cheque+" tr_cheques'><td>"+nro_cheque+"</td><td>"+nombre_banco+"</td><td>"+cuenta+"</td><td>"+benef+"</td><td  class='num valor_moneda' >"+valor_f+"</td><td class='itemc'>"+moneda+"</td><td class='num cotiz'>"+cotiz+"</td><td class='num valor_gs'>"+valor_gs_f+"</td><td class='itemc'>"+emis+"</td><td class='itemc'>"+pago+"</td><td class='itemc'><img class='del_chq' title='Borrar Cheque' style='cursor:pointer' src='img/trash_mini.png' onclick=delCheque('"+nro_cheque+"','"+factura+"');></td></tr>");
+               
+               totalizarCheques();
+               
                setRef();
                $("#nro_cheque").val("").focus();
                $("#nro_cuenta").val();
@@ -1125,7 +1370,7 @@ function addCheque(){
                $("#benef").val("");
                $("#valor_cheque").val("");  ; 
                $("#cotiz_cheque").val("");  ;  
-               $("#valor_cheque_gs").val("");  ;  
+               $("#valor_cheque_ref").val("");  ;  
                $("#fecha_emision").val("");  
                $("#fecha_pago").val(""); 
                $("#add_cheque").removeAttr("disabled");
@@ -1135,6 +1380,25 @@ function addCheque(){
            $("#msg_cheques").html("Ocurrio un error en la comunicacion con el Servidor, intente de nuevo en algunos instantes o contacte con el Administrador.");
        }
    });  
+}
+
+function totalizarCheques(){
+    $(".cheques_foot").remove();
+    var total_gs = 0;
+    var total_moneda = 0;
+    $(".valor_moneda").each(function(){
+        var gs =  parseFloat($(this).parent().find(".valor_gs").text().replace(/\./g, '').replace(/\,/g, '.') );
+        var valor_moneda = parseFloat( $(this).text().replace(/\./g, '').replace(/\,/g, '.') );
+        total_gs+=0+gs;
+        total_moneda+=0+valor_moneda;
+    });
+    var valor_gs_formated = parseFloat(total_gs).format(0, 3, '.', ',');
+    var valor_moneda_formated = parseFloat(total_moneda).format(2, 3, '.', ',');
+    
+    $("#lista_cheques").append("<tr class='cheques_foot'><td colspan='4' > </td>\n\
+    <td style=';font-weight: bolder;font-size: 13px' class='total_cheques_moneda num'>"+valor_moneda_formated+"</td><td colspan='2'></td>\n\
+    <td style=';font-weight: bolder;font-size: 13px' class='total_cheques num'>"+valor_gs_formated+"</td><td></td> </tr>")
+    
 }
 
 function delCheque(nro_cheque,factura){
@@ -1155,6 +1419,7 @@ function delCheque(nro_cheque,factura){
                $(".total_cheques").html(valor_total); 
                $(".tr_"+nro_cheque).remove();
                $("#msg_cheques").html("");
+               totalizarCheques();
                setRef();
            }
        },
@@ -1314,10 +1579,17 @@ function float(id){
 
 function recuperarNroCobro(){
     var nro_cheque = $("#bcheque").val();
+    
+    var nro_cobro = $("#nro_cobro").val();
+    var send_data = {"action": "recuperarNroCobro", nro_cheque: nro_cheque};
+    if(nro_cobro !== ""){
+        send_data = {"action": "recuperarDatosDeCobro", nro_cobro: nro_cobro};
+    }
+    
     $.ajax({
         type: "POST",
         url: "Ajax.class.php",
-        data: {"action": "recuperarNroCobro", nro_cheque: nro_cheque},
+        data: send_data,
         async: true,
         dataType: "json",
         beforeSend: function () {
@@ -1348,8 +1620,12 @@ function recuperarNroCobro(){
                      $("#total_factura").val(totalFactura);
                 }else{                                                                
                     $("#nro_cobro").val(data[0].nro_cobro);
-                    $("#total_intereses_pago_anterior").val(data[0].intereses);                      
-                    $("#tipo_transac").html("Cheque recibido por Cobro de Cuotas"); 
+                    $("#total_intereses_pago_anterior").val(data[0].intereses);  
+                    if(valor > 0){
+                       $("#tipo_transac").html("Cheque recibido por Cobro de Cuotas"); 
+                    }else{
+                        $("#tipo_transac").html("Cobro de Cuotas"); 
+                    }
                     $("#tipo_transac").removeClass("xFactura");
                     $("#tipo_transac").addClass("xCuota");
                     flagImpresionChequesXCuotas = true;
@@ -1370,4 +1646,21 @@ function recuperarNroCobro(){
             $("#msg").html(""); 
         }
     });
+}
+function verChequesDiferidos(){
+    var nro_cheque = $("#nombre_cliente").val();
+    
+    var desde = $("#fecha_cheque_diff").val();
+    
+    var usuario = getNick();
+    var url = "reportes/ChequesTercerosCaja.class.php?desde="+desde+"&hasta=31/12/2030&select_suc=%&tipo=Diferido&nro_cheque="+nro_cheque+"&campo_fecha=fecha_pago&moneda=%&user="+usuario;
+    var title = "Historial de Movimiento de Lote";
+    var params = "width=980,height=480,scrollbars=yes,menubar=yes,alwaysRaised = yes,modal=yes,location=no";
+    
+    if(!ventana){        
+        ventana = window.open(url,title,params);
+    }else{
+        ventana.close();
+        ventana = window.open(url,title,params);
+    }  
 }

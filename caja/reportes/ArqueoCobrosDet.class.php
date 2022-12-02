@@ -20,12 +20,20 @@ class ArqueoCobrosDet{
 	}
 	// Cobros
 	function showCobros($suc,$desde,$hasta){
+                $usuario = $_REQUEST['usuario'];        
+                $f = new Functions();
+                $permiso = $f->chequearPermiso("3.8.4", $usuario);    
+                if($permiso != "---"){
+                    $this->template->Set("revertir",'<a href="javascript:revertirCobro()" class="revertir">Editar Datos</a>');
+                }else{
+                    $this->template->Set("revertir",'');
+                }
 		$this->template->Show("header");
 		$this->template->Show("c_head");
 		$link = new My();
 		$this->template->Show("cobro_head");
 		$this->template->Show("menu_head");
-		$query = "select id_pago,cliente,if(control_caja='Si','si','no') as control from pagos_recibidos p where p.suc='$suc' and p.fecha between '$desde' and '$hasta' and estado = 'Cerrado' order by id_pago asc";
+		$query = "select id_pago,cliente,if(control_caja='Si','si','no') as control,concat(pdv_cod,'-',folio_num) as recibo  from pagos_recibidos p where p.suc='$suc' and p.fecha between '$desde' and '$hasta' and estado = 'Cerrado' order by id_pago asc";
 		$link->Query($query);
 		while($link->NextRecord()){
                         $cliente = $link->Record['cliente'];
@@ -46,9 +54,9 @@ class ArqueoCobrosDet{
 	function getPagosRec($cobro){
 		$link = new My();
 		$r_movs = array();
-		$movs['cli_data'] = "SELECT p.id_pago, p.cliente, p.estado, DATE_FORMAT(p.fecha,'%d-%m-%Y') AS fecha, sum(d.entrega_actual) AS float0monto, sum(d.interes) AS float0interes FROM pagos_recibidos p INNER JOIN pago_rec_det d USING(id_pago) WHERE p.id_pago = '$cobro'";
+		$movs['cli_data'] = "SELECT p.id_pago, p.cliente, p.estado,IF(p.folio_num IS NOT NULL, CONCAT(p.pdv_cod,'-',p.folio_num),'') AS recibo, DATE_FORMAT(p.fecha,'%d-%m-%Y') AS fecha, sum(d.entrega_actual) AS float0monto, sum(d.interes) AS float0interes FROM pagos_recibidos p INNER JOIN pago_rec_det d USING(id_pago) WHERE p.id_pago = '$cobro'";
 		$movs['efectivo'] = "SELECT e.id_pago, DATE_FORMAT(e.fecha,'%d-%m-%Y') AS c0fecha,e.m_cod AS c0m_cod,e.suc AS c0suc, sum(e.entrada_ref - e.salida_ref) AS float0r_mov FROM efectivo e  WHERE e.trans_num='$cobro' group by e.m_cod, e.trans_num";
-		$movs['cheques_ter'] = "SELECT id_cheque, c.nro_cheque AS r0nro_cheque, id_banco as r0id_banco, cuenta as r0cuenta, c.benef AS l0benef,DATE_FORMAT(c.fecha_emis,'%d-%m-%Y') AS c0fecha_emis, DATE_FORMAT(c.fecha_pago,'%d-%m-%Y') AS c0fecha_pago, c.tipo as c0tipo, c.valor AS float0valor, c.cotiz AS float0cotiz, c.valor_ref AS float0valor_ref FROM cheques_ter c WHERE c.trans_num='$cobro' ";
+		$movs['cheques_ter'] = "SELECT id_cheque, c.nro_cheque AS r0nro_cheque, c.id_banco AS r0id_banco,b.nombre AS l0banco, cuenta AS r0cuenta, c.benef AS l0benef,DATE_FORMAT(c.fecha_emis,'%d-%m-%Y') AS c0fecha_emis, DATE_FORMAT(c.fecha_pago,'%d-%m-%Y') AS c0fecha_pago, c.tipo AS c0tipo, c.valor AS float0valor, c.cotiz AS float0cotiz, c.valor_ref AS float0valor_ref FROM cheques_ter c,bancos b WHERE  c.id_banco = b.id_banco AND  c.trans_num='$cobro' ";
 		$movs['convenios'] = "SELECT c.id_mov, c.suc AS c0suc, c.nombre AS c0nombre,c.voucher AS r0voucher,DATE_FORMAT(c.fecha,'%d-%m-%Y') AS c0fecha,c.monto AS float0monto FROM convenios c WHERE c.trans_num='$cobro'";
 		$movs['bcos_ctas_mov'] = "SELECT b.id_mov,b.suc AS c0suc,bc.nombre AS l0nombre, b.nro_deposito AS r0nro_deposito,b.cuenta AS r0cuenta, b.entrada AS float0entrada from bcos_ctas_mov b INNER JOIN bancos bc USING(id_banco) WHERE b.trans_num='$cobro'";
 
@@ -67,11 +75,19 @@ class ArqueoCobrosDet{
 		echo json_encode($r_movs,JSON_FORCE_OBJECT);
 	}
 	// Lista de Convenios
-	function getConvenios()
-    {
-        $link = new Ms();
+	function getConvenios() {
+            
+        $link = new My();
         $convenios = array();
-        $link->Query("SELECT CreditCard,CardName FROM ocrc order by CardName asc");
+        $link->Query("SELECT tipo,cod_tarjeta as CreditCard,nombre as CardName, 
+        case 
+        when tipo = 'Tarjeta Debito'  then 1  
+        WHEN tipo = 'Tarjeta Credito'  THEN 1
+        WHEN tipo = 'Asociacion'  THEN 2
+        else 3
+        end as prioridad
+        FROM tarjetas order by prioridad asc , CardName asc");
+        
         while ($link->NextRecord()) {
             $convenios['"'.$link->Record['CreditCard'].'"'] = $link->Record['CardName'];
         }
@@ -84,8 +100,8 @@ class ArqueoCobrosDet{
 		switch($v['col']){
 			case 'fecha_emis':
 			case 'fecha_pago':
-				$v['valor'] = date('Y-m-d',strtotime($v['valor']));
-				break;
+			$v['valor'] = date('Y-m-d',strtotime($v['valor']));
+			break;
 		}
 		$query = '';
 		if($v['tabla'] == 'convenios'){
@@ -114,9 +130,22 @@ class ArqueoCobrosDet{
 	}
 	// Marca como verificado un Cobro tabla pagos_recibidos
 	function verificado($cobro){
-		$link = new My();
-		$link->Query("UPDATE pagos_recibidos set control_caja='Si' where id_pago = $cobro");
-		if($link->AffectedRows() > 0){
+		$db = new My();
+                $db_u = new My();
+                $db->Query("SELECT factura,id_cuota,entrega_actual, p.fecha FROM pagos_recibidos p,  pago_rec_det d WHERE p.id_pago = d.id_pago and  d.id_pago =$cobro");
+                
+                while($db->NextRecord()){
+                   $factura = $db->Record['factura'];
+                   $id_cuota = $db->Record['id_cuota'];
+                   $entrega_actual= $db->Record['entrega_actual'];
+                   $fecha_pago = $db->Record['fecha'];
+                        
+                   $db_u->Query("UPDATE cuotas SET saldo = saldo - $entrega_actual, fecha_ult_pago = '$fecha_pago' WHERE f_nro = $factura AND id_cuota = $id_cuota;");
+                   $db_u->Query("UPDATE cuotas SET estado ='Cancelada' WHERE f_nro = $factura AND  saldo = 0;"); //id_cuota = $id_cuota and // Todas las cuotas con saldo 0 de esta factura poner como cancelada
+                }                    
+                
+		$db->Query("UPDATE pagos_recibidos set control_caja='Si', e_sap = 1 where id_pago = $cobro");   
+		if($db->AffectedRows() > 0){
 			echo '{"msg":"Ok"}';
 		}else{
 			echo '{"msg":"error"}';
@@ -125,6 +154,12 @@ class ArqueoCobrosDet{
 	// Eliminar un cobro
 	function eliminar($cobro){
 		$link = new My();
+                
+                /**
+                 * Recorrer cuotas y revertir saldos estado 
+                 */
+                
+                
 		$eliminado = array();
 		$eliminar['deposito']="DELETE from bcos_ctas_mov WHERE trans_num = $cobro";
 		$eliminar['efectivo']="DELETE from efectivo WHERE trans_num = $cobro";
@@ -184,6 +219,11 @@ class ArqueoCobrosDet{
 		$link->Close();
 		echo json_encode($bancos);
 	}
+        function revertirCobro($id_pago){
+            $db = new My();
+            $db->Query("UPDATE pagos_recibidos SET control_caja = 'No' WHERE id_pago = $id_pago;");
+            echo '{"msg":"Ok"}';
+        }
 }
 
 $det = new ArqueoCobrosDet();

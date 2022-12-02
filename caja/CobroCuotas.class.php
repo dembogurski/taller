@@ -7,10 +7,21 @@
  */
 require_once("../Y_Template.class.php");
 require_once("../Y_DB_MySQL.class.php");
-require_once("../Y_DB_MSSQL.class.php");
+
 
 class CobroCuotas {
-    function __construct(){
+    
+    function __construct() {
+        $action = $_REQUEST['action'];
+        if (function_exists($action)) {
+            call_user_func($action);
+        } else {
+            $this->main();
+        }
+    }
+
+    function main() {
+     
         $useragent=$_SERVER['HTTP_USER_AGENT'];
         $t = new Y_Template("CobroCuotas.html");
         $usuario = $_POST['usuario'];
@@ -24,7 +35,8 @@ class CobroCuotas {
         }
         
         $t->Set('ruc_cli',$ruc_cli);
-         
+        $t->Set('random',mt_rand(100, 9999999));
+        
         
         
         $t->Set('is_mobile','false');
@@ -41,8 +53,8 @@ class CobroCuotas {
          
         
         // Buscar Convenios
-        $ms = new MS();
-        $ms->Query("select CreditCard,CardName,Phone as Tipo from ocrc where CardName not like 'ASO%' order by CardName asc");
+        $ms = new My();
+        $ms->Query("SELECT cod_tarjeta AS CreditCard,nombre AS CardName,tipo AS Tipo FROM tarjetas WHERE tipo <> 'Asociacion' ORDER BY CardName ASC");
         $convenios = "";
         while ($ms->NextRecord()) {
             $conv_cod = $ms->Record['CreditCard'];
@@ -125,6 +137,117 @@ class CobroCuotas {
         
     }
 }
+
+function agregarCheque() {
+    $nro_cheque = $_POST['nro_cheque'];
+    $cuenta = $_POST['cuenta'];
+    $id_banco = $_POST['banco'];
+    $factura = $_POST['factura'];
+    $fecha_emis = $_POST['emision'];
+    $fecha_pago = $_POST['pago'];
+    $benef = $_POST['benef'];
+    $suc = $_POST['suc'];
+    $valor = $_POST['valor'];
+    $moneda = $_POST['moneda'];
+    $cotiz = $_POST['cotiz'];
+    $valor_ref = $_POST['valor_ref'];
+    $concepto = $_POST['concepto'];
+    $trans_num = $_POST['trans_num'];
+    $campo = $_POST['campo'];
+    $tipo = $_POST['tipo'];
+    $my = new My();
+    
+    $my->Query("SELECT moneda  FROM cuotas WHERE f_nro = $trans_num LIMIT 1");
+    $my->NextRecord();
+    
+    $moneda_cuota = $my->Get("moneda");
+     
+    
+    $sql = "INSERT INTO cheques_ter(nro_cheque, id_banco, f_nro, cuenta,fecha_ins, fecha_emis, fecha_pago, benef, suc, valor, cotiz, valor_ref, motivo_anul, estado, m_cod,id_concepto,trans_num,tipo)
+    VALUES ('$nro_cheque', '$id_banco', '$factura', '$cuenta',current_date, '$fecha_emis', '$fecha_pago', '$benef', '$suc', '$valor', '$cotiz', '$valor_ref', '', 'Pendiente', '$moneda',$concepto,'$trans_num','$tipo');";
+
+    $my->Query($sql);
+  
+
+    $sumar = 'valor_ref';
+    if($moneda_cuota !== "G$"){
+        $sumar = 'valor';
+    }
+
+    $my->Query("SELECT SUM($sumar) AS TOTAL_CHEQUES FROM cheques_ter WHERE $campo = $trans_num;");
+    $my->NextRecord();
+    $total = $my->Record['TOTAL_CHEQUES'];
+    if ($total == null) {
+        echo "0";
+    } else {
+        echo $total;
+    }
+}
+
+function generarFacturaXIntereses(){
+    $datos = json_decode($_POST['datos']);
+
+    $CardCode = $datos->CardCode;
+     
+     
+    $usuario = $datos->usuario;
+    $suc = $datos->suc;
+    $moneda = $datos->moneda;
+    $cotiz = $datos->cotiz;
+    $data = $datos->data;
+    
+    
+    $db = new My();
+    $sql = "select nombre,ci_ruc, cat, tipo_doc from clientes WHERE cod_cli = '$CardCode'";
+    $db->Query($sql);
+    $db->NextRecord();
+    $ruc = $db->Record['ci_ruc'];
+    $cliente = utf8_encode($db->Record['nombre']);
+    $cat = $db->Record['cat'];
+    $tipo_doc = $db->Record['tipo_doc'];
+    
+    $hora = date('H:i');
+    
+    $db->Query("INSERT INTO marijoa.factura_venta(cod_cli,cliente,usuario,fecha,hora,ruc_cli,tipo_doc_cli,suc,cat,total,total_desc,total_bruto,estado,cod_desc,moneda,cotiz,turno,turno_id, turno_fecha, turno_llamada,empaque,nro_reserva,clase)
+    VALUES ('$CardCode','$cliente','$usuario',current_date,'$hora','$ruc','$tipo_doc','$suc',$cat,0,0,0,'En_caja',0,'$moneda',$cotiz,NULL,NULL, NULL, NULL,'Si',NULL,'Servicio');");
+
+    $db->Query("SELECT f_nro AS NRO FROM factura_venta WHERE estado = 'En_caja' AND usuario = '$usuario' and clase = 'Servicio'  ORDER BY f_nro DESC LIMIT 1");
+    $db->NextRecord();
+    $nro = $db->Record['NRO'];  
+
+    $total_bruto = 0;
+
+    foreach ($data as $cuota) {
+        $Factura = $cuota->Factura;
+        $FolioNum = $cuota->FolioNum;
+        $Cuota = $cuota->Cuota;
+        $Total = $cuota->Total;
+        $Pagado = $cuota->Pagado;
+        $Monto = $cuota->Monto;
+        $FechaFactura = $cuota->FechaFactura;
+        $Tipo = $cuota->Tipo;
+        $Interes = $cuota->Interes;
+        $total_bruto += 0 +$Interes;
+        $descrip = "Interes Ref: $Factura Cuota: $Cuota";
+        
+        $det = "INSERT INTO fact_vent_det (f_nro, codigo, lote,um_prod, descrip, um_cod,cod_falla,cant_falla,cod_falla_e,falla_real, cantidad, precio_venta, descuento, precio_neto, subtotal, estado,gramaje,ancho,tara,kg_calc,cant_med,estado_venta,ref_factura,ref_cuota)"
+             . "VALUES ($nro, 'SR001','','Unid', '$descrip', 'Unid',NULL,NULL,NULL,NULL, 1 , $Interes, 0,$Interes, $Interes, 'Pendiente',0,0,0,0, 1,'Normal',$Factura,$Cuota);";
+        $db->Query($det);
+    }
+    $descuento = fmod($total_bruto, 50);
+    $total_neto = $total_bruto - $descuento;
+    
+    $cod_desc = 0;
+    
+    if($descuento > 0){
+        $cod_desc = 4;
+    }
+    
+    $db->Query("UPDATE factura_venta SET total = $total_neto,desc_sedeco = $descuento,total_bruto = $total_bruto, cod_desc = $cod_desc WHERE f_nro = $nro");
+     
+    echo json_encode(array("mensaje"=>"Ok"));
+}
+
 new CobroCuotas();
 ?>
 

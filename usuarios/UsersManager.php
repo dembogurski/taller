@@ -37,7 +37,7 @@ class UserManager
     {
         $my_link = new My();
         $usuarios = array();
-        $my_link->query("SELECT suc,usuario, nombre, apellido,estado FROM usuarios order by usuario asc");
+        $my_link->query("SELECT suc,'' as img, usuario, nombre, apellido,estado FROM usuarios order by usuario asc");
         while ($my_link->NextRecord()) {
             array_push($usuarios, $my_link->Record);
         }
@@ -84,19 +84,19 @@ class UserManager
         $t = new Y_Template("UsersManager.html");
         $t->Show("head");
         //Cabecera = contenido de los Labels html
-        $cabecera = ["usuario"=>36,"documento"=>12,"nombre"=>36,"apellido"=>36,"telefono"=>36,"e-mail"=>36,"direccion"=>255,"fecha nacimiento"=>10,"fecha de contratacion"=>10,"limite de sesion"=>3,"sucursal"=>2,"estado"=>10,"vendedor tipo"=>6,"sueldo fijo"=>21,"sueldo contable"=>21];
+        $cabecera = ["usuario"=>36,"documento"=>12,"nombre"=>36,"apellido"=>36,"telefono"=>36,"e-mail"=>36,"direccion"=>255,"fecha nacimiento"=>10,"fecha de contratacion"=>10,"limite de sesion"=>3,"sucursal principal"=>2, "sucursal actual"=>2,"estado"=>10,"vendedor tipo"=>6,"sueldo fijo"=>21,"sueldo contable"=>21];
         $max_input_size = 27;
         $indices = array_keys($cabecera);
             
-        $db->query("SELECT usuario, doc,nombre, apellido, tel, email, dir, "
-                . "fecha_nac, fecha_cont, limite_sesion, suc, "
-                . "estado,id_tipo,sueldo_fijo,sueldo_contable FROM usuarios WHERE usuarios.usuario = '$user';");
+        $db->query("SELECT usuario, doc,nombre, apellido, tel, email, dir, fecha_nac, fecha_cont, limite_sesion, suc_princ,suc, estado,id_tipo,sueldo_fijo,sueldo_contable FROM usuarios WHERE usuarios.usuario = '$user';");
         
         $db->NextRecord();
         $res = $db->Record;
         $t->Set("user", $res["usuario"]);
         
         if (file_exists("../img/usuarios/$user.jpg")) {
+            $random = rand(5, 500);                
+            $t->Set("random", $random);        
             $t->Set("foto", $user);
         } else {
              $t->Set("foto", "no_image");
@@ -227,7 +227,7 @@ class UserManager
         $ultimos8= substr($cadena_encriptada, -8);
         
         $db = new My();
-        $query = "INSERT INTO usuarios (usuario, passw, hash, fecha_nac, fecha_cont, limite_sesion, suc, estado) values ('$user', '$clave', '$ultimos8','0000-00-00','0000-00-00', '3600', '01','Activo');";
+        $query = "INSERT INTO usuarios (usuario, passw, hash, fecha_nac, fecha_cont, limite_sesion, suc, estado) values ('$user', '$clave', '$ultimos8','0000-00-00','0000-00-00', '30', '00','Activo');";
         $db->Query($query);
         if ($db->Errno == 0) {
             echo'{"exito":true}';
@@ -246,6 +246,10 @@ class UserManager
         
         $db->Query($query);
         $db->Close();
+    }
+    function getUserPhoto(){
+        $user = $_POST['user'];
+        
     }
     // Muestra el Formulario para cambiar de contrase�a.
     function changePassword()
@@ -485,6 +489,15 @@ class UserManager
         $ponderacion = $_POST['pond'];
         $db = new My();
         $db->Query("UPDATE metas set meta_minima = $meta_minima,meta_base = $meta_base, sueldo_base = $sueldo_base, ponderacion = $ponderacion where id_meta = $id_meta and usuario = '$usuario'");
+        echo "Ok";
+    }
+    
+    function cambiarImagen(){
+        $usuario = $_POST['usuario'];         
+        $base64 = $_POST['base64'];
+        
+        $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64));
+        file_put_contents("../img/usuarios/$usuario.jpg", $data);
         echo "Ok";
     }
 

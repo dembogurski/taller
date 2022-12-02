@@ -7,7 +7,6 @@
  */
 require_once("../../Y_Template.class.php");
 require_once("../../Y_DB_MySQL.class.php"); 
-require_once("../../Y_DB_MSSQL.class.php"); 
 require_once("../../Functions.class.php");
 
 class Tarjetas {
@@ -82,11 +81,11 @@ class Tarjetas {
         $t->Show("foot");
     }
     function getConvenios($tipo){
-        $ms = new MS();
+        $db = new My();
         $convenios = array();
-        $ms->Query("SELECT CreditCard FROM OCRC WHERE Phone like '$tipo' ORDER BY CardName asc");
-        while($ms->NextRecord()){
-            array_push($convenios, $ms->Record['CreditCard']);
+        $db->Query(" SELECT  cod_tarjeta AS CreditCard FROM tarjetas  WHERE tipo like '$tipo' ORDER BY nombre asc");
+        while($db->NextRecord()){
+            array_push($convenios, $db->Record['CreditCard']);
         }
         return implode(',',$convenios);
     }

@@ -1,0 +1,176 @@
+<!-- begin: headers -->   
+    <head>  
+        <link rel="stylesheet" type="text/css" href="diagnosticos/Diagnosticos.css?_=0" /> 
+        <link rel="stylesheet" type="text/css" href="recepcion/Recepcion.css?_=0" /> 
+        <link rel="stylesheet" type="text/css" href="js/DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.dataTables.min.css">         
+        <link rel="stylesheet" type="text/css" href="js/DataTables/Responsive-2.2.2/css/responsive.bootstrap4.min.css"/>         
+    </head>  
+<!-- end:   headers -->
+
+<!-- begin: insert_edit_form -->     
+<div class="form" id="form_diagnosticos"></div>
+<!-- end:   insert_edit_form -->
+
+<!-- begin: data_header -->
+<div class="list_container">      
+    <table id="diagnosticos"  border="1" class="display responsive nowrap db_tablename"  >
+        <thead>
+            <tr>
+                <th class="invisible">Id Diag</th><th>Chapa</th><th>Propietario</th><th>Fecha</th><th class="invisible">Usuario</th><th class="invisible">Tecnico Autoriz</th><th class="invisible">Fecha Ingreso</th><th class="invisible">Estado</th><th></th>
+            </tr>
+        </thead>
+
+<!-- end:   data_header -->
+
+
+<!-- begin: data_line -->     
+<tr> <td class="invisible">{id_diag}</td> <td onclick=editDiagUI("{id_diag}")>{chapa}</td> <td onclick=editDiagUI("{id_diag}")>{cliente}</td><td onclick=editDiagUI("{id_diag}")>{fecha}</td> <td  class="invisible">{usuario}</td> <td  class="invisible">{tecnico_autoriz}</td> <td class="invisible"> {fecha_ingreso}</td> <td class="invisible">{estado}</td> <td class="itemc"><img class="edit" src="img/edit.png" onclick=editDiagUI("{id_diag}") ></td>  </tr>
+<!-- end:   data_line -->
+
+
+<!-- begin: data_foot -->     
+
+        <tfoot>
+             
+        </tfoot>
+    </table> 
+</div>
+ 
+<!-- end:   data_foot -->
+
+<!-- begin: script -->      
+    <script type="text/javascript" src="js/jquery-3.3.1.js" ></script>
+    <script type="text/javascript" language="javascript" src="js/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>        
+    <script type="text/javascript" language="javascript" src="js/DataTables/Responsive-2.2.2/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" src="js/functions.js" ></script>    
+    <script type="text/javascript" src="diagnosticos/Diagnosticos.js" ></script>
+    <script type="text/javascript" src="diagnosticos/OrdenesTrabajo.js" ></script>
+        <script>
+           configurarDiagnosticos();    
+        </script> 
+<!-- end:   script -->
+
+
+<!-- begin: edit_form_cab -->  
+
+<div class="form_diag_det" id="form_diag_det"></div>
+
+<table border="0" class="form_table" id="edit_diagnosticos" style="width: auto">
+    <tr> <th colspan="4" class="form_title" > Modificar Diagnostico  </th> </tr> 
+<!-- end:   edit_form_cab -->
+
+
+<!-- begin: edit_form_data -->     
+<tr> <td class="form_label">N&deg; Diag:</td> 
+    <td>
+        <input class="form_number PRI" type="number" id="form_id_diag"  readonly="readonly" required="required" size="5"  value="{value_of_id_diag}" > 
+    </td> 
+    <td>
+       <div class="chapa">
+            <div class="top_chapa">--&nbsp;&nbsp;&nbsp;&nbsp;MERCOSUR&nbsp;&nbsp;&nbsp;&nbsp;--</div>
+            <div class="nro_chapa">{value_of_chapa}</div>
+        </div> 
+    </td>
+</tr>
+<tr> <td class="form_label">N&deg; Recepcion:</td> 
+    <td colspan="3">
+        <select class="form_db_select" id="form_id_rec"  disabled="disabled"  >{value_of_id_rec}</select>
+    </td>  
+</tr>
+ 
+<tr> <td class="form_label">Fecha:</td> 
+    <td>
+        <input class="form_date" type="date" id="form_fecha"   readonly="readonly"   value="{value_of_fecha}" >  
+    </td> 
+    <td class="form_label" >Usuario:</td>
+    <td> <input class="form_text" type="text" readonly="readonly"   value="{value_of_usuario}" >  </td>
+</tr>
+
+<tr> <td class="form_label">Tecnico Autoriz:</td> <td>
+<select class="form_db_select" id="form_tecnico_autoriz"   >{value_of_tecnico_autoriz}</select>
+</td>  </tr>
+<tr>
+    <td class="form_label">Fecha Ingreso:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_ingreso"      value="{value_of_fecha_ingreso}" ></td>  
+    <td class="form_label"  style="display:none">Fecha Salida:</td> <td  style="display:none"><input class="form_datetime-local" type="datetime-local" id="form_fecha_salida"      value="{value_of_fecha_salida}" ></td>  
+</tr>
+
+<tr> <td class="form_label">Estado:</td>
+    <td>
+<select class="form_select" id="form_estado"     >{value_of_estado}</select>
+</td> 
+<td><img src="img/printer-02_32x32.png" class="diagnostico_print" style="cursor:pointer" onclick="imprimirDiagnostico()" ></td>
+<td><img src="img/orders.png" class="order_trab"    style="cursor:pointer;height: 36px" onclick="crearOrdenTrabajo()" > </td>
+</tr>
+
+<tr>
+    <td colspan="4" >
+        <div id="detalle_diagnostico">
+            
+        </div>
+    </td>
+</tr>
+<!-- end:   edit_form_data -->
+
+
+<!-- begin: edit_form_foot -->     
+<tr><td colspan="4" style="text-align: center" id="msg_diagnosticos" ></td></tr>
+    <tr>
+        <td colspan="4" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeForm()">
+            <input type="button" value="Modificar Datos" onclick=updateDiagData("edit_diagnosticos") id="diagnosticos_update_button">
+            <input type="button" value=" Cerrar " onclick="closeForm()" id="diagnosticos_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   edit_form_foot -->
+
+
+
+
+
+
+<!-- begin: add_form_cab -->  
+<table border="0" class="form_table" id="add_diagnosticos">
+    <tr> <th colspan="2" class="form_title" > (Nuevo Registro) Diagnosticos  </th> </tr> 
+<!-- end:   add_form_cab -->
+
+
+<!-- begin: add_form_data -->     
+<tr> <td class="form_label">N&deg; Recepcion:</td> <td>
+        <select class="form_db_select" id="form_id_rec"  onchange="selectChapa()"  >{value_of_id_rec}</select>
+</td>  </tr>
+<tr> <td class="form_label">Chapa:</td> <td><input class="form_text" type="text" id="form_chapa"      size="30"  value="" ></td>  </tr>
+<tr class="invisible"> <td class="form_label">Fecha:</td> <td><input class="form_date" type="date" id="form_fecha"        value="{fecha_hoy}" ></td>  </tr>
+<tr class="invisible"> <td class="form_label">Usuario:</td> <td><input class="form_text MUL"  type="text" id="form_usuario"  readonly="readonly"     size="30"  value="{usuario}" ></td>  </tr>
+<tr> <td class="form_label">Tecnico Autoriz:</td> <td>
+<select class="form_db_select" id="form_tecnico_autoriz"  >{value_of_tecnico_autoriz}</select>
+</td>  </tr>
+<tr > <td class="form_label">Fecha Ingreso:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_ingreso"        value="{fecha_hora_hoy}" ></td>  </tr>
+<tr style="display:none"> <td class="form_label">Fecha Salida:</td> <td><input class="form_datetime-local" type="datetime-local" id="form_fecha_salida"        value="" ></td>  </tr>
+<tr> <td class="form_label">Estado:</td> <td>
+<select class="form_select" id="form_estado"  >
+<option value="Abierto">Abierto</option>
+<option value="Cerrado">Cerrado</option>
+</select>
+</td>  </tr>
+
+<!-- end:   add_form_data -->
+
+
+<!-- begin: add_form_foot -->     
+<tr><td colspan="2" style="text-align: center" id="msg_diagnosticos" ></td></tr>
+    <tr>
+        <td colspan="2" style="text-align: center">
+            <input type="button" value="Cancelar" onclick="closeForm()">
+            <input type="button" value=" Grabar " onclick=addDiagData("add_diagnosticos") id="diagnosticos_save_button">
+            <input type="button" value=" Cerrar " onclick="closeForm()" id="diagnosticos_close_button" style="display:none">
+        </td>
+    </tr>
+</table> 
+<!-- end:   add_form_foot -->
+
+
+<!-- begin: no_result -->     
+<div style="text-align: center;margin: 2cm auto"> Ningun registro para Diagnosticos <button type="button" id="add_button_proveedores" onclick="addDiagUI()">Agregar un nuevo registro para (Diagnosticos)</button></div> 
+<!-- end:   no_result -->

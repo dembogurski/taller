@@ -16,10 +16,15 @@ class VentasAbiertas {
         //$session = $_POST['session'];
         $usuario = $_POST['usuario'];        
         $suc     = $_POST['suc'];
+        $estado = "Abierta";
+        if(isset($_GET['estado'])){
+            $estado = $_GET['estado'];
+        }
+            
                 
         $db = new My();
         $db->Query("SELECT f_nro as nro, DATE_FORMAT(fecha,'%d-%m-%Y') AS fecha, cod_cli ,ruc_cli AS ruc, cliente, cat , total,total_desc,total_bruto, estado,usuario  
-        FROM factura_venta WHERE estado = 'Abierta' AND usuario = '$usuario' AND suc = '$suc'");
+        FROM factura_venta WHERE estado = '$estado' AND usuario like '%' AND suc = '$suc'");
         
         // $t = new Y_Template("FacturaVenta.html");
         

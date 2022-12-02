@@ -5,7 +5,7 @@ require_once("Y_Template.class.php");
 class Menu {
 
     function __construct($permisos) {
-        $t = new Y_Template('menu.html');
+        $t = new Y_Template('Menu.html');   
         $json_file = file_get_contents('json/menu.json');
         $json = json_decode($json_file);
         $t->Set('json_var', json_encode($this->getMenu($json, $permisos)));

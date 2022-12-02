@@ -4,11 +4,12 @@
  * Description of Deudores
  * @author Ing.Douglas
  * @date 13/07/2017
- */
-require_once("..\Y_Template.class.php");
-require_once("..\Y_DB_MSSQL.class.php"); 
+ */    
+require_once("../Y_Template.class.php");
+require_once("../Y_DB_MySQL.class.php"); 
+ 
 
-class OrdenesCompra {
+class Deudores {
     function __construct() {
         $action = $_REQUEST['action'];          
         if (function_exists($action)) {
@@ -28,8 +29,8 @@ class OrdenesCompra {
         $t->Show("head");
 
        
-        $ms = new MS();
-       
+        $link = new My();
+            
         $dia = date("d");
          
         $mess = $arrmeses[date("m")-1];
@@ -40,40 +41,41 @@ class OrdenesCompra {
         $t->Show("body");
 
       
-        $codigo_cliente = $_REQUEST['codigo_cliente'];
+        $nombre_cliente = $_REQUEST['nombre_cliente'];
         // echo $codigo_cliente;
         
-        $Qry = "SELECT DISTINCT 'FV' as Tipo, o.CardName, o.LicTradNum as RUC, o.DocEntry,o.DocNum,o.U_Nro_Interno as Ticket,o.U_SUC as Suc, InstlmntID as NroCuota,CONVERT(VARCHAR(10), DocDate, 103) FechaFactura,CONVERT(VARCHAR(10),DueDate  , 103) Vencimiento, DATEDIFF(day,DueDate,GETDATE()) AS DiasAtraso, i.InsTotal  as TotalCuota, Paid as Pagado,FolioNum,DocCur,i.Status FROM OINV o, INV6 i WHERE o.CardCode like '$codigo_cliente' and o.DocEntry = i.DocEntry and o.GroupNum != -1  and i.Status like 'O' and i.DueDate between convert(datetime, '01/01/2009', 103) and convert(datetime, '01/01/2020', 103) and DATEDIFF(day,DueDate,GETDATE()) > 0  order by  DiasAtraso asc";
-        // echo "$Qry";
+        $Qry = "SELECT 'FV' as tipo, f.f_nro, cliente,ruc_cli as RUC,f.suc,c.id_cuota AS nro_cuota,DATE_FORMAT(f.fecha_cierre,'%d-%m-%Y') AS fecha_factura,DATE_FORMAT(c.vencimiento,'%d-%m-%Y') AS vencimiento,
+        DATE_FORMAT(c.fecha_ult_pago,'%d-%m-%Y') AS fecha_ult_pago, DATEDIFF(CURRENT_DATE,vencimiento) AS dias_atraso, c.monto,monto_ref, (c.monto - c.saldo) AS pagado,f.fact_nro AS folio_num,f.moneda
+        FROM factura_venta f INNER JOIN cuotas c ON f.f_nro = c.f_nro AND f.cliente LIKE '%$nombre_cliente%' AND c.estado LIKE 'Pendiente' ORDER BY dias_atraso ASC";
+         
         // die();
-        $ms->Query($Qry);
+        $link->Query($Qry);
         $t->Show("data_cab");
         $total = 0;
-        while($ms->NextRecord()){
-            $Tipo =  $ms->Record['Tipo'];
-            $Nombre =  $ms->Record['CardName'];
-            $RUC =  $ms->Record['RUC'];
-            $DocEntry =  $ms->Record['DocEntry'];
-            $DocNum =  $ms->Record['DocNum'];
-            $Ticket = $ms->Record['Ticket'];
-            $Suc = $ms->Record['Suc'];
-            $NroCuota =  $ms->Record['NroCuota'];
-            $FechaFactura =  $ms->Record['FechaFactura'];
-            $Vencimiento =  $ms->Record['Vencimiento'];
-            $DiasAtraso =  $ms->Record['DiasAtraso'];
-            $TotalCuota =  $ms->Record['TotalCuota'];
-            $Pagado =  $ms->Record['Pagado'];
-            $FolioNum =  $ms->Record['FolioNum'];
-            $DocCur =  $ms->Record['DocCur'];
-            $Status =  $ms->Record['Status'];
-                
-           
+        while($link->NextRecord()){
+            $Tipo =  $link->Record['tipo'];
+            $Nombre =  $link->Record['cliente'];
+            $RUC =  $link->Record['RUC']; 
+            $Ticket = $link->Record['f_nro'];
+            $Suc = $link->Record['suc'];
+            $NroCuota =  $link->Record['nro_cuota'];
+            $FechaFactura =  $link->Record['fecha_factura'];
+            $Vencimiento =  $link->Record['vencimiento'];
+            $DiasAtraso =  $link->Record['dias_atraso'];
+            $TotalCuota =  $link->Record['monto_ref'];
+            $Pagado =  $link->Record['pagado'];
+            $FolioNum =  $link->Record['folio_num'];
+            $DocCur =  $link->Record['moneda'];
+            $fecha_ult_pago =  $link->Record['fecha_ult_pago'];
+            
+            if($fecha_ult_pago == $Vencimiento){
+                $fecha_ult_pago = "";
+            }
            
             $t->Set("Tipo",$Tipo);
             $t->Set("Nombre",$Nombre);
             $t->Set("RUC",$RUC);   
-            $t->Set("DocEntry",$DocEntry);
-            $t->Set("DocNum",$DocNum);
+ 
             $t->Set("Ticket",number_format($Ticket,0, ',', '.'));
             $t->Set("Suc", $Suc);
             $t->Set("Suc", $Suc);
@@ -85,6 +87,7 @@ class OrdenesCompra {
             $t->Set("Pagado",number_format($Pagado,0, ',', '.'));
             $t->Set("FolioNum",$FolioNum);
             $t->Set("DocCur",$DocCur);
+            $t->Set("fecha_ult_pago",$fecha_ult_pago);
             $t->Set("Status",'Pendiente');
 
             $t->Show("data");
@@ -93,20 +96,6 @@ class OrdenesCompra {
         $t->Show("data_foot");
     }
 }
-
-function ultimoPago(){
-   $DocNum = $_REQUEST['DocNum'];
-   $ultimo  = "SELECT TOP 1 o.DocDate as Fecha,DATEDIFF(day,o.DocDate,GETDATE()) AS dias  FROM ORCT o, RCT2 d WHERE  o.DocNum = d.DocNum AND d.DocNum = $DocNum ORDER BY o.DocDate desc";  
-   $ms = new MS();
-   $ms->Query($ultimo);       
-   if($ms->NumRows()>0){
-       $ms->NextRecord();
-       $dias = $ms->Record['dias'];
-       echo $dias;
-   }else{
-       echo "---";
-   }
-}   
-
-new OrdenesCompra();
+ 
+new Deudores();
 ?>

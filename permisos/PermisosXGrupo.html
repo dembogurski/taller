@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+
+<!-- begin: header -->
+    <link rel="stylesheet" type="text/css" href="permisos/PermisosXGrupo.css?_=88888888888" />
+    <script type="text/javascript" src="js/jquery-ui/jquery-ui.min.js" ></script> 
+    <script type="text/javascript" src="permisos/PermisosXGrupo.js?_=888888888888" ></script>             
+<!-- end:   header -->
+
+<!-- begin: permisos_cab -->
+<div class="titulo_factura" style="margin-bottom: 4px;text-align: center;font-weight: bolder;padding: 3px">Permisos por Grupo</div>
+<div id="contenedor_permisos_por_grupo" style="text-align: left;width: auto;margin-left: 4px">
+    <table id="tabla_permisos_por_grupo" border="1"  cellspacing="0" cellpadding="0" style="min-width: 100%;margin: 0 auto;border-collapse: collapse"   >
+        <tr class="titulo_grupo"><th colspan="2" class="rezizable" style="text-align: center" >
+        <table border="0" style="margin: 0 auto " title="Ver Ejecutar Modificar">
+            <tr title="Ver Ejecutar Modificar">
+                <td title="Ver" class="itemc" >V</td><td title="Ejecutar" class="itemc">E</td><td title="Modificar" class="itemc">M</td>
+            </tr>
+            <tr title="Ver Ejecutar Modificar">
+                <td class="itemc" ><input type="checkbox"></td>
+                <td class="itemc"><input type="checkbox"></td>
+                <td class="itemc"><input type="checkbox"></td>
+            </tr>
+        </table>
+        <div style="margin-top: 8px;text-align: center;font-size: 16px">   Permisos  </div>
+        <div><input type="button" class="selectors" value="Todos" onclick="todos()" id="todos"><input type="button" class="selectors" value="Ninguno" onclick="ninguno()" id="ninguno"></div>
+        
+        </th> <th class="rezizable" colspan="{columnas}" style="height: 46px"> 
+        <div style="text-align: center;border-radius: 2px;background-color: lightskyblue;border:solid gray 1px">Grupos Seleccionables</div> 
+        <div style="min-width: 200px;min-height: 60px;background-color: white;float:left">{grupos_visibles}</div>
+        <div style="background-color: #F3F4F9;height: 36px;float:left;width: 100%">
+            
+            <label>Grupos de usuario:</label><input type="text" size="24" id="busuarios" placeholder="Buscar usuarios" value="" onchange="buscarUsuarios()">
+            <select id="usuarios" onchange="getGruposUsuario()">
+                <option value="*">Ninguno</option>
+            </select>
+        </div>  
+        </th> <th rowspan="2" class="rezizable"><span>&#8596;</span></th>    </tr>
+        <tr class="titulo"><th style="width: 4%">ID</th> <th style="width: 260px">Permiso</th> 
+            {grupos}   
+        </tr>   
+
+<!-- end:   permisos_cab -->
+
+<!-- begin: permisos_data -->
+<tr style="background-color: white">
+    <td class="item permiso" id="per_{id}" style="padding-left: 4px" >{id_sp}</td>
+    <td class="item permiso" style="padding-left: 4px">{permiso_sp}</td>
+    {permiso_x_grupo}
+</tr>
+<!-- end:   permisos_data -->
+
+<!-- begin: permisos_foot -->
+    </table>  
+</div>
+<!-- end:   permisos_foot -->
+
+
+ 
+ 
